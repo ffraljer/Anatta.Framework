@@ -1,0 +1,24 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net10.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <RootNamespace>Fraljer.Anatta.Framework</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="ManagedBass" Version="4.0.2" />
+      <PackageReference Include="ManagedBass.Fx" Version="4.0.2" />
+      <PackageReference Include="OpenTK" Version="4.9.4" />
+      <PackageReference Include="OpenTK.Mathematics" Version="4.9.4" />
+      <PackageReference Include="SixLabors.ImageSharp" Version="3.1.12" />
+    </ItemGroup>
+    <ItemGroup>
+        <EmbeddedResource Include="Resources\**\*" />
+    </ItemGroup>
+    <ItemGroup>
+      <ProjectReference Include="..\Samples\Demo.Resources\Demo.Resources.csproj" />
+    </ItemGroup>
+
+</Project>
