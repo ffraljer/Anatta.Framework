@@ -1,7 +1,7 @@
 using OpenTK.Graphics.OpenGL4;
 using Fraljer.Anatta.Framework.Interfaces.Graphics;
 
-namespace Fraljer.Anatta.Framework.Graphics;
+namespace Fraljer.Anatta.Framework.Graphics.Managers;
 
 public class Manager
 {
