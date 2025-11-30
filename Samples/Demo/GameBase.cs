@@ -1,6 +1,8 @@
 using Fraljer.Anatta.Framework;
 using Fraljer.Anatta.Framework.IO;
 using Fraljer.Anatta.Framework.Graphics;
+using Fraljer.Anatta.Framework.Graphics.Managers;
+using Fraljer.Anatta.Framework.Sound;
 using OpenTK.Mathematics;
 using OpenTK.Graphics.OpenGL4;
 
@@ -25,6 +27,8 @@ public class GameBase : Game
 
         };
         manager.Add(so);
+        byte[] dar = Resource.Load<byte[]>("btbbrbbq.mp3");
+        int stream = Audio.Play((byte[])dar);
         base.Initialise();
     }
 

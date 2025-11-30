@@ -1,6 +1,7 @@
 using System.Reflection;
 using Demo.Resources;
 using Fraljer.Anatta.Framework.Graphics;
+using Fraljer.Anatta.Framework.Sound;
 
 namespace Fraljer.Anatta.Framework.IO
 {
@@ -17,38 +18,37 @@ namespace Fraljer.Anatta.Framework.IO
         {
             if (string.IsNullOrEmpty(Base))
                 throw new InvalidOperationException("Resource.Base not set.");
+            string folder = GetTypeFolder(typeof(T));
+            string fullName = $"{Base}.Resources.{folder}.{name}";
+            var asm = typeof(Ass).Assembly; // add a class to your resource assembly and replace.
 
-            string fullName = $"{Base}.Resources.Textures.{name}";
-            var asm = typeof(Ass).Assembly; // add an empty class to your resource assembly and replace.
             
             using Stream? stream = asm.GetManifestResourceStream(fullName);
             if (stream == null)
                 throw new Exception($"Embedded resource not found: {fullName}");
 
+           
+            using var ms = new MemoryStream();
+            stream.CopyTo(ms);
+            var bytes = ms.ToArray();
+
             if (typeof(T) == typeof(Texture))
             {
-                using var ms = new MemoryStream();
-                stream.CopyTo(ms);
-
-                Texture tex = Texture.FromImageBytes(ms.ToArray());
+                Texture tex = Texture.FromImageBytes(bytes);
                 return (T)(object)tex;
             }
-
             if (typeof(T) == typeof(byte[]))
             {
-                using var ms = new MemoryStream();
-                stream.CopyTo(ms);
-                return (T)(object)ms.ToArray();
+                return (T)(object)bytes;
             }
-
             throw new NotSupportedException(typeof(T).Name);
         }
 
 
         private static string GetTypeFolder(Type t)
         {
-            if (t == typeof(Texture)) return "Texture";
-            if (t == typeof(byte[])) return "Binary";
+            if (t == typeof(Texture)) return "Textures";
+            if (t == typeof(byte[])) return "Audio";
             return "Unknown";
         }
     }

@@ -8,6 +8,7 @@ namespace Fraljer.Anatta.Framework.Graphics;
 //manager. (or, you know. kill both of them)
 public class Batcher : IDisposable
 {
+    // I wish OpenTK had a built-in sprite batcher. (or at least some 4k of it)
     public int vao, vbo;
     public Shader shd;
     public static readonly float[] quad =
