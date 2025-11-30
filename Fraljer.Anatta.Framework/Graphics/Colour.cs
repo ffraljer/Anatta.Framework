@@ -61,7 +61,15 @@ public struct Colour
             A / 255f
         );
     }
-    
+   public Color4 ToColor4() {
+       return new Color4(
+                R / 255f,
+                G / 255f,
+                B / 255f,
+                A / 255f
+            );
+   }
+    public static implicit operator Color4(Colour c) => c.ToColor4();
     #region colours
         /// <summary>
         /// Gets the system color with (R, G, B, A) = (255, 255, 255, 0).
