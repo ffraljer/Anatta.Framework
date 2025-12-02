@@ -8,6 +8,5 @@ class Program
     {
         using var g = new GameBase(new Vector2i(1280, 720));
         g.Run();
-        
     }
 }

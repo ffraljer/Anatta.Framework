@@ -6,15 +6,15 @@ using System.Runtime.InteropServices;
 
 namespace Fraljer.Anatta.Framework;
 
-public class Game : GameWindow
+public class App : GameWindow // I want this to not be a GameWindow so you can find stuff easier.
 {
     public Time Time { get; private set; }
 
-    protected Game(Vector2i tize, string title = "Untitled") : base(GameWindowSettings.Default,
+    protected App(Vector2i size, string title = "Untitled") : base(GameWindowSettings.Default,
         new NativeWindowSettings
         {
             Title = $"Anatta running: {title}",
-            ClientSize = tize,
+            ClientSize = size,
             API = ContextAPI.OpenGL,
             Profile = ContextProfile.Core
         })
@@ -22,7 +22,7 @@ public class Game : GameWindow
         Time = new();
     }
     
-    protected virtual void Initialise() {}
+    protected virtual void Initialise() {} // I wanted to use "Load" but GameWindow already has it.
     protected virtual void Update(float dt) { }
     
     protected virtual void Draw() { }
@@ -36,6 +36,7 @@ public class Game : GameWindow
 
         #region debug info
         Console.WriteLine($"[Framework]\nWindow Size: {Size.X}x{Size.Y}\nRenderer: {GL.GetString(StringName.Renderer)}\n.NET Version: {Environment.Version}\nOS: {RuntimeInformation.OSDescription}");
+        Console.WriteLine("\n\n[might be errors idk]");
         #endregion
 
         GL.ClearColor(new Color4(0,0,0,0));

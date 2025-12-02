@@ -12,13 +12,22 @@ public class Texture : IDisposable
     private int Gandle => Handle; // rider, this isn't a typo
     public int Width { get; private set; }
     public int Height { get; private set; }
-    
+    private static string[] names = { ".png", ".jpeg", ".jpg" };
 
-    public static Texture Load(string name)
-    {
-        return Resource.Load<Texture>(name);
+
+    public static Texture Load(string name) {
+        foreach (var ext in names) {
+            string resourceName = name + ext;
+            try {
+                return Resource.Load<Texture>(resourceName);
+            }
+            catch {
+
+            }
+        }
+        throw new Exception($"{name} no found");
     }
-    
+
     public static Texture FromImageBytes(byte[] bytes)
     {
         using Image<Rgba32> image = Image.Load<Rgba32>(bytes);

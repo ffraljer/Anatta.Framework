@@ -8,7 +8,7 @@ using OpenTK.Graphics.OpenGL4;
 
 namespace Demo;
 
-public class GameBase : Game
+public class GameBase : App
 {
     private Batcher batch;
     private Manager manager;

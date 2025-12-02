@@ -16,9 +16,9 @@ public class Shader : IDisposable
     {
         var a = Assembly.GetExecutingAssembly();
 
-        using Stream vr = a.GetManifestResourceStream(vertex)
+        using Stream vr = a.GetManifestResourceStream($"Fraljer.Anatta.Framework.Resources.{vertex}")
                           ?? throw new FileNotFoundException($"{vertex}  cannot be found");
-        using Stream fr = a.GetManifestResourceStream(fragment)
+        using Stream fr = a.GetManifestResourceStream($"Fraljer.Anatta.Framework.Resources.{fragment}")
                           ?? throw new FileNotFoundException($"{fragment}  cannot be found");
 
         using var vreader = new StreamReader(vr);
@@ -80,19 +80,16 @@ public class Shader : IDisposable
         int loc = G.GetUniformLocation(Handle, name);
         G.Uniform1(loc, value);
     }
-
     public void SetInt(string name, int value)
     {
         int loc = G.GetUniformLocation(Handle, name);
         G.Uniform1(loc, value);
     }
-
     public void SetVector2(string name, Vector2 vec)
     {
         int loc = G.GetUniformLocation(Gandle, name);
         G.Uniform2(loc, vec);
     }
-
     public void SetVector3(string name, Vector3 vec)
     {
         int loc = G.GetUniformLocation(Handle, name);

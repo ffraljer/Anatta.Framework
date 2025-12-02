@@ -37,7 +37,7 @@ public class Batcher : IDisposable
         GL.EnableVertexAttribArray(1);
         GL.VertexAttribPointer(1, 2, VertexAttribPointerType.Float, false, 4 * sizeof(float), 2 * sizeof(float));
 
-        shd = Shader.Load("Fraljer.Anatta.Framework.Resources.vertexSprite.glsl", "Fraljer.Anatta.Framework.Resources.fragmentSprite.glsl");
+        shd = Shader.Load("vertexSprite.glsl", "fragmentSprite.glsl");
 
         GL.BindVertexArray(0);
         GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
@@ -62,7 +62,7 @@ public class Batcher : IDisposable
     {
         GL.BindVertexArray(0);
     }
-    
+       
     public void Draw(IManageable item)
     {
         shd.Use();
