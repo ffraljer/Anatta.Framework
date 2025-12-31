@@ -1,4 +1,4 @@
-namespace Fraljer.Anatta.Framework.Interfaces.Graphics;
+namespace Anatta.Framework.Interfaces.Graphics;
 
 public interface IUpdatable
 {

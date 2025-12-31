@@ -1,7 +1,7 @@
-using Fraljer.Anatta.Framework.Interfaces.Graphics;
+using Anatta.Framework.Interfaces.Graphics;
 using OpenTK.Mathematics;
 
-namespace Fraljer.Anatta.Framework.Graphics;
+namespace Anatta.Framework.Graphics;
 
 public class Sprite : ISprite, IUpdatable
 {

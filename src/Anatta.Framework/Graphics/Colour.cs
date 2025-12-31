@@ -1,4 +1,5 @@
-namespace Fraljer.Anatta.Framework.Graphics;
+namespace Anatta.Framework.Graphics;
+
 using OpenTK.Mathematics;
 
 public struct Colour

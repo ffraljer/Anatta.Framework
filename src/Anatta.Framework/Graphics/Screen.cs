@@ -1,8 +1,8 @@
-using Fraljer.Anatta.Framework.Graphics.Managers;
-using Fraljer.Anatta.Framework.Interfaces.Graphics;
+using Anatta.Framework.Graphics.Managers;
+using Anatta.Framework.Interfaces.Graphics;
 using System.Reflection;
 
-namespace Fraljer.Anatta.Framework.Graphics;
+namespace Anatta.Framework.Graphics;
 
 public class Screen : IDisposable {
     

@@ -1,10 +1,9 @@
 using ManagedBass;
 using System.Runtime.InteropServices;
 using System.Collections.Concurrent;
-using Fraljer.Anatta.Framework.IO;
+using Anatta.Framework.IO;
 
-namespace Fraljer.Anatta.Framework.Sound
-{
+namespace Anatta.Framework.Sound {
     public static class Audio
     {
         static readonly ConcurrentDictionary<int, GCHandle> PinnedBuffers = new(); 

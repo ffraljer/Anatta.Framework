@@ -1,9 +1,9 @@
-using Fraljer.Anatta.Framework.IO;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using OpenTK.Graphics.OpenGL4;
+using Anatta.Framework.IO;
 
-namespace Fraljer.Anatta.Framework.Graphics;
+namespace Anatta.Framework.Graphics;
 
 public class Texture : IDisposable
 {

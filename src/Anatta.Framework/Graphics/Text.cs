@@ -1,12 +1,12 @@
-﻿using Fraljer.Anatta.Framework.Graphics.Renderers;
-using Fraljer.Anatta.Framework.Interfaces.Graphics;
+﻿using Anatta.Framework.Graphics.Renderers;
+using Anatta.Framework.Interfaces.Graphics;
 using OpenTK.Mathematics;
 using System;
 using System.Collections.Generic;
 using System.Reflection.Metadata;
 using System.Text;
 
-namespace Fraljer.Anatta.Framework.Graphics {
+namespace Anatta.Framework.Graphics {
     public class Text : ISprite, IUpdatable {
         public Texture Texture { get; private set; }
         public Vector2 Position { get; set; } = Vector2.Zero;

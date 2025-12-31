@@ -1,7 +1,7 @@
 using OpenTK.Mathematics;
-using Fraljer.Anatta.Framework.Graphics;
+using Anatta.Framework.Graphics;
 
-namespace Fraljer.Anatta.Framework.Interfaces.Graphics;
+namespace Anatta.Framework.Interfaces.Graphics;
 
 public interface ISprite : IManageable
 {

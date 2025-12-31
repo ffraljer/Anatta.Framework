@@ -1,4 +1,4 @@
-namespace Fraljer.Anatta.Framework;
+namespace Anatta.Framework;
 
 public class Time
 {

@@ -4,7 +4,7 @@
         <TargetFramework>net10.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-        <RootNamespace>Fraljer.Anatta.Framework</RootNamespace>
+        <RootNamespace>Anatta.Framework</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>

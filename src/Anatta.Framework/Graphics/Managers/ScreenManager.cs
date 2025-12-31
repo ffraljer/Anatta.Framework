@@ -1,4 +1,4 @@
-namespace Fraljer.Anatta.Framework.Graphics.Managers;
+namespace Anatta.Framework.Graphics.Managers;
 
 public class ScreenManager {
     

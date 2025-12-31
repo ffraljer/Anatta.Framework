@@ -1,4 +1,4 @@
-namespace Fraljer.Anatta.Framework.Graphics;
+namespace Anatta.Framework.Graphics;
 
 public static class Catppuccin {
 

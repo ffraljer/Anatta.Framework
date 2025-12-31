@@ -1,8 +1,7 @@
-using Fraljer.Anatta.Framework.Graphics;
-using Fraljer.Anatta.Framework.Graphics.Managers;
-using Fraljer.Anatta.Framework.Graphics.Renderers;
-using Fraljer.Anatta.Framework.IO;
-using Fraljer.Anatta.Framework.Sound; 
+using Anatta.Framework.Graphics;
+using Anatta.Framework.Graphics.Managers;
+using Anatta.Framework.IO;
+using Anatta.Framework.Sound;
 
 namespace Demo.Screens;
 

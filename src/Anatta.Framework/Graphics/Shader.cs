@@ -5,7 +5,7 @@ using OpenTK.Graphics.OpenGL4;
 using G = OpenTK.Graphics.OpenGL4.GL;
 using OpenTK.Mathematics;
 
-namespace Fraljer.Anatta.Framework.Graphics;
+namespace Anatta.Framework.Graphics;
 
 public class Shader : IDisposable
 {
@@ -16,9 +16,9 @@ public class Shader : IDisposable
     {
         var a = Assembly.GetExecutingAssembly();
 
-        using Stream vr = a.GetManifestResourceStream($"Fraljer.Anatta.Framework.Resources.{vertex}")
+        using Stream vr = a.GetManifestResourceStream($"Anatta.Framework.Resources.{vertex}")
                           ?? throw new FileNotFoundException($"{vertex}  cannot be found");
-        using Stream fr = a.GetManifestResourceStream($"Fraljer.Anatta.Framework.Resources.{fragment}")
+        using Stream fr = a.GetManifestResourceStream($"Anatta.Framework.Resources.{fragment}")
                           ?? throw new FileNotFoundException($"{fragment}  cannot be found");
 
         using var vreader = new StreamReader(vr);

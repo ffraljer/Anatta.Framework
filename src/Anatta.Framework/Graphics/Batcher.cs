@@ -1,8 +1,8 @@
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
-using Fraljer.Anatta.Framework.Interfaces.Graphics;
+using Anatta.Framework.Interfaces.Graphics;
 
-namespace Fraljer.Anatta.Framework.Graphics;
+namespace Anatta.Framework.Graphics;
 
 // my plan is to "unify" Manager and this. or, possibly behead batcher and replace it with
 //manager. (or, you know. kill both of them)

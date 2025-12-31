@@ -7,7 +7,7 @@ using System.IO;
 using Färg = SixLabors.ImageSharp.Color;
 
 // todo: rename namespaces
-namespace Fraljer.Anatta.Framework.Graphics.Renderers; 
+namespace Anatta.Framework.Graphics.Renderers; 
 public static class NativeTextRenderer {
     public static Texture CreateString(
         byte[] data, // todo: resource loading

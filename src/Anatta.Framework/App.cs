@@ -4,7 +4,7 @@ using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
 using System.Runtime.InteropServices;
 
-namespace Fraljer.Anatta.Framework;
+namespace Anatta.Framework;
 
 public class App : IDisposable {
     public Time Time { get; private set; }

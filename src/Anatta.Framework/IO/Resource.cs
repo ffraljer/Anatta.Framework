@@ -1,8 +1,7 @@
 using System.Reflection;
-using Fraljer.Anatta.Framework.Graphics;
+using Anatta.Framework.Graphics;
 
-namespace Fraljer.Anatta.Framework.IO
-{
+namespace Anatta.Framework.IO {
     public class Resource
     {
         public static string Base { get; private set; }

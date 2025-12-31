@@ -1,11 +1,11 @@
 using Demo.Screens;
-using Fraljer.Anatta.Framework;
-using Fraljer.Anatta.Framework.IO;
-using Fraljer.Anatta.Framework.Graphics;
-using Fraljer.Anatta.Framework.Graphics.Managers;
 using OpenTK.Mathematics;
 using OpenTK.Graphics.OpenGL4;
 using Demo.Resources;
+using Anatta.Framework;
+using Anatta.Framework.Graphics.Managers;
+using Anatta.Framework.IO;
+using Anatta.Framework.Graphics;
 
 namespace Demo;
 
