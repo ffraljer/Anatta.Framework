@@ -1,4 +1,4 @@
-﻿using OpenTK.Graphics.OpenGL;
+﻿using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
@@ -6,20 +6,27 @@ using System.Runtime.InteropServices;
 
 namespace Fraljer.Anatta.Framework;
 
-public class App : GameWindow // I want this to not be a GameWindow so you can find stuff easier.
-{
+public class App : IDisposable {
     public Time Time { get; private set; }
+    private GameWindow _gameWindow;
+    public Vector2i Size;
 
-    protected App(Vector2i size, string title = "Untitled") : base(GameWindowSettings.Default,
-        new NativeWindowSettings
-        {
+    protected App(Vector2i size, string title = "Untitled")
+    {
+        Time = new();
+
+        var nativeSettings = new NativeWindowSettings {
             Title = $"Anatta running: {title}",
             ClientSize = size,
             API = ContextAPI.OpenGL,
             Profile = ContextProfile.Core
-        })
-    {
-        Time = new();
+        };
+        Size = size;
+        _gameWindow = new GameWindow(GameWindowSettings.Default, nativeSettings);
+
+        _gameWindow.Load += OnLoad;
+        _gameWindow.RenderFrame += OnRenderFrame;
+        _gameWindow.Unload += OnUnload;
     }
     
     protected virtual void Initialise() {} // I wanted to use "Load" but GameWindow already has it.
@@ -28,21 +35,22 @@ public class App : GameWindow // I want this to not be a GameWindow so you can f
     protected virtual void Draw() { }
 
     protected virtual void OnExit() { }
-    
+
+    public void Run() => _gameWindow.Run();
+
     #region OpenTK Methods
-    protected override void OnLoad()
+    private void OnLoad()
     {
-        base.OnLoad();
 
         #region debug info
-        Console.WriteLine($"[Framework]\nWindow Size: {Size.X}x{Size.Y}\nRenderer: {GL.GetString(StringName.Renderer)}\n.NET Version: {Environment.Version}\nOS: {RuntimeInformation.OSDescription}");
+        Console.WriteLine($"[Framework]\nWindow Size: {_gameWindow.ClientSize.X}x{_gameWindow.ClientSize.Y}\nRenderer: {GL.GetString(StringName.Renderer)}\n.NET Version: {Environment.Version}\nOS: {RuntimeInformation.OSDescription}");
         Console.WriteLine("\n\n[might be errors idk]");
         #endregion
 
         GL.ClearColor(new Color4(0,0,0,0));
         Initialise();
     }
-    protected override void OnRenderFrame(FrameEventArgs args)
+    private void OnRenderFrame(FrameEventArgs args)
     {
         Time.Update((float)args.Time);
 
@@ -57,12 +65,14 @@ public class App : GameWindow // I want this to not be a GameWindow so you can f
         if (err != ErrorCode.NoError)
             Console.WriteLine($"GL Error: {err}");
 
-        SwapBuffers();
+        _gameWindow.SwapBuffers();
     }
-    protected override void OnUnload()
+    private void OnUnload()
     {
-        base.OnUnload();
         OnExit();
     }
     #endregion
+    public void Dispose() {
+        _gameWindow.Dispose();
+    }
 }

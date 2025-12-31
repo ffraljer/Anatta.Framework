@@ -40,8 +40,8 @@ public class GameBase : App
     protected override void Draw()
     {
         GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
-        manager?.Draw(batch,Size.X, Size.Y);
-        manager2.Draw(ClientSize.X, ClientSize.Y);
+        manager?.Draw(batch, Size.X, Size.Y);
+        manager2.Draw(Size.X, Size.Y);
         base.Draw();
     }
 }
