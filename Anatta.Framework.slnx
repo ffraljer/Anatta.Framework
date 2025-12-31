@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="Samples/Demo.Resources/Demo.Resources.csproj" />
+  <Project Path="Samples/Demo/Demo.csproj" />
+  <Project Path="src/Anatta.Framework/Anatta.Framework.csproj" />
+</Solution>

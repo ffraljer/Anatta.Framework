@@ -20,9 +20,6 @@
         <EmbeddedResource Include="Resources\**\*" />
     </ItemGroup>
     <ItemGroup>
-      <ProjectReference Include="..\Samples\Demo.Resources\Demo.Resources.csproj" />
-    </ItemGroup>
-    <ItemGroup>
       <None Update="bass.dll">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>

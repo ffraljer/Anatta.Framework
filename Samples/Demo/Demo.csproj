@@ -9,7 +9,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\Fraljer.Anatta.Framework\Fraljer.Anatta.Framework.csproj" />
+      <ProjectReference Include="..\..\src\Anatta.Framework\Anatta.Framework.csproj" />
       <ProjectReference Include="..\Demo.Resources\Demo.Resources.csproj" />
     </ItemGroup>
 
