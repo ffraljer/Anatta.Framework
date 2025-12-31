@@ -1,33 +1,39 @@
 using System.Reflection;
-using Demo.Resources;
 using Fraljer.Anatta.Framework.Graphics;
-using Fraljer.Anatta.Framework.Sound;
 
 namespace Fraljer.Anatta.Framework.IO
 {
     public class Resource
     {
         public static string Base { get; private set; }
+        private static readonly List<Assembly> stores = new();
 
         public static void Init(string basename)
         {
             Base = basename;
         }
-
+        // not sure if this actually works, but here it is
+        public static void AddStore(Assembly assembly) {
+            if (!stores.Contains(assembly))
+                stores.Add(assembly);
+        }
         public static T Load<T>(string name)
         {
             if (string.IsNullOrEmpty(Base))
                 throw new InvalidOperationException("Resource.Base not set.");
             string folder = GetTypeFolder(typeof(T));
             string fullName = $"{Base}.Resources.{folder}.{name}";
-            var asm = typeof(Ass).Assembly; // add a class to your resource assembly and replace.
+            Stream? stream = null;
 
-            
-            using Stream? stream = asm.GetManifestResourceStream(fullName);
+            foreach (var asm in stores) {
+                stream = asm.GetManifestResourceStream(fullName);
+                if (stream != null)
+                    break;
+            }
+
             if (stream == null)
                 throw new Exception($"Embedded resource not found: {fullName}");
 
-           
             using var ms = new MemoryStream();
             stream.CopyTo(ms);
             var bytes = ms.ToArray();

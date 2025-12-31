@@ -1,0 +1,48 @@
+﻿using SixLabors.Fonts;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Drawing.Processing;
+using SixLabors.ImageSharp.PixelFormats;
+using SixLabors.ImageSharp.Processing;
+using System.IO;
+using Färg = SixLabors.ImageSharp.Color;
+
+// todo: rename namespaces
+namespace Fraljer.Anatta.Framework.Graphics.Renderers; 
+public static class NativeTextRenderer {
+    public static Texture CreateString(
+        byte[] data, // todo: resource loading
+        string text,
+        float size,
+        Colour colour,
+        int padding = 4) {
+
+        FontCollection x = new();
+        FontFamily y = x.Add(new MemoryStream(data));
+        Font z = y.CreateFont(size);
+
+        TextOptions w = new(z) {
+            HorizontalAlignment = HorizontalAlignment.Left,
+            VerticalAlignment = VerticalAlignment.Top
+        };
+
+        FontRectangle xx = TextMeasurer.MeasureBounds(text, w);
+
+        int width = (int)MathF.Ceiling(xx.Width) + padding * 2;
+        int height = (int)MathF.Ceiling(xx.Height) + padding * 2;
+
+        using Image<Rgba32> yy = new(width, height);
+        yy.Mutate(ctx => {
+            ctx.Clear(Färg.Transparent);
+            ctx.DrawText(
+                text,
+                z,
+                new Färg(new System.Numerics.Vector4(colour.R, colour.G, colour.B, 255f)),
+                new PointF(padding, padding));
+        });
+
+        byte[] zz = new byte[width * height * 4];
+        yy.CopyPixelDataTo(zz);
+
+        return new Texture(width, height, zz);
+    }
+}

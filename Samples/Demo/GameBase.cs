@@ -5,6 +5,7 @@ using Fraljer.Anatta.Framework.Graphics;
 using Fraljer.Anatta.Framework.Graphics.Managers;
 using OpenTK.Mathematics;
 using OpenTK.Graphics.OpenGL4;
+using Demo.Resources;
 
 namespace Demo;
 
@@ -24,6 +25,7 @@ public class GameBase : App
     protected override void Initialise()
     {
         Resource.Init("Demo");
+        Resource.AddStore(typeof(Ass).Assembly);
         manager2.Push(new MainScreen(manager));
         base.Initialise();
     }

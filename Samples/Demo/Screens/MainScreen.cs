@@ -1,5 +1,6 @@
 using Fraljer.Anatta.Framework.Graphics;
 using Fraljer.Anatta.Framework.Graphics.Managers;
+using Fraljer.Anatta.Framework.Graphics.Renderers;
 using Fraljer.Anatta.Framework.IO;
 using Fraljer.Anatta.Framework.Sound; 
 
@@ -12,7 +13,9 @@ public class MainScreen : Screen {
     public override void Load() {
         base.Load();
         Sprite sprite = new("121tc");
+        Text pText = new Text("TEST FONT", File.ReadAllBytes("Content/font_allerbold.ttf"), 32f, Colour.Red);
         Add(sprite); // use Add(item) or AddRange(new IManageable[] { shit, shit2 })
+        Add(pText);
         byte[] dar = Resource.Load<byte[]>("best song in the entire album.mp3");
         Audio.Play(dar);
     }

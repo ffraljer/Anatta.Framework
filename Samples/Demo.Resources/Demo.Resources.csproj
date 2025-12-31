@@ -11,4 +11,10 @@
       <EmbeddedResource Include="Audio\**\*" />
     </ItemGroup>
 
+    <ItemGroup>
+      <None Update="Content\font_allerbold.ttf">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+    </ItemGroup>
+
 </Project>
