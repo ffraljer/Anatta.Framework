@@ -17,8 +17,7 @@ public class GameBase : App
     
     public GameBase(Vector2i tize, string title = "Demo Game") : base(tize, title)
     {
-        batch = new();
-        manager = new(batch);
+        manager = new();
         manager2 = new();
     }
 
@@ -40,7 +39,7 @@ public class GameBase : App
     protected override void Draw()
     {
         GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
-        manager?.Draw(batch, Size.X, Size.Y);
+        manager?.Draw(Size.X, Size.Y);
         manager2.Draw(Size.X, Size.Y);
         base.Draw();
     }

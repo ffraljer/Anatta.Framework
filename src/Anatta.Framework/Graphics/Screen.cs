@@ -7,7 +7,6 @@ namespace Anatta.Framework.Graphics;
 public class Screen : IDisposable {
     
     protected Manager Manager { get; private set; }
-    protected Batcher? Batcher => Manager.Batcher;
     
     public bool IsActive { get; private set; } = true;
     
@@ -18,15 +17,12 @@ public class Screen : IDisposable {
     }
 
     public virtual void Draw(int width, int height) {
-        var b = Batcher;
+        var b = Manager;
         if (b == null)
             throw new InvalidOperationException("batcher is null.");
 
-        b.Begin(width, height);
         foreach (var s in Manager.GetAll())
-            b.Draw(s);
-
-        b.End();
+            b.Draw(width, height);
     }
 
     protected Batcher BatcherManager => (Batcher)
