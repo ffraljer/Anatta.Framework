@@ -2,25 +2,45 @@ using Anatta.Framework.Graphics;
 using Anatta.Framework.Graphics.Managers;
 using Anatta.Framework.IO;
 using Anatta.Framework.Sound;
+using OpenTK.Graphics.ES20;
+using OpenTK.Mathematics;
+using OpenTK.Windowing.GraphicsLibraryFramework;
 
 namespace Demo.Screens;
 
 public class MainScreen : Screen {
+    Text player;
     public MainScreen(Manager manager) : base(manager) {
     }
 
     public override void Load() {
         base.Load();
         Sprite sprite = new("121tc");
-        Text pText = new Text("TEST FONT", File.ReadAllBytes("Content/font_allerbold.ttf"), 32f, Colour.Red);
+        FontFace f = new(File.ReadAllBytes("Content/font_allerbold.ttf"));
+        player = new Text("TEST FONT", f, 32f, Colour.Red);
+        var playe2r = new Text("TEST FONT", 32f, Colour.Red);
         Add(sprite); // use Add(item) or AddRange(new IManageable[] { shit, shit2 })
-        Add(pText);
+        Add(player);
+        Add(playe2r);
         byte[] dar = Resource.Load<byte[]>("best song in the entire album.mp3");
         Audio.Play(dar);
     }
 
-    public override void Update(float delta) {
-        
+    public override void Update(float delta, KeyboardState ks) {
+        Vector2 direction = Vector2.Zero;
+        if (ks.IsKeyDown(Keys.W) || ks.IsKeyDown(Keys.Up))
+            direction.Y -= 0.1f;
+        if (ks.IsKeyDown(Keys.S) || ks.IsKeyDown(Keys.Down))
+            direction.Y += 0.1f;
+        if (ks.IsKeyDown(Keys.A) || ks.IsKeyDown(Keys.Left))
+            direction.X -= 0.1f;
+        if (ks.IsKeyDown(Keys.D) || ks.IsKeyDown(Keys.Right))
+            direction.X += 0.1f;
+
+        if (direction.LengthSquared > 0)
+            direction = direction.Normalized();
+
+        player.Position += direction * delta;
     }
 
     public override void Draw(int width, int height) {

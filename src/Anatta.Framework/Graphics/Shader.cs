@@ -12,7 +12,7 @@ public class Shader : IDisposable
     public int Handle { get; private set; }
     private int Gandle => Handle;
 
-    public static Shader Load(string vertex, string fragment)
+    internal static Shader Load(string vertex, string fragment)
     {
         var a = Assembly.GetExecutingAssembly();
 

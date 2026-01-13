@@ -1,5 +1,6 @@
 using Anatta.Framework.Graphics.Managers;
 using Anatta.Framework.Interfaces.Graphics;
+using OpenTK.Windowing.GraphicsLibraryFramework;
 using System.Reflection;
 
 namespace Anatta.Framework.Graphics;
@@ -28,11 +29,11 @@ public class Screen : IDisposable {
     protected Batcher BatcherManager => (Batcher)
         typeof(Manager)
             .GetField("batcher", BindingFlags.NonPublic | BindingFlags.Instance)
-            ?.GetValue(Manager); // kill the green squiggly line
+            ?.GetValue(Manager)!;
 
     public virtual void Load() { }
 
-    public virtual void Update(float delta) { Manager.Update(delta); }
+    public virtual void Update(float delta, KeyboardState keyboard) { Manager.Update(delta); }
 
     public virtual void OnEnter() { IsActive = true; }
     public virtual void OnExit() { IsActive = false; }

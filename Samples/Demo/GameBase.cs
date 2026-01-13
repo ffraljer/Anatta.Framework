@@ -6,12 +6,12 @@ using Anatta.Framework;
 using Anatta.Framework.Graphics.Managers;
 using Anatta.Framework.IO;
 using Anatta.Framework.Graphics;
+using OpenTK.Windowing.GraphicsLibraryFramework;
 
 namespace Demo;
 
-public class GameBase : App
+public class GameBase : Application
 {
-    private Batcher batch;
     private Manager manager;
     private ScreenManager manager2;
     
@@ -29,11 +29,11 @@ public class GameBase : App
         base.Initialise();
     }
 
-    protected override void Update(float dt)
+    protected override void Update(float dt, KeyboardState ks)
     {
-        base.Update(dt);
+        base.Update(dt, ks);
         manager?.Update(dt);
-        manager2.Update(dt);
+        manager2.Update(dt, ks);
     }
 
     protected override void Draw()

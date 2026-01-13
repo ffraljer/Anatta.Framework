@@ -1,5 +1,6 @@
 ﻿using Anatta.Framework.Graphics.Renderers;
 using Anatta.Framework.Interfaces.Graphics;
+using Anatta.Framework.IO;
 using OpenTK.Mathematics;
 using System;
 using System.Collections.Generic;
@@ -17,14 +18,20 @@ namespace Anatta.Framework.Graphics {
         public float FontSize { get; private set; }
         public Colour Colour { get; private set; }
 
-        public Text(string text, byte[] fontData, float fontSize, Colour colour) {
+        public Text(string text, FontFace font, float fontSize, Colour colour) {
             pText = text;
             FontSize = fontSize;
             Colour = colour;
 
-            Texture = NativeTextRenderer.CreateString(fontData, text, fontSize, colour);
+            Texture = NativeTextRenderer.CreateString(font, text, fontSize, colour);
         }
+        public Text(string text, float fontSize, Colour colour) {
+            pText = text;
+            FontSize = fontSize;
+            Colour = colour;
 
+            Texture = NativeTextRenderer.CreateString(Resource.LoadInternal<FontFace>("odat.ttf"), text, fontSize, colour);
+        }
         public void Draw(Batcher batcher) {
             batcher.Draw(this);
         }

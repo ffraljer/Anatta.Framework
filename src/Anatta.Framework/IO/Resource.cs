@@ -49,11 +49,37 @@ namespace Anatta.Framework.IO {
             throw new NotSupportedException(typeof(T).Name);
         }
 
+        public static T LoadInternal<T>(string name) {
+            string folder = GetTypeFolder(typeof(T));
+            string fullName = $"Anatta.Framework.Resources.{name}";
+            Stream? stream = null;
+            var asm = Assembly.GetExecutingAssembly();
+            stream = asm.GetManifestResourceStream(fullName);
 
+            if (stream == null)
+                throw new Exception($"Embedded resource not found: {fullName}");
+
+            using var ms = new MemoryStream();
+            stream.CopyTo(ms);
+            var bytes = ms.ToArray();
+
+            if (typeof(T) == typeof(Texture)) {
+                Texture tex = Texture.FromImageBytes(bytes);
+                return (T)(object)tex;
+            }
+            if (typeof(T) == typeof(byte[])) {
+                return (T)(object)bytes;
+            }
+            if (typeof(T) == typeof(FontFace)) {
+                return (T)(object)new FontFace(bytes);
+            }
+            throw new NotSupportedException(typeof(T).Name);
+        }
         private static string GetTypeFolder(Type t)
         {
             if (t == typeof(Texture)) return "Textures";
             if (t == typeof(byte[])) return "Audio";
+            if (t == typeof(FontFace)) return "Fonts";
             return "Unknown";
         }
     }

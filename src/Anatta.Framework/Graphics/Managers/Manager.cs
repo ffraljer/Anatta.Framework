@@ -1,6 +1,7 @@
+using Anatta.Framework.Interfaces.Graphics;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
-using Anatta.Framework.Interfaces.Graphics;
+using OpenTK.Windowing.GraphicsLibraryFramework;
 
 namespace Anatta.Framework.Graphics.Managers;
 
@@ -10,6 +11,8 @@ public class Manager : IDisposable {
     private readonly int vao;
     private readonly int vbo;
     private readonly Shader shd;
+
+    public KeyboardState KeyboardState { get; set; }
 
     private static readonly float[] quad =
     {

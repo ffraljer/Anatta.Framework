@@ -2,16 +2,18 @@
 using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
+using OpenTK.Windowing.GraphicsLibraryFramework;
 using System.Runtime.InteropServices;
 
 namespace Anatta.Framework;
 
-public class App : IDisposable {
+public class Application : IDisposable {
     public Time Time { get; private set; }
     private GameWindow _gameWindow;
     public Vector2i Size;
+    public KeyboardState KeyboardState => _gameWindow.KeyboardState;
 
-    protected App(Vector2i size, string title = "Untitled")
+    protected Application(Vector2i size, string title = "Untitled")
     {
         Time = new();
 
@@ -29,9 +31,9 @@ public class App : IDisposable {
         _gameWindow.Unload += OnUnload;
     }
     
-    protected virtual void Initialise() {} // I wanted to use "Load" but GameWindow already has it.
-    protected virtual void Update(float dt) { }
-    
+    protected virtual void Initialise() {}
+    protected virtual void Update(float dt, KeyboardState keyboard) { }
+
     protected virtual void Draw() { }
 
     protected virtual void OnExit() { }
@@ -54,7 +56,7 @@ public class App : IDisposable {
     {
         Time.Update((float)args.Time);
 
-        Update(Time.Delta);
+        Update(Time.Delta, _gameWindow.KeyboardState);
 
         GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
@@ -62,7 +64,7 @@ public class App : IDisposable {
 
 
         var err = GL.GetError();
-        if (err != ErrorCode.NoError)
+        if (err != OpenTK.Graphics.OpenGL4.ErrorCode.NoError)
             Console.WriteLine($"GL Error: {err}");
 
         _gameWindow.SwapBuffers();

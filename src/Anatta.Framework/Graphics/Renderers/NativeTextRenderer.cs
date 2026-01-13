@@ -10,12 +10,13 @@ using Färg = SixLabors.ImageSharp.Color;
 namespace Anatta.Framework.Graphics.Renderers; 
 public static class NativeTextRenderer {
     public static Texture CreateString(
-        byte[] data, // todo: resource loading
+        FontFace font, // todo: resource loading
         string text,
         float size,
         Colour colour,
         int padding = 4) {
 
+        var data = font.Bytes;
         FontCollection x = new();
         FontFamily y = x.Add(new MemoryStream(data));
         Font z = y.CreateFont(size);

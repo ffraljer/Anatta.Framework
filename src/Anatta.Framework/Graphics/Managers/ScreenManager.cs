@@ -1,3 +1,5 @@
+using OpenTK.Windowing.GraphicsLibraryFramework;
+
 namespace Anatta.Framework.Graphics.Managers;
 
 public class ScreenManager {
@@ -21,7 +23,7 @@ public class ScreenManager {
     }
     public void Pop() { if (screens.Count == 0) return; var s = screens.Pop(); s.OnExit(); s.Dispose(); if (screens.Count > 0) screens.Peek().OnEnter(); } // LOL
     // long ass line
-    public void Update(float delta) { screens.Peek().Update(delta); }
+    public void Update(float delta, KeyboardState ks) { screens.Peek().Update(delta, ks); }
 
     public void Draw(int w, int h) {
         screens.Peek().Draw(w, h);
