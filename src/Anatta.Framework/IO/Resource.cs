@@ -46,9 +46,26 @@ namespace Anatta.Framework.IO {
             {
                 return (T)(object)bytes;
             }
+            if (typeof(T) == typeof(Shader)) {
+                foreach (var asm in stores) {
+                    var vr = asm.GetManifestResourceStream(
+                        $"{Base}.Resources.Shaders.{name}.glsl");
+                    var fr = asm.GetManifestResourceStream(
+                        $"{Base}.Resources.Shaders.{name}Fragment.glsl");
+
+                    if (vr != null && fr != null) {
+                        using var vreader = new StreamReader(vr);
+                        using var freader = new StreamReader(fr);
+                        return (T)(object)new Shader(
+                            vreader.ReadToEnd(),
+                            freader.ReadToEnd());
+                    }
+                }
+
+                throw new FileNotFoundException($"Shader not found: {name}");
+            }
             throw new NotSupportedException(typeof(T).Name);
         }
-
         public static T LoadInternal<T>(string name) {
             string folder = GetTypeFolder(typeof(T));
             string fullName = $"Anatta.Framework.Resources.{name}";
@@ -75,11 +92,31 @@ namespace Anatta.Framework.IO {
             }
             throw new NotSupportedException(typeof(T).Name);
         }
+        public static Shader LoadShader(string name) {
+            foreach (var asm in stores) {
+                using var vr = asm.GetManifestResourceStream(
+                    $"{Base}.Resources.Shaders.{name}.glsl");
+                using var fr = asm.GetManifestResourceStream(
+                    $"{Base}.Resources.Shaders.{name}Fragment.glsl");
+
+                if (vr != null && fr != null) {
+                    using var vreader = new StreamReader(vr);
+                    using var freader = new StreamReader(fr);
+                    return new Shader(
+                        vreader.ReadToEnd(),
+                        freader.ReadToEnd());
+                }
+            }
+
+            throw new FileNotFoundException($"Shader not found: {name}");
+        }
+
         private static string GetTypeFolder(Type t)
         {
             if (t == typeof(Texture)) return "Textures";
             if (t == typeof(byte[])) return "Audio";
             if (t == typeof(FontFace)) return "Fonts";
+            if (t == typeof(Shader)) return "Shaders";
             return "Unknown";
         }
     }

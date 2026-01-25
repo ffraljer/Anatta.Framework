@@ -10,7 +10,8 @@ namespace Anatta.Framework;
 public class Application : IDisposable {
     public Time Time { get; private set; }
     private GameWindow _gameWindow;
-    public Vector2i Size;
+    public static GameWindow Window;
+    public static Vector2i Size;
     public KeyboardState KeyboardState => _gameWindow.KeyboardState;
 
     protected Application(Vector2i size, string title = "Untitled")
@@ -25,6 +26,7 @@ public class Application : IDisposable {
         };
         Size = size;
         _gameWindow = new GameWindow(GameWindowSettings.Default, nativeSettings);
+        Window = _gameWindow;
 
         _gameWindow.Load += OnLoad;
         _gameWindow.RenderFrame += OnRenderFrame;

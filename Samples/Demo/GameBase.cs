@@ -13,12 +13,14 @@ namespace Demo;
 public class GameBase : Application
 {
     private Manager manager;
+    public static GameBase Instance;
     private ScreenManager manager2;
     
     public GameBase(Vector2i tize, string title = "Demo Game") : base(tize, title)
     {
         manager = new();
         manager2 = new();
+        Instance = this;
     }
 
     protected override void Initialise()

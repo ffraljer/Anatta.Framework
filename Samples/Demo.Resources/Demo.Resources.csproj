@@ -9,12 +9,17 @@
     <ItemGroup>
       <EmbeddedResource Include="Textures\**\*" />
       <EmbeddedResource Include="Audio\**\*" />
+      <EmbeddedResource Include="Shaders\**\*" />
     </ItemGroup>
 
     <ItemGroup>
       <None Update="Content\font_allerbold.ttf">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Shaders\" />
     </ItemGroup>
 
 </Project>

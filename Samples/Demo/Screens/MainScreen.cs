@@ -10,6 +10,8 @@ namespace Demo.Screens;
 
 public class MainScreen : Screen {
     Text player;
+    Vector2 mouseUV;
+
     public MainScreen(Manager manager) : base(manager) {
     }
 
@@ -41,9 +43,16 @@ public class MainScreen : Screen {
             direction = direction.Normalized();
 
         player.Position += direction * delta;
+
+        var mouse = GameBase.Window.MousePosition;
+        var size = GameBase.Size;
+
+        mouseUV = new Vector2(
+        mouse.X / size.X,
+        1f - (mouse.Y / size.Y)
+    );
     }
 
     public override void Draw(int width, int height) {
-        //base.Draw(width, height);
     }
 }

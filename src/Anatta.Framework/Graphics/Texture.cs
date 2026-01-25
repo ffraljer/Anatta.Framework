@@ -5,16 +5,34 @@ using Anatta.Framework.IO;
 
 namespace Anatta.Framework.Graphics;
 
+/// <summary>
+/// A texture class.
+/// </summary>
 public class Texture : IDisposable
 {
+    /// <summary>
+    /// the Handle of the Texture.
+    /// </summary>
     public int Handle { get; private set; }
     // curse my tiny hands
-    private int Gandle => Handle; // rider, this isn't a typo
+    private int Gandle => Handle;
+    /// <summary>
+    /// Width of the current Texture.
+    /// </summary>
     public int Width { get; private set; }
+    /// <summary>
+    /// Height of the current Texture.
+    /// </summary>
     public int Height { get; private set; }
     private static string[] names = { ".png", ".jpeg", ".jpg" };
 
-
+    /// <summary>
+    /// Loads a Texture from an Embedded Resource.
+    /// </summary>
+    /// <param name="name">Name of the resource</param>
+    /// <remarks>The extension is added in automatically.</remarks>
+    /// <returns>The loaded Texture.</returns>
+    /// <exception cref="FileNotFoundException">Throws if the texture cannot be found.</exception>
     public static Texture Load(string name) {
         foreach (var ext in names) {
             string resourceName = name + ext;
@@ -25,9 +43,9 @@ public class Texture : IDisposable
 
             }
         }
-        throw new Exception($"{name} no found");
+        throw new FileNotFoundException($"{name} no found");
     }
-
+    
     public static Texture FromImageBytes(byte[] bytes)
     {
         using Image<Rgba32> image = Image.Load<Rgba32>(bytes);
