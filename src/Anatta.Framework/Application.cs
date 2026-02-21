@@ -51,7 +51,7 @@ public class Application : IDisposable {
         Console.WriteLine("\n\n[might be errors idk]");
         #endregion
 
-        GL.ClearColor(new Color4(0,0,0,0));
+        GL.ClearColor(new Color4(0,0,0,255));
         Initialise();
     }
     private void OnRenderFrame(FrameEventArgs args)
