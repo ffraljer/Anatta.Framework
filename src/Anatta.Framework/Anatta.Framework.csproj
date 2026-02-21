@@ -20,11 +20,11 @@
         <EmbeddedResource Include="Resources\**\*" />
     </ItemGroup>
     <ItemGroup>
-      <None Update="bass.dll">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </None>
-      <None Update="libbass.so">
+      <None Update="runtimes\linux-x64\native\libbass.so">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Update="runtimes\win-x64\native\bass.dll">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
     </ItemGroup>
 
