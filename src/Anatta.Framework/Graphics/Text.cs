@@ -2,10 +2,6 @@
 using Anatta.Framework.Interfaces.Graphics;
 using Anatta.Framework.IO;
 using OpenTK.Mathematics;
-using System;
-using System.Collections.Generic;
-using System.Reflection.Metadata;
-using System.Text;
 
 namespace Anatta.Framework.Graphics {
     public class Text : ISprite, IUpdatable {

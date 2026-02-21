@@ -6,7 +6,6 @@ using SixLabors.ImageSharp.Processing;
 using System.IO;
 using Färg = SixLabors.ImageSharp.Color;
 
-// todo: rename namespaces
 namespace Anatta.Framework.Graphics.Renderers; 
 public static class NativeTextRenderer {
     public static Texture CreateString(
@@ -40,7 +39,7 @@ public static class NativeTextRenderer {
                 new Färg(new System.Numerics.Vector4(colour.R, colour.G, colour.B, 255f)),
                 new PointF(padding, padding));
         });
-
+    
         byte[] zz = new byte[width * height * 4];
         yy.CopyPixelDataTo(zz);
 

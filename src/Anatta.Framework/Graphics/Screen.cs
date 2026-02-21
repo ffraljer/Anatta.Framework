@@ -26,11 +26,6 @@ public class Screen : IDisposable {
             b.Draw(width, height);
     }
 
-    protected Batcher BatcherManager => (Batcher)
-        typeof(Manager)
-            .GetField("batcher", BindingFlags.NonPublic | BindingFlags.Instance)
-            ?.GetValue(Manager)!;
-
     public virtual void Load() { }
 
     public virtual void Update(float delta, KeyboardState keyboard) { Manager.Update(delta); }
