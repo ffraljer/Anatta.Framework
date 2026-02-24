@@ -1,4 +1,4 @@
-﻿using OpenTK.Graphics.OpenGL4;
+﻿using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
@@ -17,7 +17,6 @@ public class Application : IDisposable {
     protected Application(Vector2i size, string title = "Untitled")
     {
         Time = new();
-
         var nativeSettings = new NativeWindowSettings {
             Title = $"Anatta running: {title}",
             ClientSize = size,
@@ -51,7 +50,7 @@ public class Application : IDisposable {
         Console.WriteLine("\n\n[might be errors idk]");
         #endregion
 
-        GL.ClearColor(new Color4(0,0,0,255));
+        GL.ClearColor(new Color4<Rgba>(0,0,0,255));
         Initialise();
     }
     private void OnRenderFrame(FrameEventArgs args)
@@ -66,7 +65,7 @@ public class Application : IDisposable {
 
 
         var err = GL.GetError();
-        if (err != OpenTK.Graphics.OpenGL4.ErrorCode.NoError)
+        if (err != OpenTK.Graphics.OpenGL.ErrorCode.NoError)
             Console.WriteLine($"GL Error: {err}");
 
         _gameWindow.SwapBuffers();

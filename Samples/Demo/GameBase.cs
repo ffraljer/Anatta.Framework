@@ -1,11 +1,10 @@
 using Demo.Screens;
 using OpenTK.Mathematics;
-using OpenTK.Graphics.OpenGL4;
+using OpenTK.Graphics.OpenGL;
 using Demo.Resources;
 using Anatta.Framework;
 using Anatta.Framework.Graphics.Managers;
 using Anatta.Framework.IO;
-using Anatta.Framework.Graphics;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 
 namespace Demo;

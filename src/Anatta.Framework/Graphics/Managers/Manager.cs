@@ -1,5 +1,5 @@
 using Anatta.Framework.Interfaces.Graphics;
-using OpenTK.Graphics.OpenGL4;
+using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 
@@ -36,7 +36,7 @@ public class Manager : IDisposable {
             BufferTarget.ArrayBuffer,
             quad.Length * sizeof(float),
             quad,
-            BufferUsageHint.StaticDraw
+            BufferUsage.StaticDraw
         );
 
         GL.EnableVertexAttribArray(0);
@@ -121,7 +121,7 @@ public class Manager : IDisposable {
             return;
 
         sprite.Texture.Bind();
-        GL.Uniform1(
+        GL.Uniform1i(
             GL.GetUniformLocation(shd.Handle, "tex"),
             0
         );

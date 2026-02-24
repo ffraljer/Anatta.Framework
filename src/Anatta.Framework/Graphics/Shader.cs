@@ -1,8 +1,6 @@
-using System;
-using System.IO;
 using System.Reflection;
-using OpenTK.Graphics.OpenGL4;
-using G = OpenTK.Graphics.OpenGL4.GL;
+using OpenTK.Graphics.OpenGL;
+using G = OpenTK.Graphics.OpenGL.GL;
 using OpenTK.Mathematics;
 
 namespace Anatta.Framework.Graphics;
@@ -44,10 +42,10 @@ public class Shader : IDisposable
         GL.AttachShader(Handle, frgS);
         GL.LinkProgram(Handle);
         
-        G.GetProgram(Handle, GetProgramParameterName.LinkStatus, out int success);
+        G.GetProgrami(Handle, ProgramProperty.LinkStatus, out int success);
         if (success == 0)
         {
-            string info = G.GetProgramInfoLog(Handle);
+            GL.GetProgramInfoLog(Handle, out string info);
             throw new Exception($"ur fucking shader broke broo {info}");
         }
         
@@ -60,10 +58,10 @@ public class Shader : IDisposable
     
     private static void CheckCompile(int shader, string type)
     {
-        G.GetShader(shader, ShaderParameter.CompileStatus, out int success);
+        G.GetShaderi(shader, ShaderParameterName.CompileStatus, out int success);
         if (success == 0)
         {
-            string info = GL.GetShaderInfoLog(shader);
+            GL.GetShaderInfoLog(shader, out string info);
             throw new Exception($"ur {type} shader fuckin' broke: {info}");
         }
     }
@@ -73,32 +71,32 @@ public class Shader : IDisposable
     public void SetMatrix4(string name, Matrix4 mat)
     {
         int loc = G.GetUniformLocation(Gandle, name);
-        G.UniformMatrix4(loc, false, ref mat);
+        GL.UniformMatrix4f(loc, 1, false, ref mat); 
     }
     public void SetFloat(string name, float value)
     {
         int loc = G.GetUniformLocation(Handle, name);
-        G.Uniform1(loc, value);
+        G.Uniform1f(loc, value);
     }
     public void SetInt(string name, int value)
     {
         int loc = G.GetUniformLocation(Handle, name);
-        G.Uniform1(loc, value);
+        G.Uniform1i(loc, value);
     }
     public void SetVector2(string name, Vector2 vec)
     {
         int loc = G.GetUniformLocation(Gandle, name);
-        G.Uniform2(loc, vec);
+        GL.Uniform2f(loc, vec.X, vec.Y);
     }
     public void SetVector3(string name, Vector3 vec)
     {
         int loc = G.GetUniformLocation(Handle, name);
-        G.Uniform3(loc, vec);
+        G.Uniform3f(loc, vec.X, vec.Y, vec.Z);
     }
     public void SetVector4(string name, Vector4 vec)
     {
         int loc = G.GetUniformLocation(Handle, name);
-        G.Uniform4(loc, vec);
+        G.Uniform4f(loc, vec.X, vec.Y, vec.Z, vec.W);
     }
 
     public void Dispose() => G.DeleteProgram(Handle);

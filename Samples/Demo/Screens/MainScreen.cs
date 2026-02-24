@@ -2,7 +2,7 @@ using Anatta.Framework.Graphics;
 using Anatta.Framework.Graphics.Managers;
 using Anatta.Framework.IO;
 using Anatta.Framework.Sound;
-using OpenTK.Graphics.ES20;
+using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 

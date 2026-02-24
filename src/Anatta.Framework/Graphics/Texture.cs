@@ -1,6 +1,6 @@
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
-using OpenTK.Graphics.OpenGL4;
+using OpenTK.Graphics.OpenGL;
 using Anatta.Framework.IO;
 
 namespace Anatta.Framework.Graphics;
@@ -66,11 +66,11 @@ public class Texture : IDisposable
         Height = height;
 
         Handle = GL.GenTexture();
-        GL.BindTexture(TextureTarget.Texture2D, Handle);
+        GL.BindTexture(TextureTarget.Texture2d, Handle);
 
-        GL.TexImage2D(TextureTarget.Texture2D,
+        GL.TexImage2D(TextureTarget.Texture2d,
             0,
-            PixelInternalFormat.Rgba,
+            InternalFormat.Rgba, // used to be pixelinternalformat but I think it's OK
             width,
             height,
             0,
@@ -78,8 +78,8 @@ public class Texture : IDisposable
             PixelType.UnsignedByte,
             rgbaData);
 
-        GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
-        GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
+        GL.TexParameteri(TextureTarget.Texture2d, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
+        GL.TexParameteri(TextureTarget.Texture2d, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
     }
     public Texture(int glHandle, int width, int height)
     {
@@ -87,7 +87,7 @@ public class Texture : IDisposable
         Width = width;
         Height = height;
     }
-    public void Bind() => GL.BindTexture(TextureTarget.Texture2D, Handle);
+    public void Bind() => GL.BindTexture(TextureTarget.Texture2d, Handle);
 
     public void Dispose() => GL.DeleteTexture(Handle);
 }

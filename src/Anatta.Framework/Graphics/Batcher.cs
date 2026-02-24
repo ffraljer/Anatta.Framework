@@ -1,4 +1,4 @@
-using OpenTK.Graphics.OpenGL4;
+using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
 using Anatta.Framework.Interfaces.Graphics;
 
@@ -31,7 +31,7 @@ public class Batcher : IDisposable
 
         GL.BindVertexArray(vao);
         GL.BindBuffer(BufferTarget.ArrayBuffer, vbo);
-        GL.BufferData(BufferTarget.ArrayBuffer, quad.Length * sizeof(float), quad, BufferUsageHint.StaticDraw);
+        GL.BufferData(BufferTarget.ArrayBuffer, quad.Length * sizeof(float), quad, BufferUsage.StaticDraw);
 
 
         GL.EnableVertexAttribArray(0);
@@ -72,7 +72,7 @@ public class Batcher : IDisposable
         if (item is not ISprite sprite) return;
 
         sprite.Texture.Bind();
-        GL.Uniform1(GL.GetUniformLocation(shd.Handle, "tex"), 0);
+        GL.Uniform1i(GL.GetUniformLocation(shd.Handle, "tex"), 0);
 
         Vector2 finalPos = sprite.Position;
 
