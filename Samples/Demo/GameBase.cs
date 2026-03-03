@@ -5,6 +5,7 @@ using Demo.Resources;
 using Anatta.Framework;
 using Anatta.Framework.Graphics.Managers;
 using Anatta.Framework.IO;
+using Anatta.Framework.Sound;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 
 namespace Demo;
@@ -20,6 +21,7 @@ public class GameBase : Application
         manager = new();
         manager2 = new();
         Instance = this;
+        Audio.Binding = Audio.Bindings.Bass;
     }
 
     protected override void Initialise()
