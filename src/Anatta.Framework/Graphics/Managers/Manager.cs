@@ -139,14 +139,14 @@ public class Manager : IDisposable {
             anchorNorm.Y * screenH
         );
         var transform =
+            Matrix4.CreateRotationZ(sprite.Rotation) *
+            Matrix4.CreateScale(size.X, size.Y, 1f) *
+            Matrix4.CreateTranslation(-originOffset.X, -originOffset.Y, 0f) *
             Matrix4.CreateTranslation(
                 sprite.Position.X + anchorOffset.X,
                 sprite.Position.Y + anchorOffset.Y,
                 0f
-            ) *
-            Matrix4.CreateRotationZ(sprite.Rotation) *
-            Matrix4.CreateScale(size.X, size.Y, 1f) *
-            Matrix4.CreateTranslation(-originOffset.X, -originOffset.Y, 0f);
+            );
         shd.SetMatrix4("transform", transform);
 
         GL.DrawArrays(PrimitiveType.Triangles, 0, 6);

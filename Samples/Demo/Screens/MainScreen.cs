@@ -17,22 +17,28 @@ public class MainScreen : Screen {
 
     public override void Load() {
         base.Load();
-        Sprite sprite = new("121tc");
-        sprite.Scale = new Vector2(0.5f);
+        Sprite sprite = new("finished") {
+            Anchor = Anchors.Bottom,
+            Origin = Anchors.Bottom
+        };
+        sprite.Scale = new Vector2(1f);
         FontFace f = new(File.ReadAllBytes("Content/font_allerbold.ttf"));
-        player = new Text("TEST FONT", 32f, Colour.Red, f);
-        player.Position = new Vector2(2);
-        player.Origin = Anchors.Bottom;
-        var playe2r = new Text("TEST FONT", 32f, Colour.Red);
-        var playes2r = new Text("TEST FONT", 32f, Colour.Red) {
+        player = new Text("I NEED TO LAY OFF THE CATNIP...", 32f, Colour.White, f);
+        player.Position = new Vector2(0, 0);
+        player.Anchor = Anchors.TopRight;
+        player.Origin = Anchors.TopRight;
+        var playe2r = new Text("I NEED TO LAY OFF THE CATNIP...", 32f, Colour.White);
+        var playes2r = new Text("I NEED TO LAY OFF THE CATNIP...", 24f, Colour.White) {
             Font = Resource.Load<FontFace>("TIMES.ttf"),
-            Position = new(4)
+            Position = new(0),
+            Origin = Anchors.Bottom,
+            Anchor = Anchors.Bottom
         };
         Add(sprite); // use Add(item) or AddRange(new IManageable[] { shit, shit2 })
         Add(player);
         Add(playes2r);
         Add(playe2r);
-        _music = Resource.Load<Track>("best song in the entire album.mp3");
+        _music = Resource.Load<Track>("longcat.mp3");
         _music.Loop = true;
         _music.Play();
     }

@@ -9,7 +9,7 @@ using Färg = SixLabors.ImageSharp.Color;
 namespace Anatta.Framework.Graphics.Renderers; 
 public static class NativeTextRenderer {
     public static Texture CreateString(
-        FontFace font, // todo: resource loading
+        FontFace font,
         string text,
         float size,
         Colour colour,
