@@ -24,12 +24,12 @@ namespace Anatta.Framework.Sound {
         static ALCDevice _device;
         static ALCContext _context;
 
-        public static byte[] LoadAudio(string resourceName)
+        internal static byte[] LoadAudio(string resourceName)
         {
             return Resource.Load<byte[]>(resourceName);
         }
 
-        public static int Play(byte[] data)
+        internal static int Play(byte[] data)
         {
             switch (Binding) {
                 case (Bindings.Bass):
@@ -124,7 +124,7 @@ namespace Anatta.Framework.Sound {
             return source;
         }
 
-        public static void Stop(int stream)
+        internal static void Stop(int stream)
         {
             if (stream == 0) return;
 
@@ -135,7 +135,7 @@ namespace Anatta.Framework.Sound {
                 h.Free();
         }
         
-        public static void Shutdown()
+        internal static void Shutdown()
         {
             if (!openAlInitialized)
                 return;

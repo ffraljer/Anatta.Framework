@@ -1,5 +1,6 @@
 using System.Reflection;
 using Anatta.Framework.Graphics;
+using Anatta.Framework.Sound;
 
 namespace Anatta.Framework.IO {
     public class Resource
@@ -46,6 +47,17 @@ namespace Anatta.Framework.IO {
             {
                 return (T)(object)bytes;
             }
+            if (typeof(T) == typeof(Sample))
+            {
+                return (T)(object)new Sample(bytes);
+            }
+            if (typeof(T) == typeof(Track))
+            {
+                return (T)(object)new Track(bytes);
+            }
+            if (typeof(T) == typeof(FontFace)) {
+                return (T)(object)new FontFace(bytes);
+            }
             if (typeof(T) == typeof(Shader)) {
                 foreach (var asm in stores) {
                     var vr = asm.GetManifestResourceStream(
@@ -87,6 +99,14 @@ namespace Anatta.Framework.IO {
             if (typeof(T) == typeof(byte[])) {
                 return (T)(object)bytes;
             }
+            if (typeof(T) == typeof(Sample))
+            {
+                return (T)(object)new Sample(bytes);
+            }
+            if (typeof(T) == typeof(Track))
+            {
+                return (T)(object)new Track(bytes);
+            }
             if (typeof(T) == typeof(FontFace)) {
                 return (T)(object)new FontFace(bytes);
             }
@@ -114,7 +134,9 @@ namespace Anatta.Framework.IO {
         private static string GetTypeFolder(Type t)
         {
             if (t == typeof(Texture)) return "Textures";
-            if (t == typeof(byte[])) return "Audio";
+            if (t == typeof(byte[])) return "Native";
+            if (t == typeof(Sample)) return "Audio.Samples";
+            if (t == typeof(Track)) return "Audio.Tracks";
             if (t == typeof(FontFace)) return "Fonts";
             if (t == typeof(Shader)) return "Shaders";
             return "Unknown";

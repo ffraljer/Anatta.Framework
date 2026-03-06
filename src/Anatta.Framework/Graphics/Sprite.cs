@@ -6,6 +6,8 @@ namespace Anatta.Framework.Graphics;
 public class Sprite : ISprite, IUpdatable
 {
     public Texture Texture { get; }
+    public Anchors Origin { get; set; } = Anchors.TopLeft;
+    public Anchors Anchor { get; set; } = Anchors.TopLeft;
     public Vector2 Position { get; set; }
     public Vector2 Scale { get; set; } = Vector2.One;
     public float Rotation { get; set; }

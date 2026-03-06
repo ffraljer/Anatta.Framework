@@ -16,7 +16,7 @@ public class GameBase : Application
     public static GameBase Instance;
     private ScreenManager manager2;
     
-    public GameBase(Vector2i tize, string title = "Demo Game") : base(tize, title)
+    public GameBase(Vector2i tize, bool UseSDL, string title = "Demo Game") : base(tize, UseSDL, title)
     {
         manager = new();
         manager2 = new();
@@ -32,11 +32,10 @@ public class GameBase : Application
         base.Initialise();
     }
 
-    protected override void Update(float dt, KeyboardState ks)
+    protected override void Update(float dt)
     {
-        base.Update(dt, ks);
         manager?.Update(dt);
-        manager2.Update(dt, ks);
+        manager2.Update(dt);
     }
 
     protected override void Draw()

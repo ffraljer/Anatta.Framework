@@ -1,3 +1,4 @@
+using Anatta.Framework.Graphics.Helpers;
 using Anatta.Framework.Interfaces.Graphics;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
@@ -7,7 +8,7 @@ namespace Anatta.Framework.Graphics.Managers;
 
 public class Manager : IDisposable {
     private readonly List<IManageable> managables = new();
-
+    
     private readonly int vao;
     private readonly int vbo;
     private readonly Shader shd;
@@ -27,6 +28,7 @@ public class Manager : IDisposable {
     };
 
     public Manager() {
+        
         vao = GL.GenVertexArray();
         vbo = GL.GenBuffer();
 
@@ -90,7 +92,7 @@ public class Manager : IDisposable {
         Begin(screenW, screenH);
 
         foreach (var item in managables)
-            DrawItem(item);
+            DrawItem(item, screenW, screenH);
 
         End();
     }
@@ -116,7 +118,7 @@ public class Manager : IDisposable {
         );
     }
 
-    private void DrawItem(IManageable item) {
+    private void DrawItem(IManageable item, int screenW, int screenH) {
         if (item is not ISprite sprite)
             return;
 
@@ -125,16 +127,26 @@ public class Manager : IDisposable {
             GL.GetUniformLocation(shd.Handle, "tex"),
             0
         );
-
+        var size = new Vector2(
+            sprite.Texture.Width * sprite.Scale.X,
+            sprite.Texture.Height * sprite.Scale.Y
+        );
+        var originNorm = AnchorHelper.ToNormalised(sprite.Origin);
+        var originOffset = originNorm * size;
+        var anchorNorm = AnchorHelper.ToNormalised(sprite.Anchor);
+        var anchorOffset = new Vector2(
+            anchorNorm.X * screenW,
+            anchorNorm.Y * screenH
+        );
         var transform =
-            Matrix4.CreateTranslation(sprite.Position.X, sprite.Position.Y, 0f) *
+            Matrix4.CreateTranslation(
+                sprite.Position.X + anchorOffset.X,
+                sprite.Position.Y + anchorOffset.Y,
+                0f
+            ) *
             Matrix4.CreateRotationZ(sprite.Rotation) *
-            Matrix4.CreateScale(
-                sprite.Texture.Width * sprite.Scale.X,
-                sprite.Texture.Height * sprite.Scale.Y,
-                1f
-            );
-
+            Matrix4.CreateScale(size.X, size.Y, 1f) *
+            Matrix4.CreateTranslation(-originOffset.X, -originOffset.Y, 0f);
         shd.SetMatrix4("transform", transform);
 
         GL.DrawArrays(PrimitiveType.Triangles, 0, 6);

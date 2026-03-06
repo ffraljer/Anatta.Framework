@@ -9,4 +9,6 @@ public interface ISprite : IManageable
     public Vector2 Position { get; set; }
     public Vector2 Scale { get; set; }
     public float Rotation { get; set; }
+    public Anchors Origin { get; set; }
+    public Anchors Anchor { get; set; }
 }

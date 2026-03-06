@@ -6,7 +6,6 @@ using System.Reflection;
 namespace Anatta.Framework.Graphics;
 
 public class Screen : IDisposable {
-    
     protected Manager Manager { get; private set; }
     
     public bool IsActive { get; private set; } = true;
@@ -28,7 +27,7 @@ public class Screen : IDisposable {
 
     public virtual void Load() { }
 
-    public virtual void Update(float delta, KeyboardState keyboard) { Manager.Update(delta); }
+    public virtual void Update(float delta) { Manager.Update(delta); }
 
     public virtual void OnEnter() { IsActive = true; }
     public virtual void OnExit() { IsActive = false; }
