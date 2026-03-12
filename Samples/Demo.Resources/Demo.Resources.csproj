@@ -14,14 +14,13 @@
     </ItemGroup>
 
     <ItemGroup>
-      <None Update="Content\font_allerbold.ttf">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </None>
+      <Folder Include="Shaders\" />
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Fonts\" />
-      <Folder Include="Shaders\" />
+      <None Update="Fonts\font_allerbold.ttf">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
     </ItemGroup>
 
 </Project>

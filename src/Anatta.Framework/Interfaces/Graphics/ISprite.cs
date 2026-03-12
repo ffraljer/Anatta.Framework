@@ -11,4 +11,9 @@ public interface ISprite : IManageable
     public float Rotation { get; set; }
     public Anchors Origin { get; set; }
     public Anchors Anchor { get; set; }
+    
+    ISprite MoveTo(Vector2 position, float duration, bool loop = false);
+    ISprite ScaleTo(Vector2 scale, float duration, bool loop = false);
+    ISprite RotateTo(float rotation, float duration , bool loop = false);
+    event Action<ISprite>? OnClick;
 }

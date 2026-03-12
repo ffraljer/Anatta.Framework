@@ -1,5 +1,6 @@
 using OpenTK.Mathematics;
 using OpenTK.Windowing.Desktop;
+using OpenTK.Graphics.OpenGL;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 
 namespace Anatta.Framework;
@@ -30,6 +31,10 @@ internal class ToolkitWindowBackend : IWindowBackend {
         {
             RenderFrame?.Invoke((float)args.Time);
             window.SwapBuffers();
+        };
+        window.Resize += args =>
+        {
+            GL.Viewport(0, 0, args.Width, args.Height);
         };
 
         window.Unload += () => Unload?.Invoke();

@@ -1,3 +1,5 @@
+using Anatta.Framework.Graphics.Animations;
+using Anatta.Framework.Graphics.Helpers;
 using Anatta.Framework.Interfaces.Graphics;
 using OpenTK.Mathematics;
 
@@ -9,23 +11,85 @@ public class Sprite : ISprite, IUpdatable
     public Anchors Origin { get; set; } = Anchors.TopLeft;
     public Anchors Anchor { get; set; } = Anchors.TopLeft;
     public Vector2 Position { get; set; }
+
+    private Vector2 _mousePosition;
+    private bool _mousePressed;
     public Vector2 Scale { get; set; } = Vector2.One;
     public float Rotation { get; set; }
-    public Vector2 Velocity { get; set; }
-    
+    public Vector2 Velocity { get; set; } = Vector2.Zero;
+    private List<ITween> tweens = new();
+
+    public event Action<ISprite>? OnClick;
     public Sprite(Texture texture) => Texture = texture;
     public Sprite(string textureName) => Texture = Texture.Load(textureName);
 
     public void Update(float deltaTime)
     {
         Position += Velocity * deltaTime;
-    }
 
-    public void Draw(Batcher batcher)
-    {
-        batcher.Draw(this);
+        for (int i = tweens.Count - 1; i >= 0; i--)
+        {
+            if (tweens[i].Update(deltaTime))
+                tweens.RemoveAt(i);
+        }
     }
-
     public void Dispose() => Texture.Dispose();
-    
+
+    /// <param name="position">Position of the Sprite.</param>
+    /// <param name="duration">Seconds.</param>
+    /// <returns>The current <see cref="ISprite"/> instance, allowing method chaining.</returns>
+    public ISprite MoveTo(Vector2 position, float duration, bool loop = false)
+    {
+        tweens.Add(new Tween<Vector2>
+        {
+            Loop = loop,
+            Getter = () => Position,
+            Setter = v => Position = v,
+            End = position,
+            Duration = duration,
+            Lerp = AnimationHelper.Lerp
+        });
+
+        return this;
+    }
+    /// <param name="scale">Scale of the Sprite.</param>
+    /// <param name="duration">Seconds.</param>
+    /// <returns>The current <see cref="ISprite"/> instance, allowing method chaining.</returns>
+    public ISprite ScaleTo(Vector2 scale, float duration, bool loop = false)
+    {
+        tweens.Add(new Tween<Vector2>
+        {
+            Loop = loop,
+            Getter = () => Scale,
+            Setter = v => Scale = v,
+            End = scale,
+            Duration = duration,
+            Lerp = AnimationHelper.Lerp
+        });
+
+        return this;
+    }
+    /// <param name="rotation">Degrees.</param>
+    /// <param name="duration">Seconds.</param>
+    /// <returns>The current <see cref="ISprite"/> instance, allowing method chaining.</returns>
+    public ISprite RotateTo(float rotation, float duration, bool loop = false)
+    {
+        var r = MathHelper.DegreesToRadians(rotation);
+        tweens.Add(new Tween<float>
+        {
+            Loop = loop,
+            Getter = () => Rotation,
+            Setter = v => Rotation = v,
+            Start = Rotation,
+            End = r,
+            Duration = duration,
+            Lerp = AnimationHelper.Lerp
+        });
+
+        return this;
+    }
+    public void ClearTransforms()
+    {
+        tweens.Clear();
+    }
 }

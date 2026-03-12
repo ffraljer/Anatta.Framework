@@ -3,7 +3,7 @@ using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Drawing.Processing;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
-using System.IO;
+using SixLabors.ImageSharp.Drawing;
 using Färg = SixLabors.ImageSharp.Color;
 
 namespace Anatta.Framework.Graphics.Renderers; 
@@ -14,7 +14,7 @@ public static class NativeTextRenderer {
         float size,
         Colour colour,
         int padding = 4) {
-
+        
         var data = font.Bytes;
         FontCollection x = new();
         FontFamily y = x.Add(new MemoryStream(data));
@@ -26,18 +26,22 @@ public static class NativeTextRenderer {
         };
 
         FontRectangle xx = TextMeasurer.MeasureBounds(text, w);
-
-        int width = (int)MathF.Ceiling(xx.Width) + padding * 2;
-        int height = (int)MathF.Ceiling(xx.Height) + padding * 2;
+        
+        int width = (int)MathF.Ceiling(xx.Width) + padding * 2 * 2;
+        int height = (int)MathF.Ceiling(xx.Height) + padding * 2 * 2;
+        
+        float drawX = padding;
+        float drawY = padding;
 
         using Image<Rgba32> yy = new(width, height);
-        yy.Mutate(ctx => {
+        yy.Mutate(ctx =>
+        {
             ctx.Clear(Färg.Transparent);
             ctx.DrawText(
                 text,
                 z,
                 new Färg(new System.Numerics.Vector4(colour.R, colour.G, colour.B, 255f)),
-                new PointF(padding, padding));
+                new PointF(drawX, drawY));
         });
     
         byte[] zz = new byte[width * height * 4];

@@ -19,7 +19,7 @@ public class Track : IDisposable
 
     public void Play()
     {
-        _handle = Audio.Play(_data);
+        _handle = Audio.Play(_data, Loop);
     }
 
     public void Stop()

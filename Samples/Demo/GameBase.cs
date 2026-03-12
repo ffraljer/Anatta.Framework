@@ -6,7 +6,7 @@ using Anatta.Framework;
 using Anatta.Framework.Graphics.Managers;
 using Anatta.Framework.IO;
 using Anatta.Framework.Sound;
-using OpenTK.Windowing.GraphicsLibraryFramework;
+using Anatta.Framework.Graphics;
 
 namespace Demo;
 
@@ -15,19 +15,21 @@ public class GameBase : Application
     private Manager manager;
     public static GameBase Instance;
     private ScreenManager manager2;
-    
-    public GameBase(Vector2i tize, bool UseSDL, string title = "Demo Game") : base(tize, UseSDL, title)
+
+    public GameBase(Vector2i tize, bool UseSDL, string title = "Demo Game") : base(tize, title, UseSDL)
     {
         manager = new();
         manager2 = new();
         Instance = this;
         Audio.Binding = Audio.Bindings.Bass;
+
+
     }
 
     protected override void Initialise()
     {
         Resource.Init("Demo");
-        Resource.AddStore(typeof(Ass).Assembly);
+        Resource.AddStore(typeof(Assembly).Assembly);
         manager2.Push(new MainScreen(manager));
         base.Initialise();
     }

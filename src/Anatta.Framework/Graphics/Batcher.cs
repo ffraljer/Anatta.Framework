@@ -7,10 +7,9 @@ namespace Anatta.Framework.Graphics;
 // my plan is to "unify" Manager and this. or, possibly behead batcher and replace it with
 //manager. (or, you know. kill both of them)
 // done
-[Obsolete("Use vManager instead.")]
+[Obsolete("Use Manager instead.")]
 public class Batcher : IDisposable
 {
-    // I wish OpenTK had a built-in sprite batcher. (or at least some 4k of it)
     public int vao, vbo;
     public Shader shd;
     public static readonly float[] quad =

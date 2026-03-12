@@ -11,6 +11,7 @@
     <ItemGroup>
       <PackageReference Include="ManagedBass" Version="4.0.2" />
       <PackageReference Include="ManagedBass.Fx" Version="4.0.2" />
+      <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="5.3.0" />
       <PackageReference Include="OpenTK" Version="5.0.0-pre.15" />
       <PackageReference Include="SDL2-CS" Version="2.0.0" />
       <PackageReference Include="SDL2-CS.dll" Version="2.0.0" />
@@ -27,6 +28,9 @@
       </None>
       <None Update="runtimes\win-x64\native\bass.dll">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="runtimes\win-x64\native\SDL2.dll">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
     </ItemGroup>
 

@@ -29,7 +29,7 @@ namespace Anatta.Framework.Sound {
             return Resource.Load<byte[]>(resourceName);
         }
 
-        internal static int Play(byte[] data)
+        internal static int Play(byte[] data, bool loop = false)
         {
             switch (Binding) {
                 case (Bindings.Bass):
@@ -43,12 +43,12 @@ namespace Anatta.Framework.Sound {
                 throw new ArgumentException(nameof(data));
 
             if (UseOpenAL)
-                return PlayAL(data);
+                return PlayAL(data, loop);
             else
-                return PlayRg(data);
+                return PlayRg(data, loop);
         }
 
-        private static int PlayRg(byte[] data) {
+        private static int PlayRg(byte[] data, bool loop = false) {
             if (data == null || data.Length == 0) throw new ArgumentException(nameof(data));
 
             if (!Bass.Init())
@@ -69,7 +69,8 @@ namespace Anatta.Framework.Sound {
             }
 
             PinnedBuffers[stream] = handle;
-
+            
+            if(!loop)
             Bass.ChannelSetSync(stream, SyncFlags.End, 0, (handleSync, channel, dataPtr, user) =>
             {
                 if (PinnedBuffers.TryRemove(channel, out var h) && h.IsAllocated)
@@ -98,7 +99,7 @@ namespace Anatta.Framework.Sound {
             openAlInitialized = true;
         }
 
-        private static int PlayAL(byte[] compressedData)
+        private static int PlayAL(byte[] compressedData, bool loop)
         {
             initAL();
 
@@ -117,6 +118,7 @@ namespace Anatta.Framework.Sound {
 
             AL.BufferData(buffer, format, pcm, pcm.Length, sampleRate);
             AL.Sourcei(source, SourcePNameI.Buffer, buffer);
+            AL.Sourcei(source, SourcePNameI.Looping, loop ? 1 : 0);
             AL.SourcePlay(source);
 
             OpenALBuffers[source] = buffer;

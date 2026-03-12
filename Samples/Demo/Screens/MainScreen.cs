@@ -1,3 +1,4 @@
+using Anatta.Framework;
 using Anatta.Framework.Graphics;
 using Anatta.Framework.Graphics.Managers;
 using Anatta.Framework.IO;
@@ -17,20 +18,24 @@ public class MainScreen : Screen {
 
     public override void Load() {
         base.Load();
+        _music = Resource.Load<Track>("longcat.mp3");
+        _music.Loop = true;
         Sprite sprite = new("finished") {
-            Anchor = Anchors.Bottom,
-            Origin = Anchors.Bottom
+            Anchor = Anchors.Centre,
+            Origin = Anchors.Centre
         };
         sprite.Scale = new Vector2(1f);
-        FontFace f = new(File.ReadAllBytes("Content/font_allerbold.ttf"));
+        FontFace f = Resource.Load<FontFace>("font_allerbold.ttf");
         player = new Text("I NEED TO LAY OFF THE CATNIP...", 32f, Colour.White, f);
         player.Position = new Vector2(0, 0);
         player.Anchor = Anchors.TopRight;
         player.Origin = Anchors.TopRight;
+        sprite.RotateTo(360, 10, true);
+        sprite.ScaleTo(new Vector2(4), 10);
         var playe2r = new Text("I NEED TO LAY OFF THE CATNIP...", 32f, Colour.White);
         var playes2r = new Text("I NEED TO LAY OFF THE CATNIP...", 24f, Colour.White) {
             Font = Resource.Load<FontFace>("TIMES.ttf"),
-            Position = new(0),
+            Position = new(0,2),
             Origin = Anchors.Bottom,
             Anchor = Anchors.Bottom
         };
@@ -38,14 +43,14 @@ public class MainScreen : Screen {
         Add(player);
         Add(playes2r);
         Add(playe2r);
-        _music = Resource.Load<Track>("longcat.mp3");
-        _music.Loop = true;
         _music.Play();
     }
 
     public override void Update(float delta) {
+        base.Update(delta);
     }
 
     public override void Draw(int width, int height) {
+        base.Draw(width, height);
     }
 }

@@ -17,12 +17,7 @@ public class Screen : IDisposable {
     }
 
     public virtual void Draw(int width, int height) {
-        var b = Manager;
-        if (b == null)
-            throw new InvalidOperationException("batcher is null.");
-
-        foreach (var s in Manager.GetAll())
-            b.Draw(width, height);
+        Manager.Draw(width, height);
     }
 
     public virtual void Load() { }

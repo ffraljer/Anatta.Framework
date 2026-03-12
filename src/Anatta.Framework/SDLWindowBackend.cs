@@ -1,4 +1,5 @@
 using OpenTK.Graphics;
+using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 using SDL2;
@@ -17,6 +18,8 @@ internal class SDLWindowBackend : IWindowBackend
     public event Action? Load;
     public event Action<float>? RenderFrame;
     public event Action? Unload;
+
+    public bool MaximizeButton => false;
 
     public SDLWindowBackend(Vector2i size, string title)
     {
@@ -48,8 +51,20 @@ internal class SDLWindowBackend : IWindowBackend
         {
             while (SDL.SDL_PollEvent(out var e) == 1)
             {
-                if (e.type == SDL.SDL_EventType.SDL_QUIT)
-                    running = false;
+                switch (e.type)
+                {
+                    case SDL.SDL_EventType.SDL_QUIT:
+                        running = false;
+                        break;
+
+                    case SDL.SDL_EventType.SDL_WINDOWEVENT:
+                        if (e.window.windowEvent == SDL.SDL_WindowEventID.SDL_WINDOWEVENT_RESIZED)
+                        {
+                            Size = new Vector2i(e.window.data1, e.window.data2);
+                            GL.Viewport(0, 0, Size.X, Size.Y);
+                        }
+                        break;
+                }
             }
 
             var now = SDL.SDL_GetTicks();

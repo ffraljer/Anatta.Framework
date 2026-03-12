@@ -1,6 +1,6 @@
 namespace Demo.Resources;
 
-public class Ass
+public class Assembly
 {
     
 }

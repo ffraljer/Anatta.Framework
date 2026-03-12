@@ -3,7 +3,7 @@ using OpenTK.Windowing.GraphicsLibraryFramework;
 
 namespace Anatta.Framework;
 
-internal interface IWindowBackend : IDisposable {
+public interface IWindowBackend : IDisposable {
     Vector2i Size { get; }
     KeyboardState KeyboardState { get; }
 
