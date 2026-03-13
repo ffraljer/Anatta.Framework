@@ -24,7 +24,7 @@ public class Texture : IDisposable
     /// Height of the current Texture.
     /// </summary>
     public int Height { get; private set; }
-    private static string[] names = { ".png", ".jpeg", ".jpg" };
+    private static string[] names = { ".png", ".jpeg", ".jpg", ".xnb" };
 
     /// <summary>
     /// Loads a Texture from an Embedded Resource.
