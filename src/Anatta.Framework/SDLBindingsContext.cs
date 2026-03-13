@@ -1,10 +1,10 @@
 using OpenTK;
-using SDL2;
+using SDL3;
 
 internal class SDLBindingsContext : IBindingsContext
 {
     public IntPtr GetProcAddress(string procName)
     {
-        return SDL.SDL_GL_GetProcAddress(procName);
+        return SDL.GLGetProcAddress(procName);
     }
 }

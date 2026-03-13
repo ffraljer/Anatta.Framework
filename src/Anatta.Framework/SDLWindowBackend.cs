@@ -2,7 +2,8 @@ using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.GraphicsLibraryFramework;
-using SDL2;
+using SDL3;
+using System.Runtime.InteropServices;
 
 namespace Anatta.Framework;
 
@@ -15,6 +16,8 @@ internal class SDLWindowBackend : IWindowBackend
 
     public KeyboardState KeyboardState => default;
 
+    public IntPtr WindowHandle;
+
     public event Action? Load;
     public event Action<float>? RenderFrame;
     public event Action? Unload;
@@ -25,69 +28,68 @@ internal class SDLWindowBackend : IWindowBackend
     {
         Size = size;
 
-        SDL.SDL_Init(SDL.SDL_INIT_VIDEO);
+        SDL.Init(SDL.InitFlags.Video);
+        
+        SDL.GLSetAttribute(SDL.GLAttr.ContextMajorVersion, 3);
+        SDL.GLSetAttribute(SDL.GLAttr.ContextMinorVersion, 3);
+        SDL.GLSetAttribute(SDL.GLAttr.ContextProfileMask, (int)OpenGlProfile.Core);
+        SDL.GLSetAttribute(SDL.GLAttr.DoubleBuffer, 1);
+        SDL.GLSetAttribute(SDL.GLAttr.DepthSize, 24);
 
-        window = SDL.SDL_CreateWindow(
+        window = SDL.CreateWindow(
             title,
-            SDL.SDL_WINDOWPOS_CENTERED,
-            SDL.SDL_WINDOWPOS_CENTERED,
             size.X,
             size.Y,
-            SDL.SDL_WindowFlags.SDL_WINDOW_OPENGL
+            SDL.WindowFlags.OpenGL | SDL.WindowFlags.Resizable
         );
-
-        context = SDL.SDL_GL_CreateContext(window);
+        context = SDL.GLCreateContext(window);
+        SDL.GLMakeCurrent(window, context);
         GLLoader.LoadBindings(new SDLBindingsContext());
     }
-
     public void Run()
     {
         Load?.Invoke();
 
         bool running = true;
-        var last = SDL.SDL_GetTicks();
+        var last = SDL.GetTicks();
 
         while (running)
         {
-            while (SDL.SDL_PollEvent(out var e) == 1)
+            
+            while (SDL.PollEvent(out var @event) == true)
             {
-                switch (e.type)
+                switch ((SDL.EventType)@event.Type)
                 {
-                    case SDL.SDL_EventType.SDL_QUIT:
+                    case SDL.EventType.Quit:
                         running = false;
                         break;
-
-                    case SDL.SDL_EventType.SDL_WINDOWEVENT:
-                        if (e.window.windowEvent == SDL.SDL_WindowEventID.SDL_WINDOWEVENT_RESIZED)
-                        {
-                            Size = new Vector2i(e.window.data1, e.window.data2);
-                            GL.Viewport(0, 0, Size.X, Size.Y);
-                        }
+                    case SDL.EventType.WindowResized:
+                        Size = new Vector2i(@event.Window.Data1, @event.Window.Data2);
+                        GL.Viewport(0, 0, Size.X, Size.Y);
                         break;
                 }
             }
-
-            var now = SDL.SDL_GetTicks();
+            ulong now = SDL.GetTicks();
             float dt = (now - last) / 1000f;
             last = now;
 
             RenderFrame?.Invoke(dt);
 
-            SDL.SDL_GL_SwapWindow(window);
+            SDL.GLSwapWindow(window);
         }
 
         Unload?.Invoke();
-        SDL.SDL_Quit();
+        SDL.Quit();
     }
 
     public void SwapBuffers()
     {
-        SDL.SDL_GL_SwapWindow(window);
+        SDL.GLSwapWindow(window);
     }
 
     public void Dispose()
     {
-        SDL.SDL_GL_DeleteContext(context);
-        SDL.SDL_DestroyWindow(window);
+        SDL.GLDestroyContext(context);
+        SDL.DestroyWindow(window);
     }
 }

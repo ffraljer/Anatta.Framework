@@ -13,8 +13,7 @@
       <PackageReference Include="ManagedBass.Fx" Version="4.0.2" />
       <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="5.3.0" />
       <PackageReference Include="OpenTK" Version="5.0.0-pre.15" />
-      <PackageReference Include="SDL2-CS" Version="2.0.0" />
-      <PackageReference Include="SDL2-CS.dll" Version="2.0.0" />
+      <PackageReference Include="SDL3-CS" Version="3.5.0-preview.20260213-150035" />
       <PackageReference Include="SixLabors.Fonts" Version="2.1.3" />
       <PackageReference Include="SixLabors.ImageSharp" Version="3.1.12" />
       <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="2.1.7" />
@@ -29,9 +28,12 @@
       <None Update="runtimes\win-x64\native\bass.dll">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
-      <None Update="runtimes\win-x64\native\SDL2.dll">
+      <None Update="runtimes\win-x64\native\SDL3.dll">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
+    </ItemGroup>
+    <ItemGroup>
+      <Folder Include="SDL3\" />
     </ItemGroup>
 
 </Project>

@@ -55,7 +55,7 @@ public class Application : IDisposable {
                           $"\n.NET Version: {Environment.Version}\n" +
                           $"OS: {RuntimeInformation.OSDescription}" +
                           $"\nWindow Backend: {backend.ToString().TrimStart("Anatta.Framework.")}");
-        Console.WriteLine("\n\n[might be errors idk]");
+        //Console.WriteLine("\n\n[might be errors idk]");
         GL.ClearColor(0f, 0f, 0f, 1f);
         Initialise();
     }

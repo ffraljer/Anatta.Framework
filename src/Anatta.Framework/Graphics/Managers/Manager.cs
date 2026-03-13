@@ -9,9 +9,11 @@ namespace Anatta.Framework.Graphics.Managers;
 public class Manager : IDisposable {
     private readonly List<IManageable> managables = new();
     
-    private readonly int vao;
-    private readonly int vbo;
-    private readonly Shader shd;
+    private int vao;
+    private int vbo;
+    private Shader shd;
+    
+    private bool initialized = false;
 
     public KeyboardState KeyboardState { get; set; }
 
@@ -28,6 +30,11 @@ public class Manager : IDisposable {
     };
 
     public Manager() {
+        
+    }
+    private void Init()
+    {
+        if (initialized) return;
         
         vao = GL.GenVertexArray();
         vbo = GL.GenBuffer();
@@ -53,8 +60,9 @@ public class Manager : IDisposable {
 
         GL.BindVertexArray(0);
         GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
+        
+        initialized = true;
     }
-
 
     public IEnumerable<IManageable> GetAll() => managables;
 
@@ -88,7 +96,10 @@ public class Manager : IDisposable {
     }
 
 
-    public void Draw(int screenW, int screenH) {
+    public void Draw(int screenW, int screenH)
+    {
+        Init();
+        
         Begin(screenW, screenH);
 
         foreach (var item in managables)
@@ -142,11 +153,8 @@ public class Manager : IDisposable {
             Matrix4.CreateScale(size.X, size.Y, 1f) *
             Matrix4.CreateTranslation(-originOffset.X, -originOffset.Y, 0f) *
             Matrix4.CreateRotationZ(sprite.Rotation) *
-            Matrix4.CreateTranslation(
-                sprite.Position.X + anchorOffset.X,
-                sprite.Position.Y + anchorOffset.Y,
-                0f
-            );
+            Matrix4.CreateTranslation(sprite.Position.X, sprite.Position.Y, 0f) *
+            Matrix4.CreateTranslation(anchorOffset.X, anchorOffset.Y, 0f);
         shd.SetMatrix4("transform", transform);
 
         GL.DrawArrays(PrimitiveType.Triangles, 0, 6);
