@@ -12,7 +12,6 @@ namespace Anatta.Framework.IO {
         {
             Base = basename;
         }
-        // not sure if this actually works, but here it is
         public static void AddStore(Assembly assembly) {
             if (!stores.Contains(assembly))
                 stores.Add(assembly);
@@ -40,6 +39,12 @@ namespace Anatta.Framework.IO {
 
             if (typeof(T) == typeof(Texture))
             {
+                if (name.EndsWith(".xnb", StringComparison.OrdinalIgnoreCase))
+                {
+                    Texture text = LoadXnbTexture(bytes);
+                    return (T)(object)text;
+                }
+                
                 Texture tex = Texture.FromImageBytes(bytes);
                 return (T)(object)tex;
             }
@@ -130,7 +135,39 @@ namespace Anatta.Framework.IO {
 
             throw new FileNotFoundException($"Shader not found: {name}");
         }
-
+        private static Texture LoadXnbTexture(byte[] data)
+        {
+            using var ms = new MemoryStream(data);
+            using var br = new BinaryReader(ms);
+            if (new string(br.ReadChars(3)) != "XNB")
+                throw new Exception("invalid xnb");
+            char platform = br.ReadChar();
+            byte version = br.ReadByte();
+            byte flags = br.ReadByte();
+            int size = br.ReadInt32();
+            bool compressed = (flags & 0x80) != 0;
+            if (compressed)
+                throw new NotSupportedException("compressed xnb not supported");
+            int readerCount = br.Read7BitEncodedInt();
+            for (int i = 0; i < readerCount; i++)
+            {
+                br.ReadString();
+                br.ReadInt32();
+            }
+            br.Read7BitEncodedInt();
+            br.Read7BitEncodedInt();
+            int format = br.ReadInt32();
+            int width = br.ReadInt32();
+            int height = br.ReadInt32();
+            int mipCount = br.ReadInt32();
+            int dataSize = br.ReadInt32();
+            byte[] pixelData = br.ReadBytes(dataSize);
+            for (int i = 0; i < pixelData.Length; i += 4)
+            {
+                (pixelData[i], pixelData[i + 2]) = (pixelData[i + 2], pixelData[i]);
+            }
+            return new Texture(width, height, pixelData);
+        }
         private static string GetTypeFolder(Type t)
         {
             if (t == typeof(Texture)) return "Textures";
