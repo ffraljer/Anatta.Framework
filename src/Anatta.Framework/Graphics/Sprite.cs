@@ -45,6 +45,7 @@ public class Sprite : ISprite, IUpdatable
             Loop = loop,
             Getter = () => Position,
             Setter = v => Position = v,
+            Start = Position,
             End = position,
             Duration = duration,
             Lerp = AnimationHelper.Lerp

@@ -30,8 +30,8 @@ internal class Tween<T> : ITween {
         {
             if (Loop)
             {
-                Time = 0;
-                started = false;
+                Time = 0f;
+                Setter(Start);
                 return false;
             }
             else

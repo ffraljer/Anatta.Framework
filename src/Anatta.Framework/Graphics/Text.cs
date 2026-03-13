@@ -74,6 +74,7 @@ namespace Anatta.Framework.Graphics {
                 Loop = loop,
                 Getter = () => Position,
                 Setter = v => Position = v,
+                Start = Position,
                 End = position,
                 Duration = duration,
                 Lerp = AnimationHelper.Lerp
