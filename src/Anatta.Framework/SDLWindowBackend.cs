@@ -31,7 +31,7 @@ internal class SDLWindowBackend : IWindowBackend
         SDL.Init(SDL.InitFlags.Video);
         
         SDL.GLSetAttribute(SDL.GLAttr.ContextMajorVersion, 4);
-        SDL.GLSetAttribute(SDL.GLAttr.ContextMinorVersion, 6);
+        SDL.GLSetAttribute(SDL.GLAttr.ContextMinorVersion, 6 );
         SDL.GLSetAttribute(SDL.GLAttr.ContextProfileMask, (int)OpenGlProfile.Core);
         SDL.GLSetAttribute(SDL.GLAttr.DoubleBuffer, 1);
         SDL.GLSetAttribute(SDL.GLAttr.DepthSize, 24);

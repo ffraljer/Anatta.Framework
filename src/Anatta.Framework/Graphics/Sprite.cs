@@ -23,13 +23,13 @@ public class Sprite : ISprite, IUpdatable
     public Sprite(Texture texture) => Texture = texture;
     public Sprite(string textureName) => Texture = Texture.Load(textureName);
 
-    public void Update(float deltaTime)
+    public void Update()
     {
-        Position += Velocity * deltaTime;
+        Position += Velocity * Time.Delta;
 
         for (int i = tweens.Count - 1; i >= 0; i--)
         {
-            if (tweens[i].Update(deltaTime))
+            if (tweens[i].Update())
                 tweens.RemoveAt(i);
         }
     }
@@ -38,7 +38,7 @@ public class Sprite : ISprite, IUpdatable
     /// <param name="position">Position of the Sprite.</param>
     /// <param name="duration">Seconds.</param>
     /// <returns>The current <see cref="ISprite"/> instance, allowing method chaining.</returns>
-    public ISprite MoveTo(Vector2 position, float duration, bool loop = false)
+    public ISprite MoveTo(Vector2 position, float duration, Easing easing = Easing.None, bool loop = false)
     {
         tweens.Add(new Tween<Vector2>
         {
@@ -47,6 +47,7 @@ public class Sprite : ISprite, IUpdatable
             Setter = v => Position = v,
             Start = Position,
             End = position,
+            Ease = easing,
             Duration = duration,
             Lerp = AnimationHelper.Lerp
         });
@@ -56,7 +57,7 @@ public class Sprite : ISprite, IUpdatable
     /// <param name="scale">Scale of the Sprite.</param>
     /// <param name="duration">Seconds.</param>
     /// <returns>The current <see cref="ISprite"/> instance, allowing method chaining.</returns>
-    public ISprite ScaleTo(Vector2 scale, float duration, bool loop = false)
+    public ISprite ScaleTo(Vector2 scale, float duration, Easing easing = Easing.None, bool loop = false)
     {
         tweens.Add(new Tween<Vector2>
         {
@@ -64,6 +65,7 @@ public class Sprite : ISprite, IUpdatable
             Getter = () => Scale,
             Setter = v => Scale = v,
             End = scale,
+            Ease = easing,
             Duration = duration,
             Lerp = AnimationHelper.Lerp
         });
@@ -73,7 +75,7 @@ public class Sprite : ISprite, IUpdatable
     /// <param name="rotation">Degrees.</param>
     /// <param name="duration">Seconds.</param>
     /// <returns>The current <see cref="ISprite"/> instance, allowing method chaining.</returns>
-    public ISprite RotateTo(float rotation, float duration, bool loop = false)
+    public ISprite RotateTo(float rotation, float duration, Easing easing = Easing.None, bool loop = false)
     {
         var r = MathHelper.DegreesToRadians(rotation);
         tweens.Add(new Tween<float>
@@ -81,6 +83,7 @@ public class Sprite : ISprite, IUpdatable
             Loop = loop,
             Getter = () => Rotation,
             Setter = v => Rotation = v,
+            Ease = easing,
             Start = Rotation,
             End = r,
             Duration = duration,

@@ -40,11 +40,12 @@ namespace Anatta.Framework.Graphics {
             this._font = font ?? Resource.LoadInternal<FontFace>("odat.ttf");
             Texture = NativeTextRenderer.CreateString(this._font, text, fontSize, colour);
         }
-        public void Update(float deltaTime)
+        public void Update()
         {
             for (int i = tweens.Count - 1; i >= 0; i--)
             {
-                if (tweens[i].Update(deltaTime))
+                if (tweens[i].Update())
+                    tweens.RemoveAt(i);
                     tweens.RemoveAt(i);
             }
         }
@@ -67,7 +68,7 @@ namespace Anatta.Framework.Graphics {
         /// <param name="position">Position of the Sprite.</param>
         /// <param name="duration">Seconds.</param>
         /// <returns>The current <see cref="ISprite"/> instance, allowing method chaining.</returns>
-        public ISprite MoveTo(Vector2 position, float duration, bool loop = false)
+        public ISprite MoveTo(Vector2 position, float duration, Easing easing = Easing.None, bool loop = false)
         {
             tweens.Add(new Tween<Vector2>
             {
@@ -76,6 +77,7 @@ namespace Anatta.Framework.Graphics {
                 Setter = v => Position = v,
                 Start = Position,
                 End = position,
+                Ease = easing,
                 Duration = duration,
                 Lerp = AnimationHelper.Lerp
             });
@@ -85,7 +87,7 @@ namespace Anatta.Framework.Graphics {
         /// <param name="scale">Scale of the Sprite.</param>
         /// <param name="duration">Seconds.</param>
         /// <returns>The current <see cref="ISprite"/> instance, allowing method chaining.</returns>
-        public ISprite ScaleTo(Vector2 scale, float duration, bool loop = false)
+        public ISprite ScaleTo(Vector2 scale, float duration, Easing easing = Easing.None, bool loop = false)
         {
             tweens.Add(new Tween<Vector2>
             {
@@ -93,6 +95,7 @@ namespace Anatta.Framework.Graphics {
                 Getter = () => Scale,
                 Setter = v => Scale = v,
                 End = scale,
+                Ease = easing,
                 Duration = duration,
                 Lerp = AnimationHelper.Lerp
             });
@@ -102,7 +105,7 @@ namespace Anatta.Framework.Graphics {
         /// <param name="rotation">Degrees.</param>
         /// <param name="duration">Seconds.</param>
         /// <returns>The current <see cref="ISprite"/> instance, allowing method chaining.</returns>
-        public ISprite RotateTo(float rotation, float duration, bool loop = false)
+        public ISprite RotateTo(float rotation, float duration, Easing easing = Easing.None, bool loop = false)
         {
             var r = MathHelper.DegreesToRadians(rotation);
             tweens.Add(new Tween<float>
@@ -110,6 +113,7 @@ namespace Anatta.Framework.Graphics {
                 Loop = loop,
                 Getter = () => Rotation,
                 Setter = v => Rotation = v,
+                Ease = easing,
                 Start = Rotation,
                 End = r,
                 Duration = duration,

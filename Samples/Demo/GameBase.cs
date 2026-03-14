@@ -34,10 +34,10 @@ public class GameBase : Application
         base.Initialise();
     }
 
-    protected override void Update(float dt)
+    protected override void Update()
     {
-        manager?.Update(dt);
-        manager2.Update(dt);
+        manager?.Update();
+        manager2.Update();
     }
 
     protected override void Draw()

@@ -4,14 +4,15 @@ internal class Tween<T> : ITween {
     public Func<T> Getter = null!;
     public Action<T> Setter = null!;
     public T Start = default!;
+    public Easing Ease = Easing.None;
     public bool Loop;
     public T End = default!;
     public float Duration;
-    public float Time;
+    public float pTime;
     public Func<T, T, float, T> Lerp = null!;
 
     private bool started;
-    public bool Update(float dt)
+    public bool Update()
     {
         if (!started)
         {
@@ -23,14 +24,15 @@ internal class Tween<T> : ITween {
             Setter(End);
             return true;
         }
-        Time += dt;
-        float t = Math.Clamp(Time / Duration, 0f, 1f);
+        pTime += Time.Delta;
+        float t = Math.Clamp(pTime / Duration, 0f, 1f);
+        t = _ease.Evaluate(Ease, t);
         Setter(Lerp(Start, End, t));
-        if (Time >= Duration)
+        if (pTime >= Duration)
         {
             if (Loop)
             {
-                Time = 0f;
+                pTime = 0f;
                 Setter(Start);
                 return false;
             }

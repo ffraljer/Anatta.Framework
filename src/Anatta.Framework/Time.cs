@@ -2,11 +2,11 @@ namespace Anatta.Framework;
 
 public class Time
 {
-    public float Delta { get; private set; }
+    public static float Delta { get; private set; }
 
-    public float Total { get; private set; }
+    public static float Total { get; private set; }
 
-    internal void Update(float delta)
+    internal static void Update(float delta)
     {
         Delta = delta;
         Total += delta;

@@ -14,8 +14,6 @@ public class Texture : IDisposable
     /// the Handle of the Texture.
     /// </summary>
     public int Handle { get; private set; }
-    // curse my tiny hands
-    private int Gandle => Handle;
     /// <summary>
     /// Width of the current Texture.
     /// </summary>

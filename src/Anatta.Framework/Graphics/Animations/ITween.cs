@@ -6,6 +6,6 @@ namespace Anatta.Framework.Graphics.Animations
 {
     interface ITween
     {
-        bool Update(float dt);
+        bool Update();
     }
 }

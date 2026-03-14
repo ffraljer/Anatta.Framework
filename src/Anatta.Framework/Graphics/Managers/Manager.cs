@@ -88,10 +88,12 @@ public class Manager : IDisposable {
         managables.Remove(managed);
     }
 
-    public void Update(float delta) {
+    public void Update() {
+        float delta = Time.Delta;
+
         foreach (var item in managables) {
             if (item is IUpdatable u)
-                u.Update(delta);
+                u.Update();
         }
     }
 

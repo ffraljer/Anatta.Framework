@@ -9,6 +9,7 @@ namespace Anatta.Framework;
 public class Application : IDisposable {
     public Time Time { get; } = new Time();
     private readonly IWindowBackend backend;
+    
 
     /// <summary>
     /// The bindow backend
@@ -40,7 +41,7 @@ public class Application : IDisposable {
     }
     
     protected virtual void Initialise() {}
-    protected virtual void Update(float dt) { }
+    protected virtual void Update() { }
 
     protected virtual void Draw() { }
 
@@ -64,7 +65,7 @@ public class Application : IDisposable {
     {
         Time.Update(dt);
 
-        Update(Time.Delta);
+        Update();
 
         GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 

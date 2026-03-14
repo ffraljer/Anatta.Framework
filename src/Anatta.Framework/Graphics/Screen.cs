@@ -22,7 +22,7 @@ public class Screen : IDisposable {
 
     public virtual void Load() { }
 
-    public virtual void Update(float delta) { Manager.Update(delta); }
+    public virtual void Update() { Manager.Update(); }
 
     public virtual void OnEnter() { IsActive = true; }
     public virtual void OnExit() { IsActive = false; }
