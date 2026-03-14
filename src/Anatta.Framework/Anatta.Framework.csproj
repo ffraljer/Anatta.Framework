@@ -6,6 +6,17 @@
         <Nullable>enable</Nullable>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
         <RootNamespace>Anatta.Framework</RootNamespace>
+
+        <PackageId>Anatta.Framework</PackageId>
+        <Version>1.0.0</Version>
+        <Authors>fråljer</Authors>
+        <Company>fråljer</Company>
+        <Description>a probably cross-platform OpenTK 'engine'.</Description>
+        <PackageProjectUrl>https://github.com/theykilledfraljer/Anatta.Framework</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/theykilledfraljer/Anatta.Framework</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     </PropertyGroup>
 
     <ItemGroup>
