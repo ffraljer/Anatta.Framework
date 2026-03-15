@@ -8,7 +8,7 @@
         <RootNamespace>Anatta.Framework</RootNamespace>
 
         <PackageId>Anatta.Framework</PackageId>
-        <Version>1.0.0</Version>
+        <Version>1.2.0</Version>
         <Authors>fråljer</Authors>
         <Company>fråljer</Company>
         <Description>a probably cross-platform OpenTK 'engine'.</Description>
@@ -44,6 +44,7 @@
       </None>
     </ItemGroup>
     <ItemGroup>
+      <Folder Include="Graphics\Shapes\" />
       <Folder Include="SDL3\" />
     </ItemGroup>
 

@@ -5,27 +5,20 @@ using Anatta.Framework.Sound;
 namespace Anatta.Framework.IO {
     public class Resource
     {
-        public static string Base { get; private set; }
-        private static readonly List<Assembly> stores = new();
-
-        public static void Init(string basename)
-        {
-            Base = basename;
-        }
-        public static void AddStore(Assembly assembly) {
-            if (!stores.Contains(assembly))
-                stores.Add(assembly);
+        private static readonly List<IResourceStore> stores = new();
+        private readonly string rootNamespace;
+        public static void AddStore(IResourceStore store) {
+            if (!stores.Contains(store))
+                stores.Add(store);
         }
         public static T Load<T>(string name)
         {
-            if (string.IsNullOrEmpty(Base))
-                throw new InvalidOperationException("Resource.Base not set.");
             string folder = GetTypeFolder(typeof(T));
-            string fullName = $"{Base}.Resources.{folder}.{name}";
+            string fullName = $"{folder}/{name}";
             Stream? stream = null;
 
-            foreach (var asm in stores) {
-                stream = asm.GetManifestResourceStream(fullName);
+            foreach (var store in stores) {
+                stream = store.Open(fullName);
                 if (stream != null)
                     break;
             }
@@ -64,15 +57,14 @@ namespace Anatta.Framework.IO {
                 return (T)(object)new FontFace(bytes);
             }
             if (typeof(T) == typeof(Shader)) {
-                foreach (var asm in stores) {
-                    var vr = asm.GetManifestResourceStream(
-                        $"{Base}.Resources.Shaders.{name}.glsl");
-                    var fr = asm.GetManifestResourceStream(
-                        $"{Base}.Resources.Shaders.{name}Fragment.glsl");
+                foreach (var store in stores) {
+                    using var vr = store.Open($"Shaders/{name}.glsl");
+                    using var fr = store.Open($"Shaders/{name}Fragment.glsl");
 
                     if (vr != null && fr != null) {
                         using var vreader = new StreamReader(vr);
                         using var freader = new StreamReader(fr);
+
                         return (T)(object)new Shader(
                             vreader.ReadToEnd(),
                             freader.ReadToEnd());
@@ -118,15 +110,15 @@ namespace Anatta.Framework.IO {
             throw new NotSupportedException(typeof(T).Name);
         }
         public static Shader LoadShader(string name) {
-            foreach (var asm in stores) {
-                using var vr = asm.GetManifestResourceStream(
-                    $"{Base}.Resources.Shaders.{name}.glsl");
-                using var fr = asm.GetManifestResourceStream(
-                    $"{Base}.Resources.Shaders.{name}Fragment.glsl");
+            foreach (var store in stores) {
+                using var vr = store.Open($"Shaders/{name}.glsl");
+                using var fr = store.Open($"Shaders/{name}Fragment.glsl");
 
-                if (vr != null && fr != null) {
+                if (vr != null && fr != null)
+                {
                     using var vreader = new StreamReader(vr);
                     using var freader = new StreamReader(fr);
+
                     return new Shader(
                         vreader.ReadToEnd(),
                         freader.ReadToEnd());

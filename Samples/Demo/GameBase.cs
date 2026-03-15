@@ -1,3 +1,4 @@
+using System.Reflection;
 using Demo.Screens;
 using OpenTK.Mathematics;
 using OpenTK.Graphics.OpenGL;
@@ -28,8 +29,8 @@ public class GameBase : Application
 
     protected override void Initialise()
     {
-        Resource.Init("Demo");
-        Resource.AddStore(typeof(Assembly).Assembly);
+        //Resource.Init("Demo");
+        Resource.AddStore(new AssemblyStore(typeof(_Resource).Assembly, "Demo.Resources"));
         manager2.Push(new MainScreen(manager));
         base.Initialise();
     }
