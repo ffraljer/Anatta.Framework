@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Anatta.Framework.Graphics.Animations
 {
-    interface ITween
+    public interface ITween
     {
         bool Update();
     }

@@ -6,6 +6,7 @@ internal class Tween<T> : ITween {
     public T Start = default!;
     public Easing Ease = Easing.None;
     public bool Loop;
+    public float Delay;
     public T End = default!;
     public float Duration;
     public float pTime;
@@ -14,6 +15,11 @@ internal class Tween<T> : ITween {
     private bool started;
     public bool Update()
     {
+        if (Delay > 0f)
+        {
+            Delay -= Time.Delta;
+            return false;
+        }
         if (!started)
         {
             Start = Getter();

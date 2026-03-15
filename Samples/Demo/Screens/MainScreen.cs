@@ -24,7 +24,8 @@ public class MainScreen : Screen {
         Sprite sprite = new("finished") {
             Anchor = Anchors.CentreLeft,
             Position = new Vector2(0),
-            Origin = Anchors.CentreLeft
+            Origin = Anchors.CentreLeft,
+            Colour = new Colour(255, 255, 255, 0),
         };
         Vector2 size = GameBase.Instance.Size;
         float baseRatio = 16f / 9f;
@@ -35,9 +36,15 @@ public class MainScreen : Screen {
         player.Position = new Vector2(0);
         player.Anchor = Anchors.TopRight;
         player.Origin = Anchors.TopRight;
-        //sprite.RotateTo(360, 10, Easing.OutCubic);
+        
         //sprite.ScaleTo(new Vector2(4), 10);
-        sprite.MoveTo(new Vector2(GameBase.Instance.Size.X - sprite.Texture.Width, 0), 10, Easing.OutCubic);
+        sprite
+            .FadeTo(255, 10)
+            .Then()
+            .MoveTo(new Vector2(GameBase.Instance.Size.X - sprite.Texture.Width, 0), 10, Easing.InOutCubic)
+            .Then()
+            .RotateTo(360, 10, Easing.OutCubic);
+            
         var playe2r = new Text("I NEED TO LAY OFF THE CATNIP...", 32f, Colour.White);
         var playes2r = new Text("I NEED TO LAY OFF THE CATNIP...", 24f, Colour.White) {
             Font = Resource.Load<FontFace>("TIMES.ttf"),

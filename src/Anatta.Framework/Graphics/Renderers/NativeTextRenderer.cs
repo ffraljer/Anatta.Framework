@@ -4,7 +4,7 @@ using SixLabors.ImageSharp.Drawing.Processing;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
 using SixLabors.ImageSharp.Drawing;
-using Färg = SixLabors.ImageSharp.Color;
+using _Colour = SixLabors.ImageSharp.Color;
 
 namespace Anatta.Framework.Graphics.Renderers; 
 public static class NativeTextRenderer {
@@ -36,11 +36,11 @@ public static class NativeTextRenderer {
         using Image<Rgba32> yy = new(width, height);
         yy.Mutate(ctx =>
         {
-            ctx.Clear(Färg.Transparent);
+            ctx.Clear(_Colour.Transparent);
             ctx.DrawText(
                 text,
                 z,
-                new Färg(new System.Numerics.Vector4(colour.R, colour.G, colour.B, 255f)),
+                new _Colour(new System.Numerics.Vector4(colour.R, colour.G, colour.B, 255f)),
                 new PointF(drawX, drawY));
         });
     

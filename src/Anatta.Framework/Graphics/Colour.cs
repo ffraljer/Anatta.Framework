@@ -4,9 +4,16 @@ using OpenTK.Mathematics;
 
 public struct Colour
 {
-    public byte R, G, B, A;
+    public float R, G, B, A;
 
     public Colour(byte r, byte g, byte b, byte a = 255)
+    {
+        R = r;
+        G = g;
+        B = b;
+        A = a;
+    }
+    public Colour(float r, float g, float b, float a = 255f)
     {
         R = r;
         G = g;
