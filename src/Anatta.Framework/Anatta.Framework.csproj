@@ -45,7 +45,6 @@
     </ItemGroup>
     <ItemGroup>
       <Folder Include="Graphics\Shapes\" />
-      <Folder Include="SDL3\" />
     </ItemGroup>
 
 </Project>

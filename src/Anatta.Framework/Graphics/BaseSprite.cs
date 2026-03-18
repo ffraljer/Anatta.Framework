@@ -1,9 +1,9 @@
 ﻿using Anatta.Framework.Interfaces.Graphics;
 using OpenTK.Mathematics;
 
-namespace Anatta.Framework.Graphics.Animations;
+namespace Anatta.Framework.Graphics;
 
-public abstract class _Sprite : ISprite, IUpdatable {
+public abstract class BaseSprite : ISprite, IUpdatable {
     public abstract Texture Texture { get; protected set; }
     public Vector2 Position { get; set; }
     public Vector2 Scale { get; set; } = Vector2.One;
@@ -12,6 +12,12 @@ public abstract class _Sprite : ISprite, IUpdatable {
 
     public Anchors Origin { get; set; } = Anchors.TopLeft;
     public Anchors Anchor { get; set; } = Anchors.TopLeft;
+    
+    internal bool _isHovering = false;
+
+    public event Action<ISprite>? OnClick;
+    public event Action<ISprite>? OnHover;
+    public event Action<ISprite>? OnHoverLost;
 
     protected List<ITween> _tweens = new();
     protected float _sequenceTime = 0f;
@@ -119,10 +125,18 @@ public abstract class _Sprite : ISprite, IUpdatable {
 
         return this;
     }
-    
-    public event Action<ISprite>? OnClick;
-
+	internal void TriggerHover() {
+		OnHover?.Invoke(this);
+	}
+	internal void TriggerHoverLost() {
+		OnHoverLost?.Invoke(this);
+	}
+	internal void TriggerClick() {
+		OnClick?.Invoke(this);
+	}
     public virtual void Dispose()
     {
     }
+	
+	public abstract Vector2 GetSize();
 }

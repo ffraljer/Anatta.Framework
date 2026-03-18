@@ -158,7 +158,11 @@ public class Manager : IDisposable {
             Matrix4.CreateTranslation(sprite.Position.X, sprite.Position.Y, 0f) *
             Matrix4.CreateTranslation(anchorOffset.X, anchorOffset.Y, 0f);
         shd.SetMatrix4("transform", transform);
-        shd.SetVector4("uTint", sprite.Colour.ToVector4());
+		var vec4tint = new Vector4(sprite.Colour.R / 255f, 
+            sprite.Colour.G / 255f, 
+            sprite.Colour.B / 255f, 
+            sprite.Alpha / 255f);
+        shd.SetVector4("uTint", vec4tint);
 
         GL.DrawArrays(PrimitiveType.Triangles, 0, 6);
     }

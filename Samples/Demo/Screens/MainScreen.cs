@@ -2,6 +2,7 @@ using Anatta.Framework;
 using Anatta.Framework.Graphics;
 using Anatta.Framework.Graphics.Animations;
 using Anatta.Framework.Graphics.Managers;
+using Anatta.Framework.Input;
 using Anatta.Framework.IO;
 using Anatta.Framework.Sound;
 using OpenTK.Graphics.OpenGL;
@@ -36,7 +37,6 @@ public class MainScreen : Screen {
         player.Position = new Vector2(0);
         player.Anchor = Anchors.TopRight;
         player.Origin = Anchors.TopRight;
-        
         //sprite.ScaleTo(new Vector2(4), 10);
         sprite
             .FadeTo(255, 10)
@@ -56,11 +56,18 @@ public class MainScreen : Screen {
         Add(player);
         Add(playes2r);
         Add(playe2r);
-        _music.Play();
     }
 
     public override void Update() {
         base.Update();
+        Console.Write($"\rMouse: {Mouse.X}, {Mouse.Y}      ");
+        if (Keyboard.IsKeyPressed(Keyboard.Key.Space)) {
+            _music.Play();
+        }
+        if (Mouse.IsButtonPressed(Mouse.Button.Left))
+        {
+            Console.WriteLine("Left click!");
+        }
     }
 
     public override void Draw(int width, int height) {
