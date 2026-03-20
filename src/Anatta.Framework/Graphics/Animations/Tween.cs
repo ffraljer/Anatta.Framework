@@ -1,4 +1,4 @@
-namespace Anatta.Framework.Graphics.Animations;
+namespace Anatta.Framework.Graphics;
 
 internal class Tween<T> : ITween {
     public Func<T> Getter = null!;
@@ -9,36 +9,36 @@ internal class Tween<T> : ITween {
     public float Delay;
     public T End = default!;
     public float Duration;
-    public float pTime;
+    public float Time;
     public Func<T, T, float, T> Lerp = null!;
 
-    private bool started;
+    private bool _started;
     public bool Update()
     {
         if (Delay > 0f)
         {
-            Delay -= Time.Delta;
+            Delay -= Framework.Time.Delta;
             return false;
         }
-        if (!started)
+        if (!_started)
         {
             Start = Getter();
-            started = true;
+            _started = true;
         }
         if (Duration <= 0f)
         {
             Setter(End);
             return true;
         }
-        pTime += Time.Delta;
-        float t = Math.Clamp(pTime / Duration, 0f, 1f);
-        t = _ease.Evaluate(Ease, t);
+        Time += Framework.Time.Delta;
+        float t = Math.Clamp(Time / Duration, 0f, 1f);
+        t = _EasingHelper.Evaluate(Ease, t);
         Setter(Lerp(Start, End, t));
-        if (pTime >= Duration)
+        if (Time >= Duration)
         {
             if (Loop)
             {
-                pTime = 0f;
+                Time = 0f;
                 Setter(Start);
                 return false;
             }

@@ -1,4 +1,6 @@
+using Anatta.Framework.Graphics;
 using Anatta.Framework.Graphics.Helpers;
+using Anatta.Framework.Input;
 using Anatta.Framework.Interfaces.Graphics;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
@@ -7,11 +9,11 @@ using OpenTK.Windowing.GraphicsLibraryFramework;
 namespace Anatta.Framework.Graphics.Managers;
 
 public class Manager : IDisposable {
-    private readonly List<IManageable> managables = new();
-    
-    private int vao;
-    private int vbo;
-    private Shader shd;
+    private readonly List<IManageable> _managables = new();
+    public static Vector2i ScreenSize { get; set; }
+    private int _vao;
+    private int _vbo;
+    private Shader _shd;
     
     private bool initialized = false;
 
@@ -36,11 +38,11 @@ public class Manager : IDisposable {
     {
         if (initialized) return;
         
-        vao = GL.GenVertexArray();
-        vbo = GL.GenBuffer();
+        _vao = GL.GenVertexArray();
+        _vbo = GL.GenBuffer();
 
-        GL.BindVertexArray(vao);
-        GL.BindBuffer(BufferTarget.ArrayBuffer, vbo);
+        GL.BindVertexArray(_vao);
+        GL.BindBuffer(BufferTarget.ArrayBuffer, _vbo);
         GL.BufferData(
             BufferTarget.ArrayBuffer,
             quad.Length * sizeof(float),
@@ -56,7 +58,7 @@ public class Manager : IDisposable {
             1, 2, VertexAttribPointerType.Float, false, 4 * sizeof(float), 2 * sizeof(float)
         );
 
-        shd = Shader.Load("vertexSprite.glsl", "fragmentSprite.glsl");
+        _shd = Shader.Load("vertexSprite.glsl", "fragmentSprite.glsl");
 
         GL.BindVertexArray(0);
         GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
@@ -64,13 +66,13 @@ public class Manager : IDisposable {
         initialized = true;
     }
 
-    public IEnumerable<IManageable> GetAll() => managables;
+    public IEnumerable<IManageable> GetAll() => _managables;
 
     public void Add(IManageable managed) {
         if (managed == null)
             throw new ArgumentNullException(nameof(managed));
 
-        managables.Add(managed);
+        _managables.Add(managed);
     }
 
     public void AddRange(params IManageable[] managedItems) {
@@ -79,21 +81,64 @@ public class Manager : IDisposable {
 
         foreach (var m in managedItems) {
             if (m != null)
-                managables.Add(m);
+                _managables.Add(m);
         }
     }
 
     public void Remove(IManageable managed) {
         if (managed == null) return;
-        managables.Remove(managed);
+        _managables.Remove(managed);
     }
 
     public void Update() {
         float delta = Time.Delta;
 
-        foreach (var item in managables) {
+        var mousePos = new Vector2(Mouse.X, Mouse.Y);
+        
+        foreach (var item in _managables) {
             if (item is IUpdatable u)
                 u.Update();
+            
+            if (item is BaseSprite sprite)
+            {
+                Vector2 size = sprite.GetSize() * sprite.Scale;
+
+                Vector2 originNorm = AnchorHelper.ToNormalised(sprite.Origin);
+                Vector2 originOffset = originNorm * size;
+
+                Vector2 anchorNorm = AnchorHelper.ToNormalised(sprite.Anchor);
+                Vector2 anchorOffset = new Vector2(
+                    anchorNorm.X * ScreenSize.X,
+                    anchorNorm.Y * ScreenSize.Y
+                );
+
+                Vector2 pos = sprite.Position - originOffset + anchorOffset;
+
+                bool hovering = mousePos.X >= pos.X &&
+                                mousePos.X <= pos.X + size.X &&
+                                mousePos.Y >= pos.Y &&
+                                mousePos.Y <= pos.Y + size.Y;
+
+                if (hovering)
+                {
+                    if (!sprite._isHovering)
+                    {
+                        sprite._isHovering = true;
+                        sprite.TriggerHover();
+                    }
+
+                    if (Mouse.IsButtonPressed(Mouse.Button.Left))
+                        sprite.TriggerClick();
+                }
+                else
+                {
+                    if (sprite._isHovering)
+                    {
+                        sprite._isHovering = false;
+                        sprite.TriggerHoverLost();
+                    }
+                }
+            }
         }
     }
 
@@ -104,14 +149,14 @@ public class Manager : IDisposable {
         
         Begin(screenW, screenH);
 
-        foreach (var item in managables)
+        foreach (var item in _managables)
             DrawItem(item, screenW, screenH);
 
         End();
     }
 
     private void Begin(int screenW, int screenH) {
-        shd.Use();
+        _shd.Use();
 
         var projection = Matrix4.CreateOrthographicOffCenter(
             0, screenW,
@@ -119,10 +164,10 @@ public class Manager : IDisposable {
             -1, 1
         );
 
-        shd.SetMatrix4("uProjection", projection);
+        _shd.SetMatrix4("uProjection", projection);
 
         GL.ActiveTexture(TextureUnit.Texture0);
-        GL.BindVertexArray(vao);
+        GL.BindVertexArray(_vao);
 
         GL.Enable(EnableCap.Blend);
         GL.BlendFunc(
@@ -137,7 +182,7 @@ public class Manager : IDisposable {
 
         sprite.Texture.Bind();
         GL.Uniform1i(
-            GL.GetUniformLocation(shd.Handle, "tex"),
+            GL.GetUniformLocation(_shd.Handle, "tex"),
             0
         );
         var size = new Vector2(
@@ -157,12 +202,8 @@ public class Manager : IDisposable {
             Matrix4.CreateRotationZ(sprite.Rotation) *
             Matrix4.CreateTranslation(sprite.Position.X, sprite.Position.Y, 0f) *
             Matrix4.CreateTranslation(anchorOffset.X, anchorOffset.Y, 0f);
-        shd.SetMatrix4("transform", transform);
-		var vec4tint = new Vector4(sprite.Colour.R / 255f, 
-            sprite.Colour.G / 255f, 
-            sprite.Colour.B / 255f, 
-            sprite.Alpha / 255f);
-        shd.SetVector4("uTint", vec4tint);
+        _shd.SetMatrix4("transform", transform);
+        _shd.SetVector4("uTint", sprite.Colour.ToVector4());
 
         GL.DrawArrays(PrimitiveType.Triangles, 0, 6);
     }
@@ -172,16 +213,16 @@ public class Manager : IDisposable {
     }
 
     public void Dispose() {
-        foreach (var item in managables) {
+        foreach (var item in _managables) {
             if (item is IDisposable d)
                 d.Dispose();
         }
 
-        managables.Clear();
+        _managables.Clear();
 
-        GL.DeleteBuffer(vbo);
-        GL.DeleteVertexArray(vao);
+        GL.DeleteBuffer(_vbo);
+        GL.DeleteVertexArray(_vao);
 
-        shd.Dispose();
+        _shd.Dispose();
     }
 }

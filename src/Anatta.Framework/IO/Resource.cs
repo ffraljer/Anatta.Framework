@@ -5,11 +5,11 @@ using Anatta.Framework.Sound;
 namespace Anatta.Framework.IO {
     public class Resource
     {
-        private static readonly List<IResourceStore> stores = new();
+        private static readonly List<IResourceStore> Stores = new();
         private readonly string rootNamespace;
         public static void AddStore(IResourceStore store) {
-            if (!stores.Contains(store))
-                stores.Add(store);
+            if (!Stores.Contains(store))
+                Stores.Add(store);
         }
         public static T Load<T>(string name)
         {
@@ -17,7 +17,7 @@ namespace Anatta.Framework.IO {
             string fullName = $"{folder}/{name}";
             Stream? stream = null;
 
-            foreach (var store in stores) {
+            foreach (var store in Stores) {
                 stream = store.Open(fullName);
                 if (stream != null)
                     break;
@@ -57,7 +57,7 @@ namespace Anatta.Framework.IO {
                 return (T)(object)new FontFace(bytes);
             }
             if (typeof(T) == typeof(Shader)) {
-                foreach (var store in stores) {
+                foreach (var store in Stores) {
                     using var vr = store.Open($"Shaders/{name}.glsl");
                     using var fr = store.Open($"Shaders/{name}Fragment.glsl");
 
@@ -110,7 +110,7 @@ namespace Anatta.Framework.IO {
             throw new NotSupportedException(typeof(T).Name);
         }
         public static Shader LoadShader(string name) {
-            foreach (var store in stores) {
+            foreach (var store in Stores) {
                 using var vr = store.Open($"Shaders/{name}.glsl");
                 using var fr = store.Open($"Shaders/{name}Fragment.glsl");
 

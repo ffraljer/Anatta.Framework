@@ -1,7 +1,5 @@
 using Anatta.Framework.Graphics.Managers;
 using Anatta.Framework.Interfaces.Graphics;
-using OpenTK.Windowing.GraphicsLibraryFramework;
-using System.Reflection;
 
 namespace Anatta.Framework.Graphics;
 

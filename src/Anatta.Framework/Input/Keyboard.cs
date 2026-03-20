@@ -1,28 +1,28 @@
 ﻿namespace Anatta.Framework.Input;
 
 public static class Keyboard {
-    private static readonly HashSet<Keyboard.Key> _current = new();
-    private static readonly HashSet<Keyboard.Key> _previous = new();
+    private static readonly HashSet<Key> Current = new();
+    private static readonly HashSet<Key> Previous = new();
 
     internal static void BeginFrame() {
-        _previous.Clear();
-        foreach (var key in _current)
-            _previous.Add(key);
+        Previous.Clear();
+        foreach (var key in Current)
+            Previous.Add(key);
     }
-    internal static void KeyDown(Keyboard.Key keyboardKey) {
-        _current.Add(keyboardKey);
+    internal static void KeyDown(Key keyboardKey) {
+        Current.Add(keyboardKey);
     }
-    internal static void KeyUp(Keyboard.Key keyboardKey) {
-        _current.Remove(keyboardKey);
+    internal static void KeyUp(Key keyboardKey) {
+        Current.Remove(keyboardKey);
     }
-    public static bool IsKeyDown(Keyboard.Key keyboardKey) {
-        return _current.Contains(keyboardKey);
+    public static bool IsKeyDown(Key keyboardKey) {
+        return Current.Contains(keyboardKey);
     }
-    public static bool IsKeyPressed(Keyboard.Key keyboardKey) {
-        return _current.Contains(keyboardKey) && !_previous.Contains(keyboardKey);
+    public static bool IsKeyPressed(Key keyboardKey) {
+        return Current.Contains(keyboardKey) && !Previous.Contains(keyboardKey);
     }
-    public static bool IsKeyReleased(Keyboard.Key keyboardKey) {
-        return !_current.Contains(keyboardKey) && _previous.Contains(keyboardKey);
+    public static bool IsKeyReleased(Key keyboardKey) {
+        return !Current.Contains(keyboardKey) && Previous.Contains(keyboardKey);
     }
 	#region keys
 	public enum Key {

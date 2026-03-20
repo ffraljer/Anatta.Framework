@@ -17,8 +17,7 @@ public class GameBase : Application
     public static GameBase Instance;
     private ScreenManager manager2;
 
-    public GameBase(Vector2i tize, bool UseSDL, string title = "Demo Game") : base(tize, title, UseSDL)
-    {
+    public GameBase(Vector2i tize, bool UseSDL, string title = "Demo Game") : base(tize, title, UseSDL) {
         manager = new();
         manager2 = new();
         Instance = this;
@@ -27,9 +26,7 @@ public class GameBase : Application
 
     }
 
-    protected override void Initialise()
-    {
-        //Resource.Init("Demo");
+    protected override void Initialise() {
         Resource.AddStore(new AssemblyStore(typeof(_Resource).Assembly, "Demo.Resources"));
         manager2.Push(new MainScreen(manager));
         base.Initialise();

@@ -1,7 +1,9 @@
 using OpenTK;
 using SDL3;
 
-internal class SDLBindingsContext : IBindingsContext
+namespace Anatta.Framework;
+
+internal class _SDLBindingsContext : IBindingsContext
 {
     public IntPtr GetProcAddress(string procName)
     {

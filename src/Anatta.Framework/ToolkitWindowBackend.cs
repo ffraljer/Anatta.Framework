@@ -7,10 +7,10 @@ using OpenTK.Windowing.GraphicsLibraryFramework;
 namespace Anatta.Framework;
 
 internal class ToolkitWindowBackend : IWindowBackend {
-    private GameWindow window;
+    private GameWindow _window;
 
-    public Vector2i Size => window.ClientSize;
-    public KeyboardState KeyboardState => window.KeyboardState;
+    public Vector2i Size => _window.ClientSize;
+    public KeyboardState KeyboardState => _window.KeyboardState;
 
     public event Action? Load;
     public event Action<float>? RenderFrame;
@@ -24,11 +24,11 @@ internal class ToolkitWindowBackend : IWindowBackend {
             ClientSize = size
         };
 
-        window = new GameWindow(GameWindowSettings.Default, native);
+        _window = new GameWindow(GameWindowSettings.Default, native);
 
-        window.Load += () => Load?.Invoke();
+        _window.Load += () => Load?.Invoke();
 		
-        window.UpdateFrame += args =>
+        _window.UpdateFrame += args =>
         {
 	        Keyboard.BeginFrame();
 	        Mouse.BeginFrame();
@@ -38,12 +38,12 @@ internal class ToolkitWindowBackend : IWindowBackend {
 		        if (converted == Keyboard.Key.None)
 			        continue;
 
-		        if (window.KeyboardState.IsKeyDown(key))
+		        if (_window.KeyboardState.IsKeyDown(key))
 			        Keyboard.KeyDown(converted);
 		        else
 			        Keyboard.KeyUp(converted);
 	        }
-	        var mouse = window.MouseState;
+	        var mouse = _window.MouseState;
 	        _MAP(mouse, MouseButton.Left, Mouse.Button.Left);
 	        _MAP(mouse, MouseButton.Right, Mouse.Button.Right);
 	        _MAP(mouse, MouseButton.Middle, Mouse.Button.Middle);
@@ -54,17 +54,17 @@ internal class ToolkitWindowBackend : IWindowBackend {
 	        {
 	        }
         };
-        window.RenderFrame += args =>
+        _window.RenderFrame += args =>
         {
             RenderFrame?.Invoke((float)args.Time);
-            window.SwapBuffers();
+            _window.SwapBuffers();
         };
-        window.Resize += args =>
+        _window.Resize += args =>
         {
             GL.Viewport(0, 0, args.Width, args.Height);
         };
 
-        window.Unload += () => Unload?.Invoke();
+        _window.Unload += () => Unload?.Invoke();
     }
     private static void _MAP(MouseState mouse, MouseButton otk, Mouse.Button myButton)
     {
@@ -74,11 +74,11 @@ internal class ToolkitWindowBackend : IWindowBackend {
 		    Mouse.ButtonUp(myButton);
     }
 
-    public void Run() => window.Run();
+    public void Run() => _window.Run();
 
-    public void SwapBuffers() => window.SwapBuffers();
+    public void SwapBuffers() => _window.SwapBuffers();
 
-    public void Dispose() => window.Dispose();
+    public void Dispose() => _window.Dispose();
 	
 	private static Keyboard.Key ConvertKey(Keys key)
 	{

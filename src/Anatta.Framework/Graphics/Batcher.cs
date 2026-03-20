@@ -7,12 +7,13 @@ namespace Anatta.Framework.Graphics;
 // my plan is to "unify" Manager and this. or, possibly behead batcher and replace it with
 //manager. (or, you know. kill both of them)
 // done
-[Obsolete("Use Manager instead.")]
+[Obsolete("Use Manager instead.", true)]
 public class Batcher : IDisposable
 {
-    public int vao, vbo;
-    public Shader shd;
-    public static readonly float[] quad =
+    public int VAO, VBO;
+    public Shader Shader;
+    
+    private static readonly float[] _quad =
     {
         // X,  Y,  U,  V
         0f, 1f, 0f, 1f,
@@ -25,12 +26,12 @@ public class Batcher : IDisposable
     };
     public Batcher()
     {
-        vao = GL.GenVertexArray();
-        vbo = GL.GenBuffer();
+        VAO = GL.GenVertexArray();
+        VBO = GL.GenBuffer();
 
-        GL.BindVertexArray(vao);
-        GL.BindBuffer(BufferTarget.ArrayBuffer, vbo);
-        GL.BufferData(BufferTarget.ArrayBuffer, quad.Length * sizeof(float), quad, BufferUsage.StaticDraw);
+        GL.BindVertexArray(VAO);
+        GL.BindBuffer(BufferTarget.ArrayBuffer, VBO);
+        GL.BufferData(BufferTarget.ArrayBuffer, _quad.Length * sizeof(float), _quad, BufferUsage.StaticDraw);
 
 
         GL.EnableVertexAttribArray(0);
@@ -38,22 +39,22 @@ public class Batcher : IDisposable
         GL.EnableVertexAttribArray(1);
         GL.VertexAttribPointer(1, 2, VertexAttribPointerType.Float, false, 4 * sizeof(float), 2 * sizeof(float));
 
-        shd = Shader.Load("vertexSprite.glsl", "fragmentSprite.glsl");
+        Shader = Shader.Load("vertexSprite.glsl", "fragmentSprite.glsl");
 
         GL.BindVertexArray(0);
         GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
     }
     public void Begin(int screenW, int screenH)
     {
-        shd.Use();
+        Shader.Use();
 
         Matrix4 projection = Matrix4.CreateOrthographicOffCenter(
             0, screenW, screenH, 0, -1, 1);
-        shd.SetMatrix4("uProjection", projection);
+        Shader.SetMatrix4("uProjection", projection);
 
 
         GL.ActiveTexture(TextureUnit.Texture0);
-        GL.BindVertexArray(vao);
+        GL.BindVertexArray(VAO);
 
         GL.Enable(EnableCap.Blend);
         GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
@@ -66,12 +67,12 @@ public class Batcher : IDisposable
        
     public void Draw(IManageable item)
     {
-        shd.Use();
-        GL.BindVertexArray(vao);
+        Shader.Use();
+        GL.BindVertexArray(VAO);
         if (item is not ISprite sprite) return;
 
         sprite.Texture.Bind();
-        GL.Uniform1i(GL.GetUniformLocation(shd.Handle, "tex"), 0);
+        GL.Uniform1i(GL.GetUniformLocation(Shader.Handle, "tex"), 0);
 
         Vector2 finalPos = sprite.Position;
 
@@ -82,25 +83,25 @@ public class Batcher : IDisposable
                 sprite.Texture.Height * sprite.Scale.Y, 1f) *
             Matrix4.CreateTranslation(sprite.Position.X, sprite.Position.Y, 0f);
 
-        shd.SetMatrix4("transform", transform);
+        Shader.SetMatrix4("transform", transform);
 
         GL.DrawArrays(PrimitiveType.Triangles, 0, 6);
     }
     public void Dispose()
     {
-        if (vbo != 0)
+        if (VBO != 0)
         {
-            GL.DeleteBuffer(vbo);
-            vbo = 0;
+            GL.DeleteBuffer(VBO);
+            VBO = 0;
         }
 
-        if (vao != 0)
+        if (VAO != 0)
         {
-            GL.DeleteVertexArray(vao);
-            vao = 0;
+            GL.DeleteVertexArray(VAO);
+            VAO = 0;
         }
 
-        shd?.Dispose();
-        shd = null!;
+        Shader?.Dispose();
+        Shader = null!;
     }
 }

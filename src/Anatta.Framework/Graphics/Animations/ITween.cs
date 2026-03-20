@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Anatta.Framework.Graphics.Animations
+﻿namespace Anatta.Framework.Graphics
 {
     public interface ITween
     {

@@ -3,29 +3,27 @@ using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 using SDL3;
-using System.Runtime.InteropServices;
 using Anatta.Framework.Input;
 
 namespace Anatta.Framework;
 
-internal class SDLWindowBackend : IWindowBackend
+internal class DefaultWindowBackend : IWindowBackend
 {
-    private IntPtr window;
-    private IntPtr context;
+    private readonly IntPtr _window;
+    private readonly IntPtr _context;
 
     public Vector2i Size { get; private set; }
 
     public KeyboardState KeyboardState => default;
 
-    public IntPtr WindowHandle;
+    public IntPtr WindowHandle => _window;
 
     public event Action? Load;
     public event Action<float>? RenderFrame;
     public event Action? Unload;
 
-    public bool MaximizeButton => false;
 
-    public SDLWindowBackend(Vector2i size, string title)
+    public DefaultWindowBackend(Vector2i size, string title)
     {
         Size = size;
 
@@ -37,15 +35,15 @@ internal class SDLWindowBackend : IWindowBackend
         SDL.GLSetAttribute(SDL.GLAttr.DoubleBuffer, 1);
         SDL.GLSetAttribute(SDL.GLAttr.DepthSize, 24);
 
-        window = SDL.CreateWindow(
+        _window = SDL.CreateWindow(
             title,
             size.X,
             size.Y,
             SDL.WindowFlags.OpenGL | SDL.WindowFlags.Resizable
         );
-        context = SDL.GLCreateContext(window);
-        SDL.GLMakeCurrent(window, context);
-        GLLoader.LoadBindings(new SDLBindingsContext());
+        _context = SDL.GLCreateContext(_window);
+        SDL.GLMakeCurrent(_window, _context);
+        GLLoader.LoadBindings(new _SDLBindingsContext());
     }
     public void Run()
     {
@@ -57,7 +55,7 @@ internal class SDLWindowBackend : IWindowBackend
         {
             Keyboard.BeginFrame();
             Mouse.BeginFrame();
-            while (SDL.PollEvent(out var @event) == true)
+            while (SDL.PollEvent(out var @event))
             {
                 switch ((SDL.EventType)@event.Type)
                 {
@@ -76,11 +74,11 @@ internal class SDLWindowBackend : IWindowBackend
                         Keyboard.KeyUp(ConvertKey(@event.Key.Key));
                         break;
                     case SDL.EventType.MouseButtonDown:
-                        Mouse.ButtonDown((Input.Mouse.Button)(@event.Button.Button - 1));
+                        Mouse.ButtonDown((Mouse.Button)(@event.Button.Button - 1));
                         break;
 
                     case SDL.EventType.MouseButtonUp:
-                        Mouse.ButtonUp((Input.Mouse.Button)(@event.Button.Button - 1));
+                        Mouse.ButtonUp((Mouse.Button)(@event.Button.Button - 1));
                         break;
                     case SDL.EventType.MouseMotion:
                         Mouse.Move(@event.Motion.X, @event.Motion.Y);
@@ -93,7 +91,7 @@ internal class SDLWindowBackend : IWindowBackend
 
             RenderFrame?.Invoke(dt);
 
-            SDL.GLSwapWindow(window);
+            SDL.GLSwapWindow(_window);
         }
 
         Unload?.Invoke();
@@ -102,13 +100,13 @@ internal class SDLWindowBackend : IWindowBackend
 
     public void SwapBuffers()
     {
-        SDL.GLSwapWindow(window);
+        SDL.GLSwapWindow(_window);
     }
 
     public void Dispose()
     {
-        SDL.GLDestroyContext(context);
-        SDL.DestroyWindow(window);
+        SDL.GLDestroyContext(_context);
+        SDL.DestroyWindow(_window);
     }
 
     #region  keys

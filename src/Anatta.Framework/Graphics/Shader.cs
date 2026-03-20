@@ -19,10 +19,10 @@ public class Shader : IDisposable
         using Stream fr = a.GetManifestResourceStream($"Anatta.Framework.Resources.{fragment}")
                           ?? throw new FileNotFoundException($"{fragment}  cannot be found");
 
-        using var vreader = new StreamReader(vr);
-        using var freader = new StreamReader(fr);
+        using var streamReaderVertex = new StreamReader(vr);
+        using var streamReaderFragment = new StreamReader(fr);
 
-        return new Shader(vreader.ReadToEnd(), freader.ReadToEnd());
+        return new Shader(streamReaderVertex.ReadToEnd(), streamReaderFragment.ReadToEnd());
     }
 
     public Shader(string vtx, string frg)
@@ -46,7 +46,7 @@ public class Shader : IDisposable
         if (success == 0)
         {
             GL.GetProgramInfoLog(Handle, out string info);
-            throw new Exception($"ur fucking shader broke broo {info}");
+            throw new Exception($"ur fucking shader broke bro {info}");
         }
         
         G.DetachShader(Handle, vtxS);
@@ -62,7 +62,7 @@ public class Shader : IDisposable
         if (success == 0)
         {
             GL.GetShaderInfoLog(shader, out string info);
-            throw new Exception($"ur {type} shader fuckin' broke: {info}");
+            throw new Exception($"ur {type} shader fucking broke: {info}");
         }
     }
 

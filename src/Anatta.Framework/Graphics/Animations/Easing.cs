@@ -1,4 +1,4 @@
-﻿namespace Anatta.Framework.Graphics.Animations;
+﻿namespace Anatta.Framework.Graphics;
 
 public enum Easing {
     None,

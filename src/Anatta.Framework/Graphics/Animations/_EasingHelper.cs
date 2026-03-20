@@ -1,6 +1,6 @@
-﻿namespace Anatta.Framework.Graphics.Animations;
+﻿namespace Anatta.Framework.Graphics;
 
-public static class _ease {
+internal static class _EasingHelper {
     //taken from fraljer client lol
     public static float Evaluate(Easing easing, float t) {
         return easing switch {

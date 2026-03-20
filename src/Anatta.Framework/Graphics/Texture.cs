@@ -22,7 +22,7 @@ public class Texture : IDisposable
     /// Height of the current Texture.
     /// </summary>
     public int Height { get; private set; }
-    private static string[] names = { ".png", ".jpeg", ".jpg", ".xnb" };
+    private static string[] _names = { ".png", ".jpeg", ".jpg", ".xnb" };
 
     /// <summary>
     /// Loads a Texture from an Embedded Resource.
@@ -32,16 +32,15 @@ public class Texture : IDisposable
     /// <returns>The loaded Texture.</returns>
     /// <exception cref="FileNotFoundException">Throws if the texture cannot be found.</exception>
     public static Texture Load(string name) {
-        foreach (var ext in names) {
+        foreach (var ext in _names) {
             string resourceName = name + ext;
             try {
                 return Resource.Load<Texture>(resourceName);
             }
             catch {
-
             }
         }
-        throw new FileNotFoundException($"{name} no found");
+        throw new FileNotFoundException($"{name} not found");
     }
     
     public static Texture FromImageBytes(byte[] bytes)
@@ -68,7 +67,7 @@ public class Texture : IDisposable
 
         GL.TexImage2D(TextureTarget.Texture2d,
             0,
-            InternalFormat.Rgba, // used to be pixelinternalformat but I think it's OK
+            InternalFormat.Rgba,
             width,
             height,
             0,

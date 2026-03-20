@@ -10,15 +10,15 @@ namespace Anatta.Framework.Sound {
     {
         public enum Bindings {
             Bass = 1,
-            AL
+            Al // Weird...
         }
 
         public static Bindings Binding = Bindings.Bass;
         
-        private static bool UseOpenAL = false;
+        private static bool _useOpenAl = false;
         
         static readonly ConcurrentDictionary<int, GCHandle> PinnedBuffers = new(); 
-        static readonly ConcurrentDictionary<int, int> OpenALBuffers = new();
+        static readonly ConcurrentDictionary<int, int> AlBuffers = new();
 
         static bool openAlInitialized = false;
         static ALCDevice _device;
@@ -33,17 +33,17 @@ namespace Anatta.Framework.Sound {
         {
             switch (Binding) {
                 case (Bindings.Bass):
-                    UseOpenAL = false;
+                    _useOpenAl = false;
                     break;
-                case (Bindings.AL):
-                    UseOpenAL = true;
+                case (Bindings.Al):
+                    _useOpenAl = true;
                     break;
             }
             if (data == null || data.Length == 0)
                 throw new ArgumentException(nameof(data));
 
-            if (UseOpenAL)
-                return PlayAL(data, loop);
+            if (_useOpenAl)
+                return _PlayAl(data, loop);
             else
                 return PlayRg(data, loop);
         }
@@ -71,17 +71,17 @@ namespace Anatta.Framework.Sound {
             PinnedBuffers[stream] = handle;
             
             if(!loop)
-            Bass.ChannelSetSync(stream, SyncFlags.End, 0, (handleSync, channel, dataPtr, user) =>
-            {
-                if (PinnedBuffers.TryRemove(channel, out var h) && h.IsAllocated)
-                    h.Free();
-                Bass.StreamFree(channel);
-            }, IntPtr.Zero);
+                Bass.ChannelSetSync(stream, SyncFlags.End, 0, (handleSync, channel, dataPtr, user) =>
+                {
+                    if (PinnedBuffers.TryRemove(channel, out var h) && h.IsAllocated)
+                        h.Free();
+                    Bass.StreamFree(channel);
+                }, IntPtr.Zero);
 
             Bass.ChannelPlay(stream);
             return stream;
         }
-        private static void initAL()
+        private static void _InitAL()
         {
             if (openAlInitialized)
                 return;
@@ -99,14 +99,14 @@ namespace Anatta.Framework.Sound {
             openAlInitialized = true;
         }
 
-        private static int PlayAL(byte[] compressedData, bool loop)
+        private static int _PlayAl(byte[] compressedData, bool loop)
         {
-            initAL();
+            _InitAL();
 
             int sampleRate;
             int channels;
 
-            byte[] pcm = decodetopcm(compressedData, out sampleRate, out channels);
+            byte[] pcm = _DecodeToPcm(compressedData, out sampleRate, out channels);
 
             Format format =
                 channels == 1 ? Format.FormatMono16 :
@@ -121,7 +121,7 @@ namespace Anatta.Framework.Sound {
             AL.Sourcei(source, SourcePNameI.Looping, loop ? 1 : 0);
             AL.SourcePlay(source);
 
-            OpenALBuffers[source] = buffer;
+            AlBuffers[source] = buffer;
 
             return source;
         }
@@ -148,9 +148,9 @@ namespace Anatta.Framework.Sound {
 
             openAlInitialized = false;
         }
-        static byte[] decodetopcm(byte[] compressedData, out int sampleRate, out int channels)
+        private static byte[] _DecodeToPcm(byte[] compressedData, out int sampleRate, out int channels)
         {
-            initBass();
+            _InitBass();
             
             int stream = Bass.CreateStream(
                 compressedData,
@@ -170,13 +170,13 @@ namespace Anatta.Framework.Sound {
 
             byte[] pcm = new byte[totalBytes];
 
-            int bytesRead = Bass.ChannelGetData(stream, pcm, totalBytes);
+            //int bytesRead = Bass.ChannelGetData(stream, pcm, totalBytes);
 
             Bass.StreamFree(stream);
 
             return pcm;
         }
-        static void initBass()
+        static void _InitBass()
         {
             if (Bass.Init()) return;
 

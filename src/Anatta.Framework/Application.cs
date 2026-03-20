@@ -1,42 +1,38 @@
-﻿using System.Reflection.PortableExecutable;
-using System.Runtime.InteropServices;
+﻿using System.Runtime.InteropServices;
+using Anatta.Framework.Configuration;
+using Anatta.Framework.Graphics.Managers;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
-using OpenTK.Windowing.GraphicsLibraryFramework;
 
 namespace Anatta.Framework;
 
 public class Application : IDisposable {
     public Time Time { get; } = new Time();
-    private readonly IWindowBackend backend;
+    private readonly IWindowBackend _backend;
     
-
-    /// <summary>
-    /// The bindow backend
-    /// </summary>
+    public FrameworkConfig Config { get; }
+    
     public static IWindowBackend Backend;
-
-    public static KeyboardState KeyboardState;
 
     public Vector2i Size;
 
-    protected Application(Vector2i size, string title = "Untitled", bool UseSDL = true)
+    protected Application(Vector2i size, string title = "Untitled", bool useSdl = true)
     {
-        backend = UseSDL
-            ? new SDLWindowBackend(size, title)
+        Config = new FrameworkConfig();
+        
+        _backend = useSdl
+            ? new DefaultWindowBackend(size, title)
             : new ToolkitWindowBackend(size, title);
-        Backend = backend;
+        Backend = _backend;
 
-        KeyboardState = backend.KeyboardState;
-
-        Size = backend.Size;
-        backend.Load += OnLoad;
-        backend.RenderFrame += OnRenderFrame;
-        backend.Unload += OnUnload;
-        if (!UseSDL)
+        Size = _backend.Size;
+        Manager.ScreenSize = Size;
+        _backend.Load += OnLoad;
+        _backend.RenderFrame += OnRenderFrame;
+        _backend.Unload += OnUnload;
+        if (!useSdl)
             Console.WriteLine("Use SDL.");
         else {
-            return;
         }
     }
     
@@ -47,15 +43,15 @@ public class Application : IDisposable {
 
     protected virtual void OnExit() { }
 
-    public void Run() => backend.Run();
+    public void Run() => _backend.Run();
 
     private void OnLoad()
     {
-        Console.WriteLine($"[Framework]\nWindow Size: {backend.Size.X}x{backend.Size.Y}\n" +
+        Console.WriteLine($"[Framework]\nWindow Size: {_backend.Size.X}x{_backend.Size.Y}\n" +
                           $"Renderer: {GL.GetString(StringName.Renderer)}" +
                           $"\n.NET Version: {Environment.Version}\n" +
                           $"OS: {RuntimeInformation.OSDescription}" +
-                          $"\nWindow Backend: {backend.ToString().TrimStart("Anatta.Framework.")}");
+                          $"\nWindow Backend: {_backend.ToString().TrimStart("Anatta.Framework.")}");
         //Console.WriteLine("\n\n[might be errors idk]");
         GL.ClearColor(0f, 0f, 0f, 1f);
         Initialise();
@@ -79,6 +75,6 @@ public class Application : IDisposable {
 
     public void Dispose()
     {
-        backend.Dispose();
+        _backend.Dispose();
     }
 }
