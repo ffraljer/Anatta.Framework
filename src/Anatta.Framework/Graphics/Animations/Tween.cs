@@ -3,6 +3,8 @@ namespace Anatta.Framework.Graphics;
 internal class Tween<T> : ITween {
     public Func<T> Getter = null!;
     public Action<T> Setter = null!;
+    public bool Restart;
+    private T og = default!;
     public T Start = default!;
     public Easing Ease = Easing.None;
     public bool Loop;
@@ -22,7 +24,9 @@ internal class Tween<T> : ITween {
         }
         if (!_started)
         {
-            Start = Getter();
+            
+            og = Getter();
+            Start = og;
             _started = true;
         }
         if (Duration <= 0f)
@@ -39,7 +43,13 @@ internal class Tween<T> : ITween {
             if (Loop)
             {
                 Time = 0f;
-                Setter(Start);
+                if (Restart) {
+                    Start = og;
+                    Setter(og);
+                }
+                else {
+                    Start = og;
+                }
                 return false;
             }
             else

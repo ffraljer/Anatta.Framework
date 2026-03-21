@@ -8,6 +8,9 @@ public class Screen : IDisposable {
     
     public bool IsActive { get; private set; } = true;
     
+    private readonly List<IManageable> _owned = new();
+
+    
     public Screen(Manager manager) {
 
         Manager = manager
@@ -26,16 +29,21 @@ public class Screen : IDisposable {
     public virtual void OnExit() { IsActive = false; }
 
     public void Add(IManageable item) {
-
+        _owned.Add(item);
         Manager.Add(item);
     }
 
-    public void Add(IManageable[] item) {
-
-        Manager.AddRange(item);
+    public void Add(IManageable[] items) {
+        foreach (var item in items) {
+            _owned.Add(item);
+            Manager.Add(item);
+        }
     }
-    public virtual void Dispose() {
 
-        Manager.Dispose();
+    public virtual void Dispose() {
+        foreach (var item in _owned)
+            Manager.Remove(item);
+
+        _owned.Clear();
     }
 }

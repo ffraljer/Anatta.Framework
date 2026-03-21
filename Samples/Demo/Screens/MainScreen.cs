@@ -71,6 +71,16 @@ public class MainScreen : Screen {
         Add(player);
         Add(playes2r);
         Add(playe2r);
+        var CLICKTO = new Text("CLICK TO ENTER A SCREEN", 24f, Colour.White) {
+            Anchor = Anchors.BottomRight,
+            Origin = Anchors.BottomRight
+        }.ColourTo(Colour.Green, 2, Easing.None, true, true);
+        CLICKTO.OnClick += delegate {
+            _music.Stop();
+            var click = new ClickToEntered(Manager);
+            GameBase.Instance.ScreenManager.Push(click, true, 1f); 
+        };
+        Add(CLICKTO);
     }
 
     public override void Update() {

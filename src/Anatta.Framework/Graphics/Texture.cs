@@ -18,6 +18,21 @@ public class Texture : IDisposable
     /// Width of the current Texture.
     /// </summary>
     public int Width { get; private set; }
+    
+    private static Texture? _whitePixel;
+    internal static Texture WhitePixel
+    {
+        get
+        {
+            if (_whitePixel == null)
+            {
+                byte[] data = { 255, 255, 255, 255 };
+                _whitePixel = new Texture(1, 1, data);
+            }
+
+            return _whitePixel;
+        }
+    }
     /// <summary>
     /// Height of the current Texture.
     /// </summary>

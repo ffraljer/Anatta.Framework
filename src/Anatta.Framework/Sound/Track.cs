@@ -1,3 +1,5 @@
+using Anatta.Framework.Graphics.Managers;
+
 namespace Anatta.Framework.Sound;
 
 public class Track : IDisposable
@@ -17,8 +19,8 @@ public class Track : IDisposable
         return new Track(Audio.LoadAudio(resource));
     }
 
-    public void Play()
-    {
+    public void Play() {
+        Console.WriteLine("[Track] Track Played");
         _handle = Audio.Play(_data, Loop);
     }
 

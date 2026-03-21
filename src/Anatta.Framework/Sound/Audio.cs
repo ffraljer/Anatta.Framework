@@ -17,13 +17,15 @@ namespace Anatta.Framework.Sound {
         
         private static bool _useOpenAl = false;
         
+        static bool _bassInitialized = false;
+        
         static readonly ConcurrentDictionary<int, GCHandle> PinnedBuffers = new(); 
         static readonly ConcurrentDictionary<int, int> AlBuffers = new();
 
         static bool openAlInitialized = false;
         static ALCDevice _device;
         static ALCContext _context;
-
+        static int _currentMusicStream = 0;
         internal static byte[] LoadAudio(string resourceName)
         {
             return Resource.Load<byte[]>(resourceName);
@@ -41,6 +43,9 @@ namespace Anatta.Framework.Sound {
             }
             if (data == null || data.Length == 0)
                 throw new ArgumentException(nameof(data));
+                    
+            if (_currentMusicStream != 0)
+                    Stop(_currentMusicStream);
 
             if (_useOpenAl)
                 return _PlayAl(data, loop);
@@ -51,11 +56,7 @@ namespace Anatta.Framework.Sound {
         private static int PlayRg(byte[] data, bool loop = false) {
             if (data == null || data.Length == 0) throw new ArgumentException(nameof(data));
 
-            if (!Bass.Init())
-            {
-                if (!Bass.Init(0))
-                    throw new InvalidOperationException($"init fail: {Bass.LastError}");
-            }
+            _InitBass();
 
             var handle = GCHandle.Alloc(data, GCHandleType.Pinned);
             IntPtr ptr = handle.AddrOfPinnedObject();
@@ -132,7 +133,8 @@ namespace Anatta.Framework.Sound {
 
             Bass.ChannelStop(stream);
             Bass.StreamFree(stream);
-
+            if (_currentMusicStream == stream)
+                _currentMusicStream = 0;
             if (PinnedBuffers.TryRemove(stream, out var h) && h.IsAllocated)
                 h.Free();
         }
@@ -178,13 +180,15 @@ namespace Anatta.Framework.Sound {
         }
         static void _InitBass()
         {
-            if (Bass.Init()) return;
+            if (_bassInitialized) return;
 
             if (!Bass.Init())
             {
                 if (!Bass.Init(0))
                     throw new InvalidOperationException($"Bass init failed: {Bass.LastError}");
             }
+
+            _bassInitialized = true;
         }
     }
 }

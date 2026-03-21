@@ -15,11 +15,11 @@ public class GameBase : Application
 {
     private Manager manager;
     public static GameBase Instance;
-    private ScreenManager manager2;
+    public ScreenManager ScreenManager;
 
     public GameBase(Vector2i tize, bool UseSDL, string title = "Demo Game") : base(tize, title, UseSDL) {
         manager = new();
-        manager2 = new();
+        ScreenManager = new();
         Instance = this;
         Audio.Binding = Audio.Bindings.Bass;
 
@@ -28,21 +28,21 @@ public class GameBase : Application
 
     protected override void Initialise() {
         Resource.AddStore(new AssemblyStore(typeof(_Resource).Assembly, "Demo.Resources"));
-        manager2.Push(new MainScreen(manager));
+        ScreenManager.Push(new MainScreen(manager));
         base.Initialise();
     }
 
     protected override void Update()
     {
         manager?.Update();
-        manager2.Update();
+        ScreenManager.Update();
     }
 
     protected override void Draw()
     {
         GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
         manager?.Draw(Size.X, Size.Y);
-        manager2.Draw(Size.X, Size.Y);
+        ScreenManager.Draw(Size.X, Size.Y);
         base.Draw();
     }
 }

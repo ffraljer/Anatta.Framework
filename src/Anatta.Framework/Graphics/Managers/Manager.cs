@@ -15,6 +15,8 @@ public class Manager : IDisposable {
     private int _vbo;
     private Shader _shd;
     
+    private bool _fuckBass = false; // _wasMouseDown
+    
     private bool initialized = false;
 
     public KeyboardState KeyboardState { get; set; }
@@ -95,7 +97,7 @@ public class Manager : IDisposable {
 
         var mousePos = new Vector2(Mouse.X, Mouse.Y);
         
-        foreach (var item in _managables) {
+        foreach (var item in _managables.ToArray()) {
             if (item is IUpdatable u)
                 u.Update();
             
@@ -127,8 +129,12 @@ public class Manager : IDisposable {
                         sprite.TriggerHover();
                     }
 
-                    if (Mouse.IsButtonPressed(Mouse.Button.Left))
+                    bool isDown = Mouse.IsButtonPressed(Mouse.Button.Left);
+
+                    if (isDown && !_fuckBass)
                         sprite.TriggerClick();
+
+                    _fuckBass = isDown;
                 }
                 else
                 {

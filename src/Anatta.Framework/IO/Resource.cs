@@ -7,6 +7,8 @@ namespace Anatta.Framework.IO {
     {
         private static readonly List<IResourceStore> Stores = new();
         private readonly string rootNamespace;
+        private static readonly Dictionary<string, object> Cache = new();
+        
         public static void AddStore(IResourceStore store) {
             if (!Stores.Contains(store))
                 Stores.Add(store);
@@ -15,6 +17,8 @@ namespace Anatta.Framework.IO {
         {
             string folder = GetTypeFolder(typeof(T));
             string fullName = $"{folder}/{name}";
+            if (Cache.TryGetValue(fullName, out var cached))
+                return (T)cached;
             Stream? stream = null;
 
             foreach (var store in Stores) {
@@ -51,7 +55,9 @@ namespace Anatta.Framework.IO {
             }
             if (typeof(T) == typeof(Track))
             {
-                return (T)(object)new Track(bytes);
+                var track = new Track(bytes);
+                Cache[fullName] = track;
+                return (T)(object)track;
             }
             if (typeof(T) == typeof(FontFace)) {
                 return (T)(object)new FontFace(bytes);

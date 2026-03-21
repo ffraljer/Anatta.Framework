@@ -9,6 +9,8 @@ public abstract class BaseSprite : ISprite, IUpdatable {
     public Vector2 Scale { get; set; } = Vector2.One;
     public float Rotation { get; set; }
     public Colour Colour { get; set; } = Colour.White;
+    
+    private Queue<Action>? _thenActions;
 
     public Anchors Origin { get; set; } = Anchors.TopLeft;
     public Anchors Anchor { get; set; } = Anchors.TopLeft;
@@ -26,8 +28,12 @@ public abstract class BaseSprite : ISprite, IUpdatable {
     {
         if (_tweens.Count > 0)
         {
-            if (_tweens[0].Update())
+            if (_tweens[0].Update()) {
+
                 _tweens.RemoveAt(0);
+                if (_thenActions != null && _thenActions.Count > 0)
+                    _thenActions.Dequeue()?.Invoke();
+            }
         }
     }
 
@@ -39,7 +45,7 @@ public abstract class BaseSprite : ISprite, IUpdatable {
         _sequenceTime = 0f;
     }
 
-    public ISprite MoveTo(Vector2 position, float duration, Easing easing = Easing.None, bool loop = false)
+    public ISprite MoveTo(Vector2 position, float duration, Easing easing = Easing.None, bool loop = false, bool restart = false)
     {
         _tweens.Add(new Tween<Vector2>
         {
@@ -49,6 +55,7 @@ public abstract class BaseSprite : ISprite, IUpdatable {
             End = position,
             Duration = duration,
             Ease = easing,
+            Restart = restart,
             Loop = loop,
             Lerp = AnimationHelper.Lerp
         });
@@ -56,7 +63,7 @@ public abstract class BaseSprite : ISprite, IUpdatable {
         return this;
     }
 
-    public ISprite ScaleTo(Vector2 scale, float duration, Easing easing = Easing.None, bool loop = false)
+    public ISprite ScaleTo(Vector2 scale, float duration, Easing easing = Easing.None, bool loop = false, bool restart = false)
     {
         _tweens.Add(new Tween<Vector2>
         {
@@ -66,6 +73,7 @@ public abstract class BaseSprite : ISprite, IUpdatable {
             End = scale,
             Duration = duration,
             Ease = easing,
+            Restart = restart,
             Loop = loop,
             Lerp = AnimationHelper.Lerp
         });
@@ -73,7 +81,7 @@ public abstract class BaseSprite : ISprite, IUpdatable {
         return this;
     }
 
-    public ISprite RotateTo(float rotation, float duration, Easing easing = Easing.None, bool loop = false)
+    public ISprite RotateTo(float rotation, float duration, Easing easing = Easing.None, bool loop = false, bool restart = false)
     {
         var r = MathHelper.DegreesToRadians(rotation);
 
@@ -85,6 +93,7 @@ public abstract class BaseSprite : ISprite, IUpdatable {
             End = r,
             Duration = duration,
             Ease = easing,
+            Restart = restart,
             Loop = loop,
             Lerp = AnimationHelper.Lerp
         });
@@ -92,7 +101,7 @@ public abstract class BaseSprite : ISprite, IUpdatable {
         return this;
     }
 
-    public ISprite ColourTo(Colour colour, float duration, Easing easing = Easing.None, bool loop = false)
+    public ISprite ColourTo(Colour colour, float duration, Easing easing = Easing.None, bool loop = false, bool restart = false)
     {
         _tweens.Add(new Tween<Colour>
         {
@@ -103,13 +112,14 @@ public abstract class BaseSprite : ISprite, IUpdatable {
             Duration = duration,
             Ease = easing,
             Loop = loop,
+            Restart = restart,
             Lerp = AnimationHelper.Lerp
         });
 
         return this;
     }
 
-    public ISprite FadeTo(float alpha, float duration, Easing easing = Easing.None, bool loop = false)
+    public ISprite FadeTo(float alpha, float duration, Easing easing = Easing.None, bool loop = false, bool restart = false)
     {
         _tweens.Add(new Tween<float>
         {
@@ -119,6 +129,7 @@ public abstract class BaseSprite : ISprite, IUpdatable {
             End = alpha,
             Duration = duration,
             Ease = easing,
+            Restart = restart,
             Loop = loop,
             Lerp = AnimationHelper.Lerp
         });
@@ -139,4 +150,13 @@ public abstract class BaseSprite : ISprite, IUpdatable {
     }
 	
 	public abstract Vector2 GetSize();
+    
+    public ISprite Then(Action action)
+    {
+        if (_thenActions == null)
+            _thenActions = new Queue<Action>();
+
+        _thenActions.Enqueue(action);
+        return this;
+    }
 }

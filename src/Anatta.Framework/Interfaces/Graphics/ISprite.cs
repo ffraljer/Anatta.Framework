@@ -13,9 +13,10 @@ public interface ISprite : IManageable
     public Anchors Origin { get; set; }
     public Anchors Anchor { get; set; }
     
-    ISprite MoveTo(Vector2 position, float duration, Easing easing = Easing.None, bool loop = false);
-    ISprite ScaleTo(Vector2 scale, float duration, Easing easing = Easing.None, bool loop = false);
-    ISprite RotateTo(float rotation, float duration, Easing easing = Easing.None, bool loop = false);
+    ISprite MoveTo(Vector2 position, float duration, Easing easing = Easing.None, bool loop = false, bool restart = false);
+    ISprite ScaleTo(Vector2 scale, float duration, Easing easing = Easing.None, bool loop = false, bool restart = false);
+    ISprite RotateTo(float rotation, float duration, Easing easing = Easing.None, bool loop = false, bool restart = false);
     ISprite Then();
+    ISprite Then(Action action);
     event Action<ISprite>? OnClick;
 }

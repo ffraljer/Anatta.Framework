@@ -1,23 +1,58 @@
+using Anatta.Framework.Graphics.Animations;
+
 namespace Anatta.Framework.Graphics.Managers;
 
 public class ScreenManager {
     
     private readonly Stack<Screen> _screens = new();
     public Screen? Current => _screens.Count > 0 ? _screens.Peek() : null;
+    
+    private ScreenFadeOverlay? _fadeOverlay;
+    
+    private void _Fade(Screen screen, float duration = 0.5f)
+    {
+        if (_fadeOverlay == null)
+        {
+            _fadeOverlay = new ScreenFadeOverlay();
+            Current?.Add(_fadeOverlay);
+        }
+        Screen? old = _screens.Count > 0 ? _screens.Peek() : null;
+        _screens.Push(screen);
+        screen.OnEnter();
+        screen.Load();
+        if (old != null)
+        {
+            _fadeOverlay.FadeTo(255f, duration, Easing.InOutCubic)
+                .Then(() =>
+                {
+                    old.OnExit();
+                    old.Dispose();
+                    _fadeOverlay.FadeTo(0f, duration, Easing.InOutCubic);
+                });
+        }
+        else
+        {
+            _fadeOverlay.FadeTo(0f, duration, Easing.InOutCubic);
+        }
+    }
+    
+    public void Push(Screen screen, bool fade = true, float duration = 0.5f) {
+        if (screen == null)
+            throw new ArgumentNullException(nameof(screen));
+        
+        if (fade && _screens.Count > 0) {
+            _Fade(screen, duration);
+        } else {
+            if (_screens.Count > 0) {
+                var old = _screens.Pop();
+                old.OnExit();
+                old.Dispose();
+            }
 
-    public void Push(Screen screen) {
-
-        var s = screen;
-        var s2 = _screens;
-        if (s == null)
-            throw new ArgumentNullException(nameof(s));
-
-        if (s2.Count > 0)
-            _screens.Peek().OnExit();
-
-        s2.Push(s);
-        s.OnEnter();
-        s.Load();
+            _screens.Push(screen);
+            screen.OnEnter();
+            screen.Load();
+        }
     }
     public void Pop() { if (_screens.Count == 0) return; var s = _screens.Pop(); s.OnExit(); s.Dispose(); if (_screens.Count > 0) _screens.Peek().OnEnter(); } // LOL
     // long ass line
