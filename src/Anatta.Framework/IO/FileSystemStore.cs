@@ -1,14 +1,14 @@
 ﻿namespace Anatta.Framework.IO;
 
-public class FileSystemStore {
-    private readonly string _rooot;
+public class FileSystemStore : IResourceStore {
+    private readonly string _root;
 
-    public FileSystemStore(string rooot) {
-        _rooot = rooot;
+    public FileSystemStore(string root) {
+        _root = root;
     }
 
     public Stream? Open(string path) {
-        string full = Path.Combine(_rooot, path.Replace('.', Path.DirectorySeparatorChar));
+        string full = Path.Combine(_root, path);
 
         if (!File.Exists(full))
             return null;

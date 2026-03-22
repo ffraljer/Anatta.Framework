@@ -92,61 +92,77 @@ public class Manager : IDisposable {
         if (managed == null) return;
         _managables.Remove(managed);
     }
+    private void UpdateItem(IManageable item) {
+        if (item is Container container)
+            container.EnsureLoaded();
 
+        if (item is IUpdatable u)
+            u.Update();
+
+        if (item is Drawable sprite && item is not Container)
+            HandleInput(sprite);
+
+        if (item is Container c)
+        {
+            foreach (var child in c.Children)
+                UpdateItem(child);
+        }
+    }
+    #region INPUT
+    private void HandleInput(Drawable sprite)
+    {
+        var mousePos = new Vector2(Mouse.X, Mouse.Y);
+
+        Vector2 size = sprite.GetSize() * sprite.Scale;
+
+        Vector2 originNorm = AnchorHelper.ToNormalised(sprite.Origin);
+        Vector2 originOffset = originNorm * size;
+
+        Vector2 anchorNorm = AnchorHelper.ToNormalised(sprite.Anchor);
+        Vector2 anchorOffset = new Vector2(
+            anchorNorm.X * ScreenSize.X,
+            anchorNorm.Y * ScreenSize.Y
+        );
+
+        Vector2 pos = sprite.Position - originOffset + anchorOffset;
+
+        bool hovering = mousePos.X >= pos.X &&
+                        mousePos.X <= pos.X + size.X &&
+                        mousePos.Y >= pos.Y &&
+                        mousePos.Y <= pos.Y + size.Y;
+
+        if (hovering)
+        {
+            if (!sprite._isHovering)
+            {
+                sprite._isHovering = true;
+                sprite.TriggerHover();
+            }
+
+            bool isDown = Mouse.IsButtonPressed(Mouse.Button.Left);
+
+            if (isDown && !_fuckBass)
+                sprite.TriggerClick();
+
+            _fuckBass = isDown;
+        }
+        else
+        {
+            if (sprite._isHovering)
+            {
+                sprite._isHovering = false;
+                sprite.TriggerHoverLost();
+            }
+        }
+    }
+    #endregion
     public void Update() {
         float delta = Time.Delta;
 
         var mousePos = new Vector2(Mouse.X, Mouse.Y);
         
-        foreach (var item in _managables.ToArray()) {
-            if (item is IUpdatable u)
-                u.Update();
-            
-            if (item is Drawable sprite)
-            {
-                Vector2 size = sprite.GetSize() * sprite.Scale;
-
-                Vector2 originNorm = AnchorHelper.ToNormalised(sprite.Origin);
-                Vector2 originOffset = originNorm * size;
-
-                Vector2 anchorNorm = AnchorHelper.ToNormalised(sprite.Anchor);
-                Vector2 anchorOffset = new Vector2(
-                    anchorNorm.X * ScreenSize.X,
-                    anchorNorm.Y * ScreenSize.Y
-                );
-
-                Vector2 pos = sprite.Position - originOffset + anchorOffset;
-
-                bool hovering = mousePos.X >= pos.X &&
-                                mousePos.X <= pos.X + size.X &&
-                                mousePos.Y >= pos.Y &&
-                                mousePos.Y <= pos.Y + size.Y;
-
-                if (hovering)
-                {
-                    if (!sprite._isHovering)
-                    {
-                        sprite._isHovering = true;
-                        sprite.TriggerHover();
-                    }
-
-                    bool isDown = Mouse.IsButtonPressed(Mouse.Button.Left);
-
-                    if (isDown && !_fuckBass)
-                        sprite.TriggerClick();
-
-                    _fuckBass = isDown;
-                }
-                else
-                {
-                    if (sprite._isHovering)
-                    {
-                        sprite._isHovering = false;
-                        sprite.TriggerHoverLost();
-                    }
-                }
-            }
-        }
+        foreach (var item in _managables.AsEnumerable().Reverse())
+            UpdateItem(item);
     }
 
 
@@ -158,11 +174,20 @@ public class Manager : IDisposable {
         Begin(screenW, screenH);
 
         foreach (var item in _managables)
-            DrawItem(item, screenW, screenH);
+            _Draw(item, screenW, screenH);
 
         End();
     }
-
+    private void _Draw(IManageable item, int screenW, int screenH)
+    {
+        if (item is Container container) {
+            foreach (var child in container.Children)
+                _Draw(child, screenW, screenH);
+        }
+        else if (item is Drawable drawable) {
+            DrawItem(drawable, screenW, screenH);
+        }
+    }
     private void Begin(int screenW, int screenH) {
         _shd.Use();
 
@@ -216,16 +241,19 @@ public class Manager : IDisposable {
             Texture.WhitePixel.Bind();
             GL.Uniform1i(GL.GetUniformLocation(_shd.Handle, "tex"), 0);
         }
-        else {
+        else if (sprite.Texture != null) {
             size = new Vector2(sprite.Texture.Width * sprite.Scale.X, sprite.Texture.Height * sprite.Scale.Y);
 
             sprite.Texture.Bind();
             GL.Uniform1i(GL.GetUniformLocation(_shd.Handle, "tex"), 0);
             _shd.SetVector4("uTint", sprite.Colour.ToVector4());
-            
+
             _shd.SetFloat("uCircleRadius", 0f);
             _shd.SetFloat("uCircleThickness", 0f);
             _shd.SetVector4("uBorderColour", new Vector4(0f));
+        }
+        else {
+            return;
         }
         
         var originNorm = AnchorHelper.ToNormalised(sprite.Origin);
@@ -239,7 +267,7 @@ public class Manager : IDisposable {
             Matrix4.CreateScale(size.X, size.Y, 1f) *
             Matrix4.CreateTranslation(-originOffset.X, -originOffset.Y, 0f) *
             Matrix4.CreateRotationZ(sprite.Rotation) *
-            Matrix4.CreateTranslation(sprite.Position.X, sprite.Position.Y, 0f) *
+            Matrix4.CreateTranslation(sprite.DrawPosition.X, sprite.DrawPosition.Y, 0f) *
             Matrix4.CreateTranslation(anchorOffset.X, anchorOffset.Y, 0f);
         _shd.SetMatrix4("transform", transform);
 

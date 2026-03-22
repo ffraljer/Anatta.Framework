@@ -21,7 +21,7 @@ void main()
     float bottom = uSize.y - p.y;
 
     if (uCircleRadius <= 0.0) { // box
-        if (uRadius > 0.0) { // rounded corners
+        if (uRadius > 0.0) { // rounded
             float dx = max(uRadius - left, 0.0);
             dx = max(dx, max(uRadius - right, 0.0));
 
@@ -43,33 +43,27 @@ void main()
     else { // circle
         vec2 center = uSize * 0.5;
         float dist = length(p - center);
+        float aa = fwidth(dist);
 
-        if (uCircleThickness > 0.0) { // ring
+        float fillAlpha = 1.0 - smoothstep(uCircleRadius - uCircleThickness - aa, uCircleRadius - uCircleThickness + aa, dist);
+
+        float borderAlpha = 0.0;
+        if (uCircleThickness > 0.0) {
             float outer = uCircleRadius;
             float inner = uCircleRadius - uCircleThickness;
-
-            float aa = fwidth(dist);
-
-            float outerAlpha = 1.0 - smoothstep(outer - aa, outer + aa, dist);
-            float innerAlpha = smoothstep(inner - aa, inner + aa, dist);
-
-            float ringAlpha = outerAlpha * innerAlpha;
-
-            if (ringAlpha <= 0.0)
-                discard;
-
-            color = uBorderColour;
-            color.a *= ringAlpha;
-        } else { // filled circle
-            float aa = fwidth(dist);
-            float alpha = 1.0 - smoothstep(uCircleRadius - aa, uCircleRadius + aa, dist);
-
-            if (alpha <= 0.0)
-                discard;
-
-            color *= uTint;
-            color.a *= alpha;
+            borderAlpha = smoothstep(inner - aa, inner + aa, dist) * (1.0 - smoothstep(outer - aa, outer + aa, dist));
         }
+
+        vec4 fillColor = uTint;
+        fillColor.a *= fillAlpha;
+
+        vec4 borderColor = uBorderColour;
+        borderColor.a *= borderAlpha;
+
+        color = fillColor + borderColor * (1.0 - fillColor.a);
+
+        if (color.a <= 0.0)
+            discard;
     }
 
     FragColor = color;

@@ -23,7 +23,7 @@ public class MainScreen : Screen {
         base.Load();
         _music = Resource.Load<Track>("longcat.mp3");
         _music.Loop = true;
-        Sprite sprite = new("finished") {
+        Sprite sprite = new("MAMAMIAIMANEEDA") {
             Anchor = Anchors.CentreLeft,
             Position = new Vector2(0),
             Origin = Anchors.CentreLeft,

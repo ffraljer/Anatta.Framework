@@ -16,6 +16,8 @@ public class Application : IDisposable {
 
     public Vector2i Size;
 
+    public bool HideCursor;
+
     protected Application(Vector2i size, string title = "Untitled", bool useSdl = true)
     {
         Config = new FrameworkConfig();
@@ -30,6 +32,7 @@ public class Application : IDisposable {
         _backend.Load += OnLoad;
         _backend.RenderFrame += OnRenderFrame;
         _backend.Unload += OnUnload;
+        _backend.HideCursor = HideCursor;
         if (!useSdl)
             Console.WriteLine("Use SDL.");
         else {

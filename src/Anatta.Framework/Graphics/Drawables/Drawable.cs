@@ -9,6 +9,20 @@ public abstract class Drawable : ISprite, IUpdatable {
     public Vector2 Position { get; set; }
     public Vector2 Scale { get; set; } = Vector2.One;
     public float CornerRadius { get; set; } = 0f;
+
+    public Drawable? Parent { get; internal set; }
+    
+    public Vector2 DrawPosition
+    {
+        get
+        {
+            if (Parent == null)
+                return Position;
+
+            return Parent.DrawPosition + Position;
+        }
+    }
+
     public float Rotation { get; set; }
     public Colour Colour { get; set; } = Colour.White;
     

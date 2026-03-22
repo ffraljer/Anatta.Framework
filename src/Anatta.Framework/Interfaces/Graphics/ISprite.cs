@@ -7,6 +7,7 @@ public interface ISprite : IManageable
 {
     public Texture Texture { get; }
     public Vector2 Position { get; set; }
+    public Vector2 DrawPosition { get; }
     public Vector2 Scale { get; set; }
     public float Rotation { get; set; }
     public float CornerRadius { get; set; }

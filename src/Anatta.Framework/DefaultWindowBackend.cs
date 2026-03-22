@@ -16,6 +16,8 @@ internal class DefaultWindowBackend : IWindowBackend
 
     public KeyboardState KeyboardState => default;
 
+    public bool HideCursor { get; set; }
+
     public IntPtr WindowHandle => _window;
 
     public event Action? Load;
@@ -41,6 +43,9 @@ internal class DefaultWindowBackend : IWindowBackend
             size.Y,
             SDL.WindowFlags.OpenGL | SDL.WindowFlags.Resizable
         );
+        if (HideCursor) {
+            SDL.HideCursor();
+        }
         _context = SDL.GLCreateContext(_window);
         SDL.GLMakeCurrent(_window, _context);
         GLLoader.LoadBindings(new _SDLBindingsContext());

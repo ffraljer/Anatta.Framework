@@ -5,6 +5,7 @@ namespace Anatta.Framework;
 
 public interface IWindowBackend : IDisposable {
     Vector2i Size { get; }
+    bool HideCursor { get; set; }
     KeyboardState KeyboardState { get; }
 
     void Run();

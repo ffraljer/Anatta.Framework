@@ -2,6 +2,7 @@ using OpenTK.Mathematics;
 using OpenTK.Windowing.Desktop;
 using Anatta.Framework.Input;
 using OpenTK.Graphics.OpenGL;
+using OpenTK.Windowing.Common;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 
 namespace Anatta.Framework;
@@ -11,20 +12,28 @@ internal class ToolkitWindowBackend : IWindowBackend {
 
     public Vector2i Size => _window.ClientSize;
     public KeyboardState KeyboardState => _window.KeyboardState;
-
+    public bool HideCursor { get; set; }
     public event Action? Load;
     public event Action<float>? RenderFrame;
     public event Action? Unload;
 
-    public ToolkitWindowBackend(Vector2i size, string title)
-    {
+    public ToolkitWindowBackend(Vector2i size, string title) {
+	    var cursorstate = (CursorState)0;
+	    if (HideCursor) {
+		    cursorstate = (CursorState)1;
+	    }
+	    else {
+		    cursorstate = default;
+	    }
         var native = new NativeWindowSettings
         {
             Title = title,
-            ClientSize = size
+            ClientSize = size,
         };
 
         _window = new GameWindow(GameWindowSettings.Default, native);
+
+        _window.CursorState = cursorstate;
 
         _window.Load += () => Load?.Invoke();
 		
