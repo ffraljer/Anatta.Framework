@@ -1,4 +1,5 @@
-using Anatta.Framework.Graphics;
+using Anatta.Framework.Graphics.Drawables;
+using Anatta.Framework.Graphics.Drawables.Shapes;
 using Anatta.Framework.Graphics.Helpers;
 using Anatta.Framework.Input;
 using Anatta.Framework.Interfaces.Graphics;
@@ -101,7 +102,7 @@ public class Manager : IDisposable {
             if (item is IUpdatable u)
                 u.Update();
             
-            if (item is BaseSprite sprite)
+            if (item is Drawable sprite)
             {
                 Vector2 size = sprite.GetSize() * sprite.Scale;
 
@@ -149,8 +150,9 @@ public class Manager : IDisposable {
     }
 
 
-    public void Draw(int screenW, int screenH)
-    {
+    public void Draw() {
+        var screenH = ScreenSize.Y;
+        var screenW = ScreenSize.X;
         Init();
         
         Begin(screenW, screenH);
@@ -185,16 +187,47 @@ public class Manager : IDisposable {
     private void DrawItem(IManageable item, int screenW, int screenH) {
         if (item is not ISprite sprite)
             return;
+        
+        Vector2 size;
 
-        sprite.Texture.Bind();
-        GL.Uniform1i(
-            GL.GetUniformLocation(_shd.Handle, "tex"),
-            0
-        );
-        var size = new Vector2(
-            sprite.Texture.Width * sprite.Scale.X,
-            sprite.Texture.Height * sprite.Scale.Y
-        );
+        if (item is Box box) {
+            size = box.Size * box.Scale;
+
+            _shd.SetVector4("uTint", box.Colour.ToVector4());
+            _shd.SetVector2("uSize", size);
+            _shd.SetFloat("uRadius", box.CornerRadius);
+            
+            _shd.SetFloat("uCircleRadius", 0f);
+            _shd.SetFloat("uCircleThickness", 0f); 
+            _shd.SetVector4("uBorderColour", new Vector4(0f));
+            Texture.WhitePixel.Bind();
+            GL.Uniform1i(GL.GetUniformLocation(_shd.Handle, "tex"), 0);
+        }
+        else if (item is Circle circle)
+        { 
+            size = new Vector2(circle.Radius * 2f * circle.Scale.X, circle.Radius * 2f * circle.Scale.Y);
+
+            _shd.SetVector2("uSize", size);
+            _shd.SetFloat("uCircleRadius", circle.Radius * MathF.Max(circle.Scale.X, circle.Scale.Y));
+            _shd.SetFloat("uCircleThickness", circle.Thickness * MathF.Max(circle.Scale.X, circle.Scale.Y));
+            _shd.SetVector4("uTint", circle.FillColour.ToVector4());
+            _shd.SetVector4("uBorderColour", circle.BorderColour.ToVector4());
+
+            Texture.WhitePixel.Bind();
+            GL.Uniform1i(GL.GetUniformLocation(_shd.Handle, "tex"), 0);
+        }
+        else {
+            size = new Vector2(sprite.Texture.Width * sprite.Scale.X, sprite.Texture.Height * sprite.Scale.Y);
+
+            sprite.Texture.Bind();
+            GL.Uniform1i(GL.GetUniformLocation(_shd.Handle, "tex"), 0);
+            _shd.SetVector4("uTint", sprite.Colour.ToVector4());
+            
+            _shd.SetFloat("uCircleRadius", 0f);
+            _shd.SetFloat("uCircleThickness", 0f);
+            _shd.SetVector4("uBorderColour", new Vector4(0f));
+        }
+        
         var originNorm = AnchorHelper.ToNormalised(sprite.Origin);
         var originOffset = originNorm * size;
         var anchorNorm = AnchorHelper.ToNormalised(sprite.Anchor);
@@ -209,11 +242,10 @@ public class Manager : IDisposable {
             Matrix4.CreateTranslation(sprite.Position.X, sprite.Position.Y, 0f) *
             Matrix4.CreateTranslation(anchorOffset.X, anchorOffset.Y, 0f);
         _shd.SetMatrix4("transform", transform);
-        _shd.SetVector4("uTint", sprite.Colour.ToVector4());
 
         GL.DrawArrays(PrimitiveType.Triangles, 0, 6);
     }
-
+    
     private void End() {
         GL.BindVertexArray(0);
     }
@@ -230,5 +262,14 @@ public class Manager : IDisposable {
         GL.DeleteVertexArray(_vao);
 
         _shd.Dispose();
+    }
+    
+    private Vector2 GetScreenScale(Vector2 spriteSize) {
+        float ratio = ScreenSize.X / spriteSize.X;
+        float ratio1 = ScreenSize.Y / spriteSize.Y;
+
+        float scale = MathF.Min(ratio, ratio1);
+
+        return spriteSize * scale;
     }
 }

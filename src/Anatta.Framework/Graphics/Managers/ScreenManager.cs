@@ -58,8 +58,7 @@ public class ScreenManager {
     // long ass line
     public void Update() { _screens.Peek().Update(); }
 
-    public void Draw(int w, int h) {
-        _screens.Peek().Draw(w, h);
+    public void Draw() {
     }
 
     public void Dispose() {

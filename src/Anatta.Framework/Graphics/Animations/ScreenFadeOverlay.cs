@@ -1,9 +1,10 @@
-﻿using OpenTK.Mathematics;
+﻿using Anatta.Framework.Graphics.Drawables;
 using Anatta.Framework.Graphics.Managers;
+using OpenTK.Mathematics;
 
 namespace Anatta.Framework.Graphics.Animations;
 
-internal class ScreenFadeOverlay : BaseSprite {
+internal class ScreenFadeOverlay : Drawable {
     public ScreenFadeOverlay()
     {
         Position = Vector2.Zero;

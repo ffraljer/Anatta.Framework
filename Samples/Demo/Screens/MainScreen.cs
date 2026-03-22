@@ -1,6 +1,7 @@
 using Anatta.Framework;
 using Anatta.Framework.Configuration;
 using Anatta.Framework.Graphics;
+using Anatta.Framework.Graphics.Drawables;
 using Anatta.Framework.Graphics.Managers;
 using Anatta.Framework.Input;
 using Anatta.Framework.IO;
@@ -8,7 +9,6 @@ using Anatta.Framework.Sound;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.GraphicsLibraryFramework;
-using BaseSprite = Anatta.Framework.Graphics.BaseSprite;
 
 namespace Demo.Screens;
 
@@ -28,6 +28,7 @@ public class MainScreen : Screen {
             Position = new Vector2(0),
             Origin = Anchors.CentreLeft,
             Colour = new Colour(255, 255, 255, 0),
+            CornerRadius = 4f
         };
         Vector2 size = GameBase.Instance.Size;
         float baseRatio = 16f / 9f;
@@ -88,7 +89,7 @@ public class MainScreen : Screen {
         Console.Write($"\rMouse: {Mouse.X}, {Mouse.Y}      ");
     }
 
-    public override void Draw(int width, int height) {
-        base.Draw(width, height);
+    public override void Draw() {
+        base.Draw();
     }
 }

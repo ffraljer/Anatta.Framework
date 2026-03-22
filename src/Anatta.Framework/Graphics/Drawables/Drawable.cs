@@ -1,12 +1,14 @@
-﻿using Anatta.Framework.Interfaces.Graphics;
+﻿using Anatta.Framework.Graphics;
+using Anatta.Framework.Interfaces.Graphics;
 using OpenTK.Mathematics;
 
-namespace Anatta.Framework.Graphics;
+namespace Anatta.Framework.Graphics.Drawables;
 
-public abstract class BaseSprite : ISprite, IUpdatable {
+public abstract class Drawable : ISprite, IUpdatable {
     public abstract Texture Texture { get; protected set; }
     public Vector2 Position { get; set; }
     public Vector2 Scale { get; set; } = Vector2.One;
+    public float CornerRadius { get; set; } = 0f;
     public float Rotation { get; set; }
     public Colour Colour { get; set; } = Colour.White;
     

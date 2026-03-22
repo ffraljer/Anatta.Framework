@@ -1,9 +1,9 @@
 using Anatta.Framework.Graphics;
 using OpenTK.Mathematics;
 
-namespace Anatta.Framework.Graphics;
+namespace Anatta.Framework.Graphics.Drawables;
 
-public class Sprite : BaseSprite
+public class Sprite : Drawable
 {
     public override Texture Texture { get; protected set; }
     
