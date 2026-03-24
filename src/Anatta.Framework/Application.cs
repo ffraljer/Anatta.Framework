@@ -25,7 +25,7 @@ public class Application : IDisposable {
         
         _backend = useSdl
             ? new DefaultWindowBackend(size, title)
-            : new ToolkitWindowBackend(size, title);
+            : new GameWindowWindowBackend(size, title);
         Backend = _backend;
 
         Size = _backend.Size;

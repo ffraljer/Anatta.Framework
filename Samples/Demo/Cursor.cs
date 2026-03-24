@@ -8,16 +8,15 @@ namespace Demo;
 
 public class CursorContainer : Container
 {
-    private Circle outerBlack;
+    private Drawable outerBlack;
     private Circle outerPink;
     private Circle cursormiddl;
     protected override void Load()
     {
-        outerBlack = new Circle
+        outerBlack = new Circle()
         {
-            Radius = 19,
             BorderColour = new Colour(0, 0, 0),
-            Thickness = 6,
+            Radius = 19,
             Origin = Anchors.Centre
         };
         outerPink = new Circle

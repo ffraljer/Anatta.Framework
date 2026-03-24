@@ -7,7 +7,7 @@ using OpenTK.Windowing.GraphicsLibraryFramework;
 
 namespace Anatta.Framework;
 
-internal class ToolkitWindowBackend : IWindowBackend {
+internal class GameWindowWindowBackend : IWindowBackend { // this is all I could come up with.
     private GameWindow _window;
 
     public Vector2i Size => _window.ClientSize;
@@ -17,7 +17,7 @@ internal class ToolkitWindowBackend : IWindowBackend {
     public event Action<float>? RenderFrame;
     public event Action? Unload;
 
-    public ToolkitWindowBackend(Vector2i size, string title) {
+    public GameWindowWindowBackend(Vector2i size, string title) {
 	    var cursorstate = (CursorState)0;
 	    if (HideCursor) {
 		    cursorstate = (CursorState)1;

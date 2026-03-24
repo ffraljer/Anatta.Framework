@@ -1,3 +1,5 @@
+using Anatta.Framework.Interfaces.Graphics;
+
 namespace Anatta.Framework.Graphics;
 
 public enum Anchors {
