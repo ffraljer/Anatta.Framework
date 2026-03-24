@@ -9,6 +9,13 @@ public class Screen : IDisposable {
     public bool IsActive { get; private set; } = true;
     
     private readonly List<IManageable> _owned = new();
+    
+    protected IEnumerable<IManageable> InternalChildren {
+        set {
+            foreach (var item in value)
+                Add(item);
+        }
+    }
 
     
     public Screen(Manager manager) {

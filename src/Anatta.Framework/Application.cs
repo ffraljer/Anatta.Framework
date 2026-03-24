@@ -8,6 +8,7 @@ namespace Anatta.Framework;
 
 public class Application : IDisposable {
     public Time Time { get; } = new Time();
+    
     private readonly IWindowBackend _backend;
     
     public FrameworkConfig Config { get; }
@@ -34,7 +35,7 @@ public class Application : IDisposable {
         _backend.Unload += OnUnload;
         _backend.HideCursor = HideCursor;
         if (!useSdl)
-            Console.WriteLine("Use SDL.");
+            Console.WriteLine("[Framework] Use SDL.");
         else {
         }
     }
