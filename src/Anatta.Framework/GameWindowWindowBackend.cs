@@ -12,15 +12,18 @@ internal class GameWindowWindowBackend : IWindowBackend { // this is all I could
 
     public Vector2i Size => _window.ClientSize;
     public KeyboardState KeyboardState => _window.KeyboardState;
-    public bool HideCursor { get; set; }
+    public bool HideCursor {
+	    get => _window.CursorState == CursorState.Hidden;
+	    set => _window.CursorState = value ? CursorState.Hidden : CursorState.Normal;
+    }
     public event Action? Load;
     public event Action<float>? RenderFrame;
     public event Action? Unload;
 
     public GameWindowWindowBackend(Vector2i size, string title) {
-	    var cursorstate = (CursorState)0;
+	    var cursorstate = CursorState.Normal;
 	    if (HideCursor) {
-		    cursorstate = (CursorState)1;
+		    cursorstate = CursorState.Hidden;
 	    }
 	    else {
 		    cursorstate = default;
@@ -41,17 +44,19 @@ internal class GameWindowWindowBackend : IWindowBackend { // this is all I could
         {
 	        Keyboard.BeginFrame();
 	        Mouse.BeginFrame();
-	        foreach (Keys key in Enum.GetValues(typeof(Keys)))
+	        _window.KeyDown += e =>
 	        {
-		        var converted = ConvertKey(key);
-		        if (converted == Keyboard.Key.None)
-			        continue;
+		        var key = ConvertKey(e.Key);
+		        if (key != Keyboard.Key.None)
+			        Keyboard.KeyDown(key);
+	        };
 
-		        if (_window.KeyboardState.IsKeyDown(key))
-			        Keyboard.KeyDown(converted);
-		        else
-			        Keyboard.KeyUp(converted);
-	        }
+	        _window.KeyUp += e =>
+	        {
+		        var key = ConvertKey(e.Key);
+		        if (key != Keyboard.Key.None)
+			        Keyboard.KeyUp(key);
+	        };
 	        var mouse = _window.MouseState;
 	        _MAP(mouse, MouseButton.Left, Mouse.Button.Left);
 	        _MAP(mouse, MouseButton.Right, Mouse.Button.Right);

@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="Anatta.Template.Resources/Anatta.Template.Resources.csproj" />
+  <Project Path="Anatta.Template/Anatta.Template.csproj" />
+</Solution>

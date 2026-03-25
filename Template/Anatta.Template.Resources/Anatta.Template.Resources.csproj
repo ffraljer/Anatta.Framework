@@ -1,0 +1,33 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net10.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+    
+    <ItemGroup>
+        <EmbeddedResource Include="Textures\**\*" />
+        <EmbeddedResource Include="Audio\**\*" />
+        <EmbeddedResource Include="Shaders\**\*" />
+        <EmbeddedResource Include="Fonts\**\*" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Audio\Tracks\" />
+      <Folder Include="Shaders\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Update="runtimes\linux-x64\native\libbass.so">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="runtimes\win-x64\native\bass.dll">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="runtimes\win-x64\native\SDL3.dll">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+    </ItemGroup>
+
+</Project>
