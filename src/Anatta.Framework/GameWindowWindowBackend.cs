@@ -12,22 +12,27 @@ internal class GameWindowWindowBackend : IWindowBackend { // this is all I could
 
     public Vector2i Size => _window.ClientSize;
     public KeyboardState KeyboardState => _window.KeyboardState;
-    public bool HideCursor {
-	    get => _window.CursorState == CursorState.Hidden;
-	    set => _window.CursorState = value ? CursorState.Hidden : CursorState.Normal;
+    private bool _hideCursor;
+    public bool HideCursor
+    {
+	    get => _hideCursor;
+	    set
+	    {
+		    _hideCursor = value;
+
+		    if (_window != null)
+		    {
+			    _window.CursorState = value
+				    ? CursorState.Hidden
+				    : CursorState.Normal;
+		    }
+	    }
     }
     public event Action? Load;
     public event Action<float>? RenderFrame;
     public event Action? Unload;
 
     public GameWindowWindowBackend(Vector2i size, string title) {
-	    var cursorstate = CursorState.Normal;
-	    if (HideCursor) {
-		    cursorstate = CursorState.Hidden;
-	    }
-	    else {
-		    cursorstate = default;
-	    }
         var native = new NativeWindowSettings
         {
             Title = title,
@@ -36,34 +41,44 @@ internal class GameWindowWindowBackend : IWindowBackend { // this is all I could
 
         _window = new GameWindow(GameWindowSettings.Default, native);
 
-        _window.CursorState = cursorstate;
+        _window.FocusedChanged += (focused) => {
+	        if (focused.IsFocused)
+		        _window.CursorState = HideCursor ? CursorState.Hidden : CursorState.Normal;
+        };
+        _window.Load += () => {
+	        _window.CursorState = HideCursor ? CursorState.Hidden : CursorState.Normal;
+	        Load?.Invoke();
+        };
+        
+        _window.KeyDown += e =>
+        {
+	        var key = ConvertKey(e.Key);
+	        if (key != Keyboard.Key.None)
+		        Keyboard.KeyDown(key);
+        };
 
-        _window.Load += () => Load?.Invoke();
-		
+        _window.KeyUp += e =>
+        {
+	        var key = ConvertKey(e.Key);
+	        if (key != Keyboard.Key.None)
+		        Keyboard.KeyUp(key);
+        };
+        
         _window.UpdateFrame += args =>
         {
 	        Keyboard.BeginFrame();
 	        Mouse.BeginFrame();
-	        _window.KeyDown += e =>
-	        {
-		        var key = ConvertKey(e.Key);
-		        if (key != Keyboard.Key.None)
-			        Keyboard.KeyDown(key);
-	        };
 
-	        _window.KeyUp += e =>
-	        {
-		        var key = ConvertKey(e.Key);
-		        if (key != Keyboard.Key.None)
-			        Keyboard.KeyUp(key);
-	        };
 	        var mouse = _window.MouseState;
+
 	        _MAP(mouse, MouseButton.Left, Mouse.Button.Left);
 	        _MAP(mouse, MouseButton.Right, Mouse.Button.Right);
 	        _MAP(mouse, MouseButton.Middle, Mouse.Button.Middle);
 	        _MAP(mouse, MouseButton.Button1, Mouse.Button.X1);
 	        _MAP(mouse, MouseButton.Button2, Mouse.Button.X2);
+
 	        Mouse.Move(mouse.X, mouse.Y);
+
 	        if (mouse.ScrollDelta.Y != 0)
 	        {
 	        }
