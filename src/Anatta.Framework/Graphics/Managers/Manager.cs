@@ -214,9 +214,14 @@ public class Manager : IDisposable {
             return;
         
         Vector2 size;
-
+        
         if (item is Box box) {
             size = box.Size * box.Scale;
+            Vector4 top = box.Gradient?.Top.ToVector4() ?? box.Colour.ToVector4();
+            Vector4 bottom = box.Gradient?.Bottom.ToVector4() ?? box.Colour.ToVector4();
+            
+            _shd.SetVector4("uTintTop", top);
+            _shd.SetVector4("uTintBottom", bottom);
 
             _shd.SetVector4("uTint", box.Colour.ToVector4());
             _shd.SetVector2("uSize", size);
@@ -227,16 +232,26 @@ public class Manager : IDisposable {
             _shd.SetVector4("uBorderColour", new Vector4(0f));
             Texture.WhitePixel.Bind();
             GL.Uniform1i(GL.GetUniformLocation(_shd.Handle, "tex"), 0);
+            
         }
         else if (item is Circle circle)
         { 
             size = new Vector2(circle.Radius * 2f * circle.Scale.X, circle.Radius * 2f * circle.Scale.Y);
+            Vector4 fill = circle.FillColour.ToVector4();
+            Vector4 top = circle.Gradient?.Top.ToVector4() ?? fill;
+            Vector4 bottom = circle.Gradient?.Bottom.ToVector4() ?? fill;
+            Vector4 topp = circle.BorderGradient?.Top.ToVector4() ?? circle.BorderColour.ToVector4();
+            Vector4 botmm = circle.BorderGradient?.Bottom.ToVector4() ?? circle.BorderColour.ToVector4();
 
+            _shd.SetVector4("uTintTop", top);
+            _shd.SetVector4("uTintBottom", bottom);
+            _shd.SetVector4("uTint", top);
+            _shd.SetVector4("uBorderColour", circle.BorderColour.ToVector4());
+            _shd.SetVector4("uBorderTop", topp);
+            _shd.SetVector4("uBorderBottom", botmm);
             _shd.SetVector2("uSize", size);
             _shd.SetFloat("uCircleRadius", circle.Radius * MathF.Max(circle.Scale.X, circle.Scale.Y));
             _shd.SetFloat("uCircleThickness", circle.Thickness * MathF.Max(circle.Scale.X, circle.Scale.Y));
-            _shd.SetVector4("uTint", circle.FillColour.ToVector4());
-            _shd.SetVector4("uBorderColour", circle.BorderColour.ToVector4());
 
             Texture.WhitePixel.Bind();
             GL.Uniform1i(GL.GetUniformLocation(_shd.Handle, "tex"), 0);
@@ -246,7 +261,10 @@ public class Manager : IDisposable {
 
             sprite.Texture.Bind();
             GL.Uniform1i(GL.GetUniformLocation(_shd.Handle, "tex"), 0);
-            _shd.SetVector4("uTint", sprite.Colour.ToVector4());
+            Vector4 tint = sprite.Colour.ToVector4();
+            _shd.SetVector4("uTintTop", tint);
+            _shd.SetVector4("uTintBottom", tint);
+            _shd.SetVector4("uTint", tint);
 
             _shd.SetFloat("uCircleRadius", 0f);
             _shd.SetFloat("uCircleThickness", 0f);

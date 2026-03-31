@@ -16,20 +16,24 @@ public class CursorContainer : Container
         outerBlack = new Circle()
         {
             BorderColour = new Colour(0, 0, 0),
-            Radius = 19,
+            Radius = 19*2,
+            Thickness = 12,
+            BorderGradient = ColourInfo.GradientVertical(new Colour("FC618F"), new Colour("BB1A41")),
             Origin = Anchors.Centre
         };
+        var C = new Colour("FC618F").Darken(0.6f);
+        C.A = 128;
         outerPink = new Circle
         {
-            Radius = 18,
-            BorderColour = Colour.HotPink,
-            Thickness = 6,
-            FillColour = new Colour(0, 0, 0, 128), // 50% opaque
+            Radius = 18 * 2,
+            BorderGradient = ColourInfo.GradientVertical(new Colour("FC618F"), new Colour("BB1A41")),
+            Thickness = 12,
+            FillColour = C,
             Origin = Anchors.Centre
         };
         cursormiddl = new Circle
         {
-            Radius = 3,
+            Radius = 9,
             FillColour = Colour.White,
             Origin = Anchors.Centre
         };
@@ -44,11 +48,11 @@ public class CursorContainer : Container
         base.Update();
         Position = new Vector2(Mouse.X, Mouse.Y);
         if (Mouse.IsButtonDown(Mouse.Button.Left)) {
-            if (outerBlack.Scale != new Vector2(1.25f)) {
+            if (outerBlack.Scale != new Vector2(1.2f)) {
                 outerBlack.ClearTransforms();
-                outerBlack.ScaleTo(new Vector2(1.25f), 0.1f);
+                outerBlack.ScaleTo(new Vector2(1.2f), 0.1f);
                 outerPink.ClearTransforms();
-                outerPink.ScaleTo(new Vector2(1.25f), 0.1f);
+                outerPink.ScaleTo(new Vector2(1.2f), 0.1f);
             }
         }
         else

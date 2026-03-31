@@ -23,7 +23,7 @@ public class MainScreen : Screen {
         base.Load();
         _music = Resource.Load<Track>("longcat.mp3");
         _music.Loop = true;
-        Sprite sprite = new("MAMAMIAIMANEEDA") {
+        Sprite sprite = new("finished") {
             Anchor = Anchors.CentreLeft,
             Position = new Vector2(0),
             Origin = Anchors.CentreLeft,
@@ -34,8 +34,7 @@ public class MainScreen : Screen {
         float baseRatio = 16f / 9f;
         float ratio = (size.X / size.Y) / baseRatio;
         sprite.Scale = new Vector2(ratio, 1f);
-        FontFace f = Resource.Load<FontFace>("font_allerbold.ttf");
-        player = new Text("I NEED TO LAY OFF THE CATNIP...", 32f, Colour.White, f);
+        player = new Text("I NEED TO LAY OFF THE CATNIP...", 32f, Colour.White, Fonts.AllerBold);
         player.Position = new Vector2(0);
         player.Anchor = Anchors.TopRight;
         player.Origin = Anchors.TopRight;
@@ -79,14 +78,14 @@ public class MainScreen : Screen {
         CLICKTO.OnClick += delegate {
             _music.Stop();
             var click = new ClickToEntered(Manager);
-            GameBase.Instance.ScreenManager.Push(click, true, 1f); 
+            GameBase.ScreenManager.Push(click, true, 1f); 
         };
         Add(CLICKTO);
     }
 
     public override void Update() {
         base.Update();
-        Console.Write($"\rMouse: {Mouse.X}, {Mouse.Y}      ");
+        //Console.Write($"\rMouse: {Mouse.X}, {Mouse.Y}      "); // having something like this writing recursively might mess up logging.
     }
 
     public override void Draw() {

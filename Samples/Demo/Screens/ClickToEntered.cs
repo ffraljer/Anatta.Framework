@@ -25,7 +25,7 @@ public class ClickToEntered : Screen {
             Origin = Anchors.Centre,
             Size = GameBase.Instance.Size - new Vector2i(100),
             CornerRadius = 12,
-            Colour = Colour.HotPink
+            Gradient = new ColourInfo(DemoColours.Purple0, DemoColours.Purple1) 
         };
         Add(Boc);
     }

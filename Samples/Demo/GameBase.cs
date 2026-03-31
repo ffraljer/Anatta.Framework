@@ -18,15 +18,12 @@ public class GameBase : Application
 {
     private Manager manager;
     private Manager _cursorManager;
-    public static GameBase Instance;
-    public ScreenManager ScreenManager;
+    public static ScreenManager ScreenManager;
 
     public GameBase(Vector2i tize, bool UseSDL, string title = "Demo Game") : base(tize, title, UseSDL) {
         manager = new();
         _cursorManager = new();
         ScreenManager = new();
-        Instance = this;
-        Audio.Binding = Audio.Bindings.Bass;
         HideCursor = true;
     }
 

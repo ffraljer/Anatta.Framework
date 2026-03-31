@@ -77,5 +77,26 @@ public partial struct Colour
                 A / 255f
             );
    }
-    public static implicit operator Color4<Rgba>(Colour c) => c.ToColor4();
+   public Colour Darken(float factor = 0.1f)
+   {
+       factor = Math.Clamp(factor, 0f, 1f);
+       return new Colour(
+           R * (1 - factor),
+           G * (1 - factor),
+           B * (1 - factor),
+           A
+       );
+   }
+
+   public Colour Lighten(float factor = 0.1f) {
+       factor = Math.Clamp(factor, 0f, 1f);
+       return new Colour(
+           R + (255 - R) * factor,
+           G + (255 - G) * factor,
+           B + (255 - B) * factor,
+           A
+       );
+   }
+
+   public static implicit operator Color4<Rgba>(Colour c) => c.ToColor4();
 }

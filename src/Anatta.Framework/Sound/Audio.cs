@@ -2,6 +2,7 @@ using ManagedBass;
 using System.Runtime.InteropServices;
 using System.Collections.Concurrent;
 using Anatta.Framework.IO;
+using Anatta.Framework.Logging;
 using OpenTK.Audio.OpenAL;
 using OpenTK.Audio.OpenAL.ALC;
 
@@ -18,6 +19,8 @@ namespace Anatta.Framework.Sound {
         private static bool _useOpenAl = false;
         
         static bool _bassInitialized = false;
+
+        internal static Logger logger = new("Audio");
         
         static readonly ConcurrentDictionary<int, GCHandle> PinnedBuffers = new(); 
         static readonly ConcurrentDictionary<int, int> AlBuffers = new();

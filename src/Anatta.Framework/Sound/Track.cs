@@ -20,7 +20,7 @@ public class Track : IDisposable
     }
 
     public void Play() {
-        Console.WriteLine("[Track] Track Played");
+        Audio.logger.Info("Track played.");
         _handle = Audio.Play(_data, Loop);
     }
 
