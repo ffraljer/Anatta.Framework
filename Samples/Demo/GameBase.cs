@@ -18,6 +18,9 @@ public class GameBase : Application
     private Manager manager;
     private Manager _cursorManager;
     public static ScreenManager ScreenManager;
+    private bool _escapePressedLastFrame = false;
+
+    public static Screen ClickToEntered;
 
     public GameBase(Vector2i tize, bool UseSDL, string title = "Demo Game") : base(tize, title, UseSDL) {
         manager = new();
@@ -27,6 +30,7 @@ public class GameBase : Application
     }
 
     protected override void Initialise() {
+        loadScreens();
         Resource.AddStore(new AssemblyStore(typeof(_Resource).Assembly, "Demo.Resources"));
         Resource.AddStore(new FileSystemStore("Content"));
         ScreenManager.Push(new MainScreen(manager));
@@ -34,9 +38,21 @@ public class GameBase : Application
         _cursorManager.Add(new CursorContainer());
     }
 
+    private void loadScreens() {
+        ClickToEntered = new ClickToEntered(manager);
+    }
     protected override void Update()
     {
         manager?.Update();
+        if (ScreenManager.Current == ClickToEntered) {
+            bool escapeNow = Keyboard.IsKeyDown(Keyboard.Key.Escape);
+
+            if (escapeNow && !_escapePressedLastFrame) {
+                ScreenManager.Push(new MainScreen(manager), true, 0.5f);
+            }
+
+            _escapePressedLastFrame = escapeNow;
+        }
         ScreenManager.Update();
         _cursorManager.Update();
     }

@@ -1,7 +1,7 @@
 ﻿namespace Anatta.Framework {
     public enum Renderer {
         GL, // It only allows for input in the Demo right now, but I WILL try to implement Vulkan.
-        VK
+        DX
     }
 }
 

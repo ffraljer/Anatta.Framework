@@ -8,32 +8,29 @@ public class ScreenManager {
     public Screen? Current => _screens.Count > 0 ? _screens.Peek() : null;
     
     private ScreenFadeOverlay? _fadeOverlay;
+    private Manager man = new();
     
-    private void _Fade(Screen screen, float duration = 0.5f)
-    {
-        if (_fadeOverlay == null)
-        {
+    private void _Fade(Screen screen, float duration = 0.5f) {
+        if (_fadeOverlay == null) {
             _fadeOverlay = new ScreenFadeOverlay();
-            Current?.Add(_fadeOverlay);
+            man.Add(_fadeOverlay);
         }
+
         Screen? old = _screens.Count > 0 ? _screens.Peek() : null;
-        _screens.Push(screen);
-        screen.OnEnter();
-        screen.Load();
-        if (old != null)
-        {
-            _fadeOverlay.FadeTo(255f, duration, Easing.InOutCubic)
-                .Then(() =>
-                {
+        _fadeOverlay.FadeTo(255f, duration, Easing.InOutCubic)
+            .Then(() => {
+                if (old != null) {
                     old.OnExit();
                     old.Dispose();
-                    _fadeOverlay.FadeTo(0f, duration, Easing.InOutCubic);
-                });
-        }
-        else
-        {
-            _fadeOverlay.FadeTo(0f, duration, Easing.InOutCubic);
-        }
+                    _screens.Pop();
+                }
+
+                _screens.Push(screen);
+                screen.Load();
+                screen.OnEnter();
+
+                _fadeOverlay.FadeTo(0f, duration, Easing.InOutCubic);
+            });
     }
     
     public void Push(Screen screen, bool fade = true, float duration = 0.5f) {
@@ -56,9 +53,13 @@ public class ScreenManager {
     }
     public void Pop() { if (_screens.Count == 0) return; var s = _screens.Pop(); s.OnExit(); s.Dispose(); if (_screens.Count > 0) _screens.Peek().OnEnter(); } // LOL
     // long ass line
-    public void Update() { _screens.Peek().Update(); }
+    public void Update() {
+        _screens.Peek().Update(); 
+        man.Update();
+    }
 
     public void Draw() {
+        man.Draw();
     }
 
     public void Dispose() {

@@ -1,4 +1,5 @@
 using System.Reflection;
+using Anatta.Framework.Interfaces.Graphics;
 using Anatta.Framework.Logging;
 using OpenTK.Graphics.OpenGL;
 using G = OpenTK.Graphics.OpenGL.GL;
@@ -6,9 +7,9 @@ using OpenTK.Mathematics;
 
 namespace Anatta.Framework.Graphics;
 
-public class Shader : IDisposable
+public class Shader : IDisposable, IShader
 {
-    public int Handle { get; private set; }
+    public int Handle { get; set; }
     private int Gandle => Handle;
     private Logger _logger = new("Shader");
 

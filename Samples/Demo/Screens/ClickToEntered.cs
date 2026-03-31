@@ -10,6 +10,7 @@ using OpenTK.Mathematics;
 namespace Demo.Screens;
 
 public class ClickToEntered : Screen {
+    private Track track;
     public ClickToEntered(Manager manager) : base(manager) { }
     public override void Load() {
         Add(new Text("YOU HAVE CLICKED AND ENTERED", 24f, Colour.White) {
@@ -17,7 +18,7 @@ public class ClickToEntered : Screen {
             Origin = Anchors.BottomRight
         }.ColourTo(Colour.Red, 2, Easing.None, true)
         .Then());
-        var track = Resource.Load<Track>("btbbrbbq.mp3");
+         track = Resource.Load<Track>("btbbrbbq.mp3");
         track.Play();
         var Boc = new Box() {
             Anchor = Anchors.Centre,
@@ -31,6 +32,12 @@ public class ClickToEntered : Screen {
     public override void Draw() {
         base.Draw();
     }
+
+    public override void OnExit() {
+        base.OnExit();
+        track.Stop();
+    }
+
     public override void Update() {
         base.Update();                            
     }

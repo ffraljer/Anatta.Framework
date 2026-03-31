@@ -17,7 +17,7 @@ public class Application : IDisposable {
     protected Logger logger = new("Application");
     private Logger _frameworkLogger = new("Framework");
     
-    public FrameworkConfig Config { get; }
+    public static FrameworkConfig Config { get; set; }
     
     public static IWindowBackend Backend;
 

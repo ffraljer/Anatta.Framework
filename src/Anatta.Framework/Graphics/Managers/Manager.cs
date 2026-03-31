@@ -9,7 +9,7 @@ using OpenTK.Windowing.GraphicsLibraryFramework;
 
 namespace Anatta.Framework.Graphics.Managers;
 
-public class Manager : IDisposable {
+public class Manager : IDisposable, IManager {
     private readonly List<IManageable> _managables = new();
     public static Vector2i ScreenSize { get; set; }
     private int _vao;

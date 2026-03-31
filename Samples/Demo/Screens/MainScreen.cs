@@ -38,7 +38,7 @@ public class MainScreen : Screen {
         player.Anchor = Anchors.TopRight;
         player.Origin = Anchors.TopRight;
         //sprite.ScaleTo(new Vector2(4), 10);
-        if (GameBase.Instance.Config.GraphicsRenderer.Value == Renderer.GL) {
+        if (Application.Config.GraphicsRenderer.Value == Renderer.GL) {
             
             sprite.OnClick += delegate {
                 _music.Play();
@@ -76,8 +76,7 @@ public class MainScreen : Screen {
         }.ColourTo(Colour.Green, 2, Easing.None, true, true);
         CLICKTO.OnClick += delegate {
             _music.Stop();
-            var click = new ClickToEntered(Manager);
-            GameBase.ScreenManager.Push(click, true, 1f); 
+            GameBase.ScreenManager.Push(GameBase.ClickToEntered, true, 0.5f); 
         };
         Add(CLICKTO);
     }
