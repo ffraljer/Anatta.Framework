@@ -2,7 +2,7 @@
 using Anatta.Framework.Interfaces.Graphics;
 using OpenTK.Mathematics;
 
-namespace Anatta.Framework.Graphics.Drawables;
+namespace Anatta.Framework.Graphics;
 
 public abstract class Drawable : ISprite, IUpdatable {
     public abstract Texture Texture { get; protected set; }

@@ -1,7 +1,7 @@
 ﻿using OpenTK.Mathematics;
 using System.Collections;
 
-namespace Anatta.Framework.Graphics.Drawables;
+namespace Anatta.Framework.Graphics;
 
 public class Container : Drawable, IEnumerable<Drawable> {
     protected readonly List<Drawable> _children = new();

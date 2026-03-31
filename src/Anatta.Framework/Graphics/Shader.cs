@@ -1,4 +1,5 @@
 using System.Reflection;
+using Anatta.Framework.Logging;
 using OpenTK.Graphics.OpenGL;
 using G = OpenTK.Graphics.OpenGL.GL;
 using OpenTK.Mathematics;
@@ -9,6 +10,7 @@ public class Shader : IDisposable
 {
     public int Handle { get; private set; }
     private int Gandle => Handle;
+    private Logger _logger = new("Shader");
 
     internal static Shader Load(string vertex, string fragment)
     {
@@ -47,6 +49,7 @@ public class Shader : IDisposable
         {
             GL.GetProgramInfoLog(Handle, out string info);
             throw new Exception($"ur fucking shader broke bro {info}");
+            _logger.Error("Shader error!");
         }
         
         G.DetachShader(Handle, vtxS);
@@ -56,13 +59,14 @@ public class Shader : IDisposable
     }
     
     
-    private static void CheckCompile(int shader, string type)
+    private void CheckCompile(int shader, string type)
     {
         G.GetShaderi(shader, ShaderParameterName.CompileStatus, out int success);
         if (success == 0)
         {
             GL.GetShaderInfoLog(shader, out string info);
             throw new Exception($"ur {type} shader fucking broke: {info}");
+            _logger.Error("Shader error!");
         }
     }
 

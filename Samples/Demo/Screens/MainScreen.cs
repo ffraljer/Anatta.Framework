@@ -1,7 +1,6 @@
 using Anatta.Framework;
 using Anatta.Framework.Configuration;
 using Anatta.Framework.Graphics;
-using Anatta.Framework.Graphics.Drawables;
 using Anatta.Framework.Graphics.Managers;
 using Anatta.Framework.Input;
 using Anatta.Framework.IO;

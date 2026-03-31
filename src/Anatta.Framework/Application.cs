@@ -15,6 +15,7 @@ public class Application : IDisposable {
     private readonly IWindowBackend _backend;
 
     protected Logger logger = new("Application");
+    private Logger _frameworkLogger = new("Framework");
     
     public FrameworkConfig Config { get; }
     
@@ -59,12 +60,11 @@ public class Application : IDisposable {
 
     private void OnLoad()
     {
-        Console.WriteLine($"[Framework]\n" +
-                          $"Window Size: {_backend.Size.X}x{_backend.Size.Y}\n" +
-                          $"Renderer: {GL.GetString(StringName.Renderer)}\n" +
-                          $".NET Version: {Environment.Version}\n" +
-                          $"OS: {RuntimeInformation.OSDescription}\n" +
-                          $"Window Backend: {_backend.ToString().TrimStart("Anatta.Framework.")}\n");
+        _frameworkLogger.Info($"Window Size: {_backend.Size.X}x{_backend.Size.Y}");
+        _frameworkLogger.Info($"Renderer: {GL.GetString(StringName.Renderer)}");
+        _frameworkLogger.Info($".NET Version: {Environment.Version}");
+        _frameworkLogger.Info($"OS: {RuntimeInformation.OSDescription}");
+        _frameworkLogger.Info($"Window Backend: {_backend.ToString().TrimStart("Anatta.Framework.")}");
         GL.ClearColor(0f, 0f, 0f, 1f);
         Initialise();
     }

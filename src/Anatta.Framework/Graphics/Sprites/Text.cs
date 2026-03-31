@@ -1,9 +1,9 @@
-﻿using Anatta.Framework.Graphics;
-using Anatta.Framework.Graphics.Renderers;
+﻿using Anatta.Framework.Graphics.Renderers;
+using Anatta.Framework.Graphics;
 using Anatta.Framework.IO;
 using OpenTK.Mathematics;
 
-namespace Anatta.Framework.Graphics.Drawables {
+namespace Anatta.Framework.Graphics {
     public class Text : Drawable {
         public override Texture Texture { get; protected set; }
         public string Content { get; private set; }

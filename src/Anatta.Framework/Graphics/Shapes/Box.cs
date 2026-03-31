@@ -2,7 +2,7 @@
 using Anatta.Framework.Interfaces.Graphics;
 using OpenTK.Mathematics;
 
-namespace Anatta.Framework.Graphics.Drawables.Shapes;
+namespace Anatta.Framework.Graphics.Shapes;
 
 public class Box : Drawable, IHasGradients {
 

@@ -1,6 +1,6 @@
-using Anatta.Framework.Graphics.Drawables;
-using Anatta.Framework.Graphics.Drawables.Shapes;
 using Anatta.Framework.Graphics.Helpers;
+using Anatta.Framework.Graphics.Shapes;
+using Anatta.Framework.Graphics;
 using Anatta.Framework.Input;
 using Anatta.Framework.Interfaces.Graphics;
 using OpenTK.Graphics.OpenGL;

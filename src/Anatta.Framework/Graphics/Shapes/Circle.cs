@@ -2,7 +2,7 @@
 using Anatta.Framework.Interfaces.Graphics;
 using OpenTK.Mathematics;
 
-namespace Anatta.Framework.Graphics.Drawables.Shapes;
+namespace Anatta.Framework.Graphics.Shapes;
 
 public class Circle : Drawable, IHasGradients{
     public float Radius { get; set; } = 50f;
