@@ -58,7 +58,7 @@ public class Texture : IDisposable
         throw new FileNotFoundException($"{name} not found");
     }
     
-    public static Texture FromImageBytes(byte[] bytes)
+    public static Texture SetData(byte[] bytes)
     {
         using Image<Rgba32> image = Image.Load<Rgba32>(bytes);
 

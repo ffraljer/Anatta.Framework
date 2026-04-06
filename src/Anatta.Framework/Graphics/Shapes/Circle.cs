@@ -1,5 +1,5 @@
-﻿using Anatta.Framework.Graphics;
-using Anatta.Framework.Interfaces.Graphics;
+﻿using Anatta.Framework.Graphics.Sprites;
+using Anatta.Framework.Graphics.Interfaces;
 using OpenTK.Mathematics;
 
 namespace Anatta.Framework.Graphics.Shapes;
@@ -13,11 +13,7 @@ public class Circle : Drawable, IHasGradients{
     public ColourInfo? Gradient { get; set; } = null;
     public ColourInfo? BorderGradient { get; set; } = null;
 
-    public override Texture Texture { get; protected set; }
-
-    public Circle() {
-        Texture = Texture.WhitePixel;
-    }
+    public override Texture Texture { get; protected set; } = Texture.WhitePixel;
 
     public override Vector2 GetSize() {
         return new Vector2(Radius * 2f);

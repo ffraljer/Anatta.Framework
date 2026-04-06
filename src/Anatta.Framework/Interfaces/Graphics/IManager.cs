@@ -1,11 +1,6 @@
-﻿using Anatta.Framework.Interfaces.Graphics;
-using OpenTK.Mathematics;
-
-namespace Anatta.Framework.Interfaces.Graphics;
+﻿namespace Anatta.Framework.Graphics.Interfaces;
 
 public interface IManager {
-    static Vector2i ScreenSize { get; set; }
-    
     void Add(IManageable managed);
     void AddRange(params IManageable[] managedItems);
     void Remove(IManageable managed);

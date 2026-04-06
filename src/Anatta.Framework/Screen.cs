@@ -1,5 +1,5 @@
 using Anatta.Framework.Graphics.Managers;
-using Anatta.Framework.Interfaces.Graphics;
+using Anatta.Framework.Graphics.Interfaces;
 
 namespace Anatta.Framework;
 

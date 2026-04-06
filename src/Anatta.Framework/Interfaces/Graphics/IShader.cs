@@ -1,6 +1,6 @@
 ﻿using OpenTK.Mathematics;
 
-namespace Anatta.Framework.Interfaces.Graphics;
+namespace Anatta.Framework.Graphics.Interfaces;
 
 public interface IShader {
     int Handle { get; set; }

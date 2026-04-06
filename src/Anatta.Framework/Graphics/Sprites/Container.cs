@@ -1,10 +1,10 @@
 ﻿using OpenTK.Mathematics;
 using System.Collections;
 
-namespace Anatta.Framework.Graphics;
+namespace Anatta.Framework.Graphics.Sprites;
 
 public class Container : Drawable, IEnumerable<Drawable> {
-    protected readonly List<Drawable> _children = new();
+    private readonly List<Drawable> _children = new();
 
     public IReadOnlyList<Drawable> Children => _children;
     
@@ -18,7 +18,7 @@ public class Container : Drawable, IEnumerable<Drawable> {
 
     public Drawable this[int index] => _children[index];
     
-    private bool _loaded = false;
+    private bool _loaded;
 
     protected virtual void Load() { }
 

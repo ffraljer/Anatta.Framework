@@ -1,5 +1,5 @@
 using System.Reflection;
-using Anatta.Framework.Interfaces.Graphics;
+using Anatta.Framework.Graphics.Interfaces;
 using Anatta.Framework.Logging;
 using OpenTK.Graphics.OpenGL;
 using G = OpenTK.Graphics.OpenGL.GL;

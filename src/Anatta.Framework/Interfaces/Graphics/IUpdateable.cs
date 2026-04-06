@@ -1,4 +1,4 @@
-namespace Anatta.Framework.Interfaces.Graphics;
+namespace Anatta.Framework.Graphics.Interfaces;
 
 public interface IUpdatable
 {

@@ -5,7 +5,7 @@ using OpenTK.Graphics.OpenGL;
 using Demo.Resources;
 using Anatta.Framework;
 using Anatta.Framework.Graphics.Managers;
-using Anatta.Framework.Graphics.Shapes;
+using Anatta.Framework.Graphics.Sprites;
 using Anatta.Framework.IO;
 using Anatta.Framework.Sound;
 using Anatta.Framework.Graphics;

@@ -1,6 +1,6 @@
 ﻿using Anatta.Framework.Graphics;
 
-namespace Anatta.Framework.Interfaces.Graphics;
+namespace Anatta.Framework.Graphics.Interfaces;
 
 public interface IHasGradients {
     ColourInfo? Gradient { get; set; }

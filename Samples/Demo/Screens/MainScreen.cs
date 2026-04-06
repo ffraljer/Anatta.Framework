@@ -2,12 +2,10 @@ using Anatta.Framework;
 using Anatta.Framework.Configuration;
 using Anatta.Framework.Graphics;
 using Anatta.Framework.Graphics.Managers;
-using Anatta.Framework.Input;
+using Anatta.Framework.Graphics.Sprites;
 using Anatta.Framework.IO;
 using Anatta.Framework.Sound;
-using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
-using OpenTK.Windowing.GraphicsLibraryFramework;
 
 namespace Demo.Screens;
 

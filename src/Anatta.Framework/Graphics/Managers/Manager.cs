@@ -1,28 +1,25 @@
 using Anatta.Framework.Graphics.Helpers;
 using Anatta.Framework.Graphics.Shapes;
-using Anatta.Framework.Graphics;
+using Anatta.Framework.Graphics.Sprites;
 using Anatta.Framework.Input;
-using Anatta.Framework.Interfaces.Graphics;
+using Anatta.Framework.Graphics.Interfaces;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
-using OpenTK.Windowing.GraphicsLibraryFramework;
 
 namespace Anatta.Framework.Graphics.Managers;
 
-public class Manager : IDisposable, IManager {
+public class Manager : IDisposable {
     private readonly List<IManageable> _managables = new();
     public static Vector2i ScreenSize { get; set; }
     private int _vao;
     private int _vbo;
     private Shader _shd;
     
-    private bool _fuckBass = false; // _wasMouseDown
+    private bool _wasMouseDown;
     
-    private bool initialized = false;
+    private bool _initialized;
 
-    public KeyboardState KeyboardState { get; set; }
-
-    private static readonly float[] quad =
+    private static readonly float[] Quad =
     {
       // X,  Y,  U,  V
         0f, 1f, 0f, 1f,
@@ -33,13 +30,9 @@ public class Manager : IDisposable, IManager {
         1f, 1f, 1f, 1f,
         1f, 0f, 1f, 0f
     };
-
-    public Manager() {
-        
-    }
     private void Init()
     {
-        if (initialized) return;
+        if (_initialized) return;
         
         _vao = GL.GenVertexArray();
         _vbo = GL.GenBuffer();
@@ -48,8 +41,8 @@ public class Manager : IDisposable, IManager {
         GL.BindBuffer(BufferTarget.ArrayBuffer, _vbo);
         GL.BufferData(
             BufferTarget.ArrayBuffer,
-            quad.Length * sizeof(float),
-            quad,
+            Quad.Length * sizeof(float),
+            Quad,
             BufferUsage.StaticDraw
         );
 
@@ -66,7 +59,7 @@ public class Manager : IDisposable, IManager {
         GL.BindVertexArray(0);
         GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
         
-        initialized = true;
+        _initialized = true;
     }
 
     public IEnumerable<IManageable> GetAll() => _managables;
@@ -79,17 +72,16 @@ public class Manager : IDisposable, IManager {
     }
 
     public void AddRange(params IManageable[] managedItems) {
-        if (managedItems == null)
-            return;
+        if (managedItems == null) throw new ArgumentNullException(nameof(managedItems));
+        if (managedItems.Length == 0) return;
 
-        foreach (var m in managedItems) {
-            if (m != null)
-                _managables.Add(m);
+        for (int i = 0; i < managedItems.Length; i++) {
+            _managables.Add(managedItems[i]);
         }
     }
 
     public void Remove(IManageable managed) {
-        if (managed == null) return;
+        if (managed == null) throw new ArgumentNullException(nameof(managed));
         _managables.Remove(managed);
     }
     private void UpdateItem(IManageable item) {
@@ -133,34 +125,30 @@ public class Manager : IDisposable, IManager {
 
         if (hovering)
         {
-            if (!sprite._isHovering)
+            if (!sprite.IsHovering)
             {
-                sprite._isHovering = true;
+                sprite.IsHovering = true;
                 sprite.TriggerHover();
             }
 
             bool isDown = Mouse.IsButtonPressed(Mouse.Button.Left);
 
-            if (isDown && !_fuckBass)
+            if (isDown && !_wasMouseDown)
                 sprite.TriggerClick();
 
-            _fuckBass = isDown;
+            _wasMouseDown = isDown;
         }
         else
         {
-            if (sprite._isHovering)
+            if (sprite.IsHovering)
             {
-                sprite._isHovering = false;
+                sprite.IsHovering = false;
                 sprite.TriggerHoverLost();
             }
         }
     }
     #endregion
     public void Update() {
-        float delta = Time.Delta;
-
-        var mousePos = new Vector2(Mouse.X, Mouse.Y);
-        
         foreach (var item in _managables.AsEnumerable().Reverse())
             UpdateItem(item);
     }
@@ -308,14 +296,5 @@ public class Manager : IDisposable, IManager {
         GL.DeleteVertexArray(_vao);
 
         _shd.Dispose();
-    }
-    
-    private Vector2 GetScreenScale(Vector2 spriteSize) {
-        float ratio = ScreenSize.X / spriteSize.X;
-        float ratio1 = ScreenSize.Y / spriteSize.Y;
-
-        float scale = MathF.Min(ratio, ratio1);
-
-        return spriteSize * scale;
     }
 }

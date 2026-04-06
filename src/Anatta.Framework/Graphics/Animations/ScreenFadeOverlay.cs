@@ -1,5 +1,5 @@
 ﻿using Anatta.Framework.Graphics.Managers;
-using Anatta.Framework.Graphics;
+using Anatta.Framework.Graphics.Sprites;
 using OpenTK.Mathematics;
 
 namespace Anatta.Framework.Graphics.Animations;

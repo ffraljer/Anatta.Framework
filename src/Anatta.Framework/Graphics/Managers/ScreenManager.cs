@@ -8,12 +8,12 @@ public class ScreenManager {
     public Screen? Current => _screens.Count > 0 ? _screens.Peek() : null;
     
     private ScreenFadeOverlay? _fadeOverlay;
-    private Manager man = new();
+    private readonly Manager _spriteManager = new();
     
     private void _Fade(Screen screen, float duration = 0.5f) {
         if (_fadeOverlay == null) {
             _fadeOverlay = new ScreenFadeOverlay();
-            man.Add(_fadeOverlay);
+            _spriteManager.Add(_fadeOverlay);
         }
 
         Screen? old = _screens.Count > 0 ? _screens.Peek() : null;
@@ -55,11 +55,11 @@ public class ScreenManager {
     // long ass line
     public void Update() {
         _screens.Peek().Update(); 
-        man.Update();
+        _spriteManager.Update();
     }
 
     public void Draw() {
-        man.Draw();
+        _spriteManager.Draw();
     }
 
     public void Dispose() {

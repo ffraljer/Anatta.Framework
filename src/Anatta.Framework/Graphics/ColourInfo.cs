@@ -6,7 +6,8 @@ public struct ColourInfo
 {
     public Colour Top;
     public Colour Bottom;
-
+    
+    // MAYBE I could replace colours with ColourInfo? MAYBE
     public ColourInfo(Colour single) {
         Top = Bottom = single;
     }

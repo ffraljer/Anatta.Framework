@@ -3,10 +3,10 @@ using Anatta.Framework.Graphics;
 using Anatta.Framework.Sound;
 
 namespace Anatta.Framework.IO {
-    public class Resource
+    public static class Resource
     {
         private static readonly List<IResourceStore> Stores = new();
-        private readonly string rootNamespace;
+        private static readonly string RootNamespace;
         private static readonly Dictionary<string, object> Cache = new();
         
         public static void AddStore(IResourceStore store) {
@@ -42,7 +42,7 @@ namespace Anatta.Framework.IO {
                     return (T)(object)text;
                 }
                 
-                Texture tex = Texture.FromImageBytes(bytes);
+                Texture tex = Texture.SetData(bytes);
                 return (T)(object)tex;
             }
             if (typeof(T) == typeof(byte[]))
@@ -82,7 +82,6 @@ namespace Anatta.Framework.IO {
             throw new NotSupportedException(typeof(T).Name);
         }
         public static T LoadInternal<T>(string name) {
-            string folder = GetTypeFolder(typeof(T));
             string fullName = $"Anatta.Framework.Resources.{name}";
             Stream? stream = null;
             var asm = Assembly.GetExecutingAssembly();
@@ -96,7 +95,7 @@ namespace Anatta.Framework.IO {
             var bytes = ms.ToArray();
 
             if (typeof(T) == typeof(Texture)) {
-                Texture tex = Texture.FromImageBytes(bytes);
+                Texture tex = Texture.SetData(bytes);
                 return (T)(object)tex;
             }
             if (typeof(T) == typeof(byte[])) {

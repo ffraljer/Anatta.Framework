@@ -1,7 +1,6 @@
-using Anatta.Framework.Graphics;
 using OpenTK.Mathematics;
 
-namespace Anatta.Framework.Graphics;
+namespace Anatta.Framework.Graphics.Sprites;
 
 public class Sprite : Drawable
 {

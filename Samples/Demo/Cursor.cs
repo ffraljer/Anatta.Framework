@@ -1,5 +1,6 @@
 ﻿using Anatta.Framework.Graphics;
 using Anatta.Framework.Graphics.Shapes;
+using Anatta.Framework.Graphics.Sprites;
 using Anatta.Framework.Input;
 using OpenTK.Mathematics;
 

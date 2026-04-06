@@ -1,14 +1,13 @@
-﻿using Anatta.Framework.Graphics;
-using Anatta.Framework.Interfaces.Graphics;
+﻿using Anatta.Framework.Graphics.Interfaces;
 using OpenTK.Mathematics;
 
-namespace Anatta.Framework.Graphics;
+namespace Anatta.Framework.Graphics.Sprites;
 
 public abstract class Drawable : ISprite, IUpdatable {
     public abstract Texture Texture { get; protected set; }
     public Vector2 Position { get; set; }
     public Vector2 Scale { get; set; } = Vector2.One;
-    public float CornerRadius { get; set; } = 0f;
+    public float CornerRadius { get; set; }
 
     public Drawable? Parent { get; internal set; }
     
@@ -31,14 +30,13 @@ public abstract class Drawable : ISprite, IUpdatable {
     public Anchors Origin { get; set; } = Anchors.TopLeft;
     public Anchors Anchor { get; set; } = Anchors.TopLeft;
     
-    internal bool _isHovering = false;
+    internal bool IsHovering = false;
 
     public event Action<ISprite>? OnClick;
     public event Action<ISprite>? OnHover;
     public event Action<ISprite>? OnHoverLost;
 
-    protected List<ITween> _tweens = new();
-    protected float _sequenceTime = 0f;
+    private List<ITween> _tweens = new();
 
     public virtual void Update()
     {
@@ -58,7 +56,6 @@ public abstract class Drawable : ISprite, IUpdatable {
     public void ClearTransforms()
     {
         _tweens.Clear();
-        _sequenceTime = 0f;
     }
 
     public ISprite MoveTo(Vector2 position, float duration, Easing easing = Easing.None, bool loop = false, bool restart = false)
