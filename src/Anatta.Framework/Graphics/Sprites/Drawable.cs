@@ -5,12 +5,11 @@ using OpenTK.Mathematics;
 namespace Anatta.Framework.Graphics.Sprites;
 
 public abstract class Drawable : ISprite, IUpdatable { 
-    // todo: make tweens run in parallel, and somehow still allow the *To() methods to still work.
+    // my only problem now is that I have two animation systems 
     public abstract Texture Texture { get; protected set; }
     public Vector2 Position { get; set; }
     public Vector2 Scale { get; set; } = Vector2.One;
     public float CornerRadius { get; set; }
-
     public Drawable? Parent { get; internal set; }
     
     public Vector2 DrawPosition
@@ -38,18 +37,31 @@ public abstract class Drawable : ISprite, IUpdatable {
     public event Action<ISprite>? OnHover;
     public event Action<ISprite>? OnHoverLost;
 
-    private List<ITween> _tweens = new();
+    private List<ITween> _transformTweens = new(); // TransformationSequence tweens
+    private TransformationSequence? _currentSequence;
+    private List<ITween> _tweens = new(); // *To() tweens
 
     public virtual void Update()
     {
-        if (_tweens.Count > 0)
-        {
+        // *To() tweens
+        if (_tweens.Count > 0) {
             if (_tweens[0].Update()) {
-
                 _tweens.RemoveAt(0);
                 if (_thenActions != null && _thenActions.Count > 0)
                     _thenActions.Dequeue()?.Invoke();
             }
+        }
+
+        // transformation sequences
+        for (int i = _transformTweens.Count - 1; i >= 0; i--) {
+            if (_transformTweens[i].Update())
+                _transformTweens.RemoveAt(i);
+        }
+
+        // check if sequence is finished and should loop
+        if (_transformTweens.Count == 0 && _currentSequence != null && _currentSequence.Loop) {
+            TransformSnap(_currentSequence);
+            ApplyTransformationSequence(_currentSequence);
         }
     }
 
@@ -59,7 +71,7 @@ public abstract class Drawable : ISprite, IUpdatable {
     {
         _tweens.Clear();
     }
-
+    #region sequential tweens
     public ISprite MoveTo(Vector2 position, float duration, Easing easing = Easing.None, bool loop = false, bool restart = false)
     {
         _tweens.Add(new Tween<Vector2>
@@ -156,6 +168,7 @@ public abstract class Drawable : ISprite, IUpdatable {
 
         return this;
     }
+    #endregion
 	internal void TriggerHover() {
 		OnHover?.Invoke(this);
 	}
@@ -170,6 +183,7 @@ public abstract class Drawable : ISprite, IUpdatable {
     }
     
     public ISprite ApplyTransformationSequence(TransformationSequence sequence) {
+        _currentSequence = sequence;
         void EnqueueSequence() {
             for (int i = 0; i < sequence.Transformations.Count; i++) {
                 var t = sequence.Transformations[i];
@@ -179,14 +193,7 @@ public abstract class Drawable : ISprite, IUpdatable {
                 twindyn.Loop = false;
                 twindyn.Restart = false;
 
-                if (i == sequence.Transformations.Count - 1 && sequence.Loop) {
-                    Then(() => {
-                        TransformSnap(sequence);
-                        EnqueueSequence();
-                    });
-                }
-
-                _tweens.Add(twin);
+                _transformTweens.Add(twin);
             }
         }
 

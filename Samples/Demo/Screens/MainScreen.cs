@@ -14,14 +14,14 @@ public class MainScreen : Screen {
     Text player;
     private Track _music;
 
-    public MainScreen(Manager manager) : base(manager) {
+    public MainScreen(SpriteManager spriteManager) : base(spriteManager) {
     }
 
     public override void Load() {
         base.Load();
-        var transformas = new Transformation[] { // remember that timing is sequential, fuck me.
-            new Transformation(Transformation.Type.Colour, Colour.White, Colour.Green, 0f, 2f, Easing.OutCubic),
-            new Transformation(Transformation.Type.Colour, Colour.Green, Colour.White, 0f, 2f, Easing.OutCubic),
+        var transformas = new Transformation[] {
+            new (Transformation.Type.Colour, Colour.White, Colour.Green, 0f, 2f, Easing.OutCubic),
+            new (Transformation.Type.Colour, Colour.Green, Colour.White, 2f, 4f, Easing.OutCubic),
         };
         _music = Resource.Load<Track>("longcat.mp3");
         _music.Loop = true;

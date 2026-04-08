@@ -12,7 +12,7 @@ namespace Demo.Screens;
 
 public class ClickToEntered : Screen {
     private Track track;
-    public ClickToEntered(Manager manager) : base(manager) { }
+    public ClickToEntered(SpriteManager spriteManager) : base(spriteManager) { }
     public override void Load() {
         Add(new Text("YOU HAVE CLICKED AND ENTERED", 24f, Colour.White) {
             Anchor = Anchors.BottomRight,

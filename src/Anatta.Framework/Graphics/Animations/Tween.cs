@@ -20,9 +20,6 @@ internal class Tween<T> : ITween {
     {
         if (!_started) {
             og = Getter();
-            if (Start.Equals(default(T)))
-                Start = og;
-
             _started = true;
         }
         
@@ -34,16 +31,18 @@ internal class Tween<T> : ITween {
         Setter(Lerp(Start, End, t));
         if (Time >= EndTime) {
             if (Loop) {
-                Time = 0f;
+                Time -= _duration;
 
                 if (Restart) {
-                    og = Getter();
-                    Start = og;
-                    Setter(Start);
+                    //og = Getter();
+                    Start = Getter();
+                    // Setter(Start);
                 }
                 else {
                     Start = End;
                 }
+
+                Setter(Start);
 
                 return false;
             }
