@@ -1,10 +1,10 @@
-using Anatta.Framework.Graphics.Managers;
+using Anatta.Framework.Graphics.Sprites;
 using Anatta.Framework.Graphics.Interfaces;
 
 namespace Anatta.Framework;
 
 public class Screen : IDisposable {
-    protected Manager Manager { get; private set; }
+    protected SpriteManager Manager { get; private set; }
     
     public bool IsActive { get; private set; } = true;
     
@@ -18,10 +18,10 @@ public class Screen : IDisposable {
     }
 
     
-    public Screen(Manager manager) {
+    public Screen(SpriteManager spriteManager) {
 
-        Manager = manager
-                  ?? throw new ArgumentNullException(nameof(manager));
+        Manager = spriteManager
+                  ?? throw new ArgumentNullException(nameof(spriteManager));
     }
 
     public virtual void Draw() {

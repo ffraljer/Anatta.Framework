@@ -1,6 +1,7 @@
 using Anatta.Framework;
 using Anatta.Framework.Configuration;
 using Anatta.Framework.Graphics;
+using Anatta.Framework.Graphics.Animations;
 using Anatta.Framework.Graphics.Managers;
 using Anatta.Framework.Graphics.Sprites;
 using Anatta.Framework.IO;
@@ -13,11 +14,15 @@ public class MainScreen : Screen {
     Text player;
     private Track _music;
 
-    public MainScreen(Manager manager) : base(manager) {
+    public MainScreen(SpriteManager spriteManager) : base(spriteManager) {
     }
 
     public override void Load() {
         base.Load();
+        var transformas = new Transformation[] {
+            new (Transformation.Type.Colour, Colour.White, Colour.Green, 0f, 2f, Easing.OutCubic),
+            new (Transformation.Type.Colour, Colour.Green, Colour.White, 2f, 4f, Easing.OutCubic),
+        };
         _music = Resource.Load<Track>("longcat.mp3");
         _music.Loop = true;
         Sprite sprite = new("finished") {
@@ -71,7 +76,8 @@ public class MainScreen : Screen {
         var CLICKTO = new Text("CLICK TO ENTER A SCREEN", 24f, Colour.White) {
             Anchor = Anchors.BottomRight,
             Origin = Anchors.BottomRight
-        }.ColourTo(Colour.Green, 2, Easing.None, true, true);
+        };
+        CLICKTO.ApplyTransformationSequence(new TransformationSequence(transformas, true));
         CLICKTO.OnClick += delegate {
             _music.Stop();
             GameBase.ScreenManager.Push(GameBase.ClickToEntered, true, 0.5f); 

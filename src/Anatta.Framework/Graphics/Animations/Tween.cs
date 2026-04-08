@@ -10,50 +10,43 @@ internal class Tween<T> : ITween {
     public bool Loop;
     public float Delay;
     public T End = default!;
-    public float Duration;
+    public float StartTime, EndTime;
     public float Time;
     public Func<T, T, float, T> Lerp = null!;
+    private float _duration => EndTime - StartTime;
 
     private bool _started;
     public bool Update()
     {
-        if (Delay > 0f)
-        {
-            Delay -= Framework.Time.Delta;
-            return false;
-        }
-        if (!_started)
-        {
-            
+        if (!_started) {
             og = Getter();
-            Start = og;
             _started = true;
         }
-        if (Duration <= 0f)
-        {
-            Setter(End);
-            return true;
-        }
+        
         Time += Framework.Time.Delta;
-        float t = Math.Clamp(Time / Duration, 0f, 1f);
+        if (Time < StartTime)
+            return false;
+        float t = Math.Clamp((Time - StartTime) / _duration, 0f, 1f);
         t = _EasingHelper.Evaluate(Ease, t);
         Setter(Lerp(Start, End, t));
-        if (Time >= Duration)
-        {
-            if (Loop)
-            {
-                Time = 0f;
+        if (Time >= EndTime) {
+            if (Loop) {
+                Time -= _duration;
+
                 if (Restart) {
-                    Start = og;
-                    Setter(og);
+                    //og = Getter();
+                    Start = Getter();
+                    // Setter(Start);
                 }
                 else {
-                    Start = og;
+                    Start = End;
                 }
+
+                Setter(Start);
+
                 return false;
             }
-            else
-            {
+            else {
                 Setter(End);
                 return true;
             }

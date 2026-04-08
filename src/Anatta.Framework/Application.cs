@@ -1,6 +1,6 @@
 ﻿using System.Runtime.InteropServices;
 using Anatta.Framework.Configuration;
-using Anatta.Framework.Graphics.Managers;
+using Anatta.Framework.Graphics.Sprites;
 using Anatta.Framework.Logging;
 using Anatta.Framework.Threading;
 using OpenTK.Graphics.OpenGL;
@@ -37,7 +37,7 @@ public class Application : IDisposable {
         Backend = _backend;
 
         Size = _backend.Size;
-        Manager.ScreenSize = Size;
+        SpriteManager.ScreenSize = Size;
         _backend.Load += OnLoad;
         _backend.RenderFrame += OnRenderFrame;
         _backend.Unload += OnUnload;

@@ -1,14 +1,15 @@
-﻿using Anatta.Framework.Graphics.Interfaces;
+﻿using Anatta.Framework.Graphics.Animations;
+using Anatta.Framework.Graphics.Interfaces;
 using OpenTK.Mathematics;
 
 namespace Anatta.Framework.Graphics.Sprites;
 
-public abstract class Drawable : ISprite, IUpdatable {
+public abstract class Drawable : ISprite, IUpdatable { 
+    // my only problem now is that I have two animation systems 
     public abstract Texture Texture { get; protected set; }
     public Vector2 Position { get; set; }
     public Vector2 Scale { get; set; } = Vector2.One;
     public float CornerRadius { get; set; }
-
     public Drawable? Parent { get; internal set; }
     
     public Vector2 DrawPosition
@@ -36,18 +37,31 @@ public abstract class Drawable : ISprite, IUpdatable {
     public event Action<ISprite>? OnHover;
     public event Action<ISprite>? OnHoverLost;
 
-    private List<ITween> _tweens = new();
+    private List<ITween> _transformTweens = new(); // TransformationSequence tweens
+    private TransformationSequence? _currentSequence;
+    private List<ITween> _tweens = new(); // *To() tweens
 
     public virtual void Update()
     {
-        if (_tweens.Count > 0)
-        {
+        // *To() tweens
+        if (_tweens.Count > 0) {
             if (_tweens[0].Update()) {
-
                 _tweens.RemoveAt(0);
                 if (_thenActions != null && _thenActions.Count > 0)
                     _thenActions.Dequeue()?.Invoke();
             }
+        }
+
+        // transformation sequences
+        for (int i = _transformTweens.Count - 1; i >= 0; i--) {
+            if (_transformTweens[i].Update())
+                _transformTweens.RemoveAt(i);
+        }
+
+        // check if sequence is finished and should loop
+        if (_transformTweens.Count == 0 && _currentSequence != null && _currentSequence.Loop) {
+            TransformSnap(_currentSequence);
+            ApplyTransformationSequence(_currentSequence);
         }
     }
 
@@ -57,7 +71,7 @@ public abstract class Drawable : ISprite, IUpdatable {
     {
         _tweens.Clear();
     }
-
+    #region sequential tweens
     public ISprite MoveTo(Vector2 position, float duration, Easing easing = Easing.None, bool loop = false, bool restart = false)
     {
         _tweens.Add(new Tween<Vector2>
@@ -66,8 +80,9 @@ public abstract class Drawable : ISprite, IUpdatable {
             Setter = v => Position = v,
             Start = Position,
             End = position,
-            Duration = duration,
             Ease = easing,
+            StartTime = 0f,
+            EndTime = duration,
             Restart = restart,
             Loop = loop,
             Lerp = AnimationHelper.Lerp
@@ -84,9 +99,10 @@ public abstract class Drawable : ISprite, IUpdatable {
             Setter = v => Scale = v,
             Start = Scale,
             End = scale,
-            Duration = duration,
             Ease = easing,
             Restart = restart,
+            StartTime = 0f,
+            EndTime = duration,
             Loop = loop,
             Lerp = AnimationHelper.Lerp
         });
@@ -104,8 +120,9 @@ public abstract class Drawable : ISprite, IUpdatable {
             Setter = v => Rotation = v,
             Start = Rotation,
             End = r,
-            Duration = duration,
             Ease = easing,
+            StartTime = 0f,
+            EndTime = duration,
             Restart = restart,
             Loop = loop,
             Lerp = AnimationHelper.Lerp
@@ -122,9 +139,10 @@ public abstract class Drawable : ISprite, IUpdatable {
             Setter = v => Colour = v,
             Start = Colour,
             End = colour,
-            Duration = duration,
             Ease = easing,
             Loop = loop,
+            StartTime = 0f,
+            EndTime = duration,
             Restart = restart,
             Lerp = AnimationHelper.Lerp
         });
@@ -140,8 +158,9 @@ public abstract class Drawable : ISprite, IUpdatable {
             Setter = v => Colour = new Colour(Colour.R, Colour.G, Colour.B, v),
             Start = Colour.A,
             End = alpha,
-            Duration = duration,
             Ease = easing,
+            StartTime = 0f,
+            EndTime = duration,
             Restart = restart,
             Loop = loop,
             Lerp = AnimationHelper.Lerp
@@ -149,6 +168,7 @@ public abstract class Drawable : ISprite, IUpdatable {
 
         return this;
     }
+    #endregion
 	internal void TriggerHover() {
 		OnHover?.Invoke(this);
 	}
@@ -161,7 +181,118 @@ public abstract class Drawable : ISprite, IUpdatable {
     public virtual void Dispose()
     {
     }
+    
+    public ISprite ApplyTransformationSequence(TransformationSequence sequence) {
+        _currentSequence = sequence;
+        void EnqueueSequence() {
+            for (int i = 0; i < sequence.Transformations.Count; i++) {
+                var t = sequence.Transformations[i];
+                var twin = BuildTween(t);
+
+                dynamic twindyn = twin;
+                twindyn.Loop = false;
+                twindyn.Restart = false;
+
+                _transformTweens.Add(twin);
+            }
+        }
+
+        EnqueueSequence();
+        return this;
+    }
 	
+    private ITween BuildTween(Transformation t) {
+        switch (t.TransformType) {
+            case Transformation.Type.Move:
+                return new Tween<Vector2> {
+                    Getter = () => Position,
+                    Setter = v => Position = v,
+                    Start = t.VecStart,
+                    End = t.VecEnd,
+                    Ease = t.Easing,
+                    StartTime = t.StartTime,
+                    EndTime = t.EndTime,
+                    Lerp = AnimationHelper.Lerp
+                };
+
+            case Transformation.Type.Scale:
+                return new Tween<Vector2> {
+                    Getter = () => Scale,
+                    Setter = v => Scale = v,
+                    Start = t.VecStart,
+                    End = t.VecEnd,
+                    Ease = t.Easing,
+                    StartTime = t.StartTime,
+                    EndTime = t.EndTime,
+                    Lerp = AnimationHelper.Lerp
+                };
+
+            case Transformation.Type.Rotate:
+                return new Tween<float> {
+                    Getter = () => Rotation,
+                    Setter = v => Rotation = v,
+                    Start = t.FloatStart,
+                    End = t.FloatEnd,
+                    StartTime = t.StartTime,
+                    EndTime = t.EndTime,
+                    Ease = t.Easing,
+                    Lerp = AnimationHelper.Lerp
+                };
+
+            case Transformation.Type.Colour:
+                return new Tween<Colour> {
+                    Getter = () => Colour,
+                    Setter = v => Colour = v,
+                    Start = t.ColStart,
+                    End = t.ColEnd,
+                    StartTime = t.StartTime,
+                    EndTime = t.EndTime,
+                    Ease = t.Easing,
+                    Lerp = AnimationHelper.Lerp
+                };
+
+            case Transformation.Type.Fade:
+                return new Tween<float> {
+                    Getter = () => Colour.A,
+                    Setter = v => Colour = new Colour(Colour.R, Colour.G, Colour.B, v),
+                    Start = t.FloatStart,
+                    End = t.FloatEnd,
+                    StartTime = t.StartTime,
+                    EndTime = t.EndTime,
+                    Ease = t.Easing,
+                    Lerp = AnimationHelper.Lerp
+                };
+        }
+
+        throw new Exception("unknown transformation type");
+    }
+    
+    private void TransformSnap(TransformationSequence sequence) {
+        var first = sequence.Transformations[0];
+
+        switch (first.TransformType) {
+            case Transformation.Type.Move:
+                Position = first.VecStart;
+                break;
+
+            case Transformation.Type.Scale:
+                Scale = first.VecStart;
+                break;
+
+            case Transformation.Type.Rotate:
+                Rotation = first.FloatStart;
+                break;
+
+            case Transformation.Type.Colour:
+                Colour = first.ColStart;
+                break;
+
+            case Transformation.Type.Fade:
+                Colour = new Colour(Colour.R, Colour.G, Colour.B, first.FloatStart);
+                break;
+        }
+    }
+    
 	public abstract Vector2 GetSize();
     
     public ISprite Then(Action action)

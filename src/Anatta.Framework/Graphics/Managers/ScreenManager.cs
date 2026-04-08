@@ -1,4 +1,5 @@
 using Anatta.Framework.Graphics.Animations;
+using Anatta.Framework.Graphics.Sprites;
 
 namespace Anatta.Framework.Graphics.Managers;
 
@@ -8,7 +9,7 @@ public class ScreenManager {
     public Screen? Current => _screens.Count > 0 ? _screens.Peek() : null;
     
     private ScreenFadeOverlay? _fadeOverlay;
-    private readonly Manager _spriteManager = new();
+    private readonly SpriteManager _spriteManager = new();
     
     private void _Fade(Screen screen, float duration = 0.5f) {
         if (_fadeOverlay == null) {
