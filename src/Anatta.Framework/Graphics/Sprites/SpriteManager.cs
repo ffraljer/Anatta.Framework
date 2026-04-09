@@ -54,7 +54,7 @@ public class SpriteManager : IDisposable {
             1, 2, VertexAttribPointerType.Float, false, 4 * sizeof(float), 2 * sizeof(float)
         );
 
-        _shd = Shader.Load("vertexSprite.glsl", "fragmentSprite.glsl");
+        _shd = Shader.Load("sprite.avs", "sprite.afs");
 
         GL.BindVertexArray(0);
         GL.BindBuffer(BufferTarget.ArrayBuffer, 0);

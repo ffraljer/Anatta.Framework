@@ -33,7 +33,7 @@ public class Application : IDisposable {
         
         _backend = useSdl
             ? new DefaultWindowBackend(size, title)
-            : new GameWindowWindowBackend(size, title);
+            : new NativeWindowBackend(size, title);
         Backend = _backend;
 
         Size = _backend.Size;

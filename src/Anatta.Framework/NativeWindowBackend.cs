@@ -7,7 +7,7 @@ using OpenTK.Windowing.GraphicsLibraryFramework;
 
 namespace Anatta.Framework;
 
-internal class GameWindowWindowBackend : IWindowBackend { // this is all I could come up with.
+internal class NativeWindowBackend : IWindowBackend {
     private GameWindow _window;
 
     public Vector2i Size => _window.ClientSize;
@@ -32,7 +32,7 @@ internal class GameWindowWindowBackend : IWindowBackend { // this is all I could
     public event Action<float>? RenderFrame;
     public event Action? Unload;
 
-    public GameWindowWindowBackend(Vector2i size, string title) {
+    public NativeWindowBackend(Vector2i size, string title) {
         var native = new NativeWindowSettings
         {
             Title = title,

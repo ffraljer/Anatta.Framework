@@ -64,8 +64,8 @@ namespace Anatta.Framework.IO {
             }
             if (typeof(T) == typeof(Shader)) {
                 foreach (var store in Stores) {
-                    using var vr = store.Open($"Shaders/{name}.glsl");
-                    using var fr = store.Open($"Shaders/{name}Fragment.glsl");
+                    using var vr = store.Open($"Shaders/{name}.avs");
+                    using var fr = store.Open($"Shaders/{name}.afs");
 
                     if (vr != null && fr != null) {
                         using var vreader = new StreamReader(vr);
@@ -81,7 +81,7 @@ namespace Anatta.Framework.IO {
             }
             throw new NotSupportedException(typeof(T).Name);
         }
-        public static T LoadInternal<T>(string name) {
+        internal static T LoadInternal<T>(string name) {
             string fullName = $"Anatta.Framework.Resources.{name}";
             Stream? stream = null;
             var asm = Assembly.GetExecutingAssembly();

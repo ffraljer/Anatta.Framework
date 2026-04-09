@@ -1,6 +1,5 @@
 ﻿using Anatta.Framework;
 using Anatta.Framework.Graphics;
-using Anatta.Framework.Graphics.Managers;
 using Anatta.Framework.Graphics.Shapes;
 using Anatta.Framework.Graphics.Sprites;
 using Anatta.Framework.Input;

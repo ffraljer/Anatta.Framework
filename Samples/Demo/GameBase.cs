@@ -4,7 +4,7 @@ using OpenTK.Mathematics;
 using OpenTK.Graphics.OpenGL;
 using Demo.Resources;
 using Anatta.Framework;
-using Anatta.Framework.Graphics.Managers;
+using Anatta.Framework.Graphics;
 using Anatta.Framework.Graphics.Sprites;
 using Anatta.Framework.IO;
 using Anatta.Framework.Sound;
@@ -17,7 +17,7 @@ public class GameBase : Application
 {
     private SpriteManager _spriteManager;
     private SpriteManager _cursorSpriteManager;
-    public static ScreenManager ScreenManager;
+    public static ScreenStack ScreenStack;
     private bool _escapePressedLastFrame = false;
 
     public static Screen ClickToEntered;
@@ -25,7 +25,7 @@ public class GameBase : Application
     public GameBase(Vector2i tize, bool UseSDL, string title = "Demo Game") : base(tize, title, UseSDL) {
         _spriteManager = new();
         _cursorSpriteManager = new();
-        ScreenManager = new();
+        ScreenStack = new();
         HideCursor = true;
     }
 
@@ -33,7 +33,7 @@ public class GameBase : Application
         loadScreens();
         Resource.AddStore(new AssemblyStore(typeof(_Resource).Assembly, "Demo.Resources"));
         Resource.AddStore(new FileSystemStore("Content"));
-        ScreenManager.Push(new MainScreen(_spriteManager));
+        ScreenStack.Push(new MainScreen(_spriteManager));
         base.Initialise();
         _cursorSpriteManager.Add(new CursorContainer());
     }
@@ -44,16 +44,16 @@ public class GameBase : Application
     protected override void Update()
     {
         _spriteManager?.Update();
-        if (ScreenManager.Current == ClickToEntered) {
+        if (ScreenStack.Current == ClickToEntered) {
             bool escapeNow = Keyboard.IsKeyDown(Keyboard.Key.Escape);
 
             if (escapeNow && !_escapePressedLastFrame) {
-                ScreenManager.Push(new MainScreen(_spriteManager), true, 0.5f);
+                ScreenStack.Push(new MainScreen(_spriteManager), true, 0.5f);
             }
 
             _escapePressedLastFrame = escapeNow;
         }
-        ScreenManager.Update();
+        ScreenStack.Update();
         _cursorSpriteManager.Update();
     }
 
@@ -61,7 +61,7 @@ public class GameBase : Application
     {
         GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
         _spriteManager?.Draw();
-        ScreenManager.Draw();
+        ScreenStack.Draw();
         _cursorSpriteManager.Draw();
         base.Draw();
     }

@@ -2,7 +2,7 @@ using Anatta.Framework;
 using Anatta.Framework.Configuration;
 using Anatta.Framework.Graphics;
 using Anatta.Framework.Graphics.Animations;
-using Anatta.Framework.Graphics.Managers;
+using Anatta.Framework.Graphics;
 using Anatta.Framework.Graphics.Sprites;
 using Anatta.Framework.IO;
 using Anatta.Framework.Sound;
@@ -80,7 +80,7 @@ public class MainScreen : Screen {
         CLICKTO.ApplyTransformationSequence(new TransformationSequence(transformas, true));
         CLICKTO.OnClick += delegate {
             _music.Stop();
-            GameBase.ScreenManager.Push(GameBase.ClickToEntered, true, 0.5f); 
+            GameBase.ScreenStack.Push(GameBase.ClickToEntered, true, 0.5f); 
         };
         Add(CLICKTO);
     }
