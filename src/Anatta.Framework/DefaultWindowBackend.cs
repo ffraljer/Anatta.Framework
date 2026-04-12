@@ -14,9 +14,13 @@
 
         public Vector2i Size { get; private set; }
 
+        private readonly WindowManager _windowManager;
+
         public KeyboardState KeyboardState => default;
 
         public bool HideCursor { get; set; }
+
+        public event Action<Vector2i>? Resized;
 
         public IntPtr WindowHandle => _window;
 
@@ -28,6 +32,11 @@
         public DefaultWindowBackend(Vector2i size, string title)
         {
             Size = size;
+
+            _windowManager = new WindowManager() { 
+                Width = size.X,
+                Height = size.Y,
+            };
 
             SDL.Init(SDL.InitFlags.Video);
             
@@ -69,7 +78,10 @@
                             break;
                         case SDL.EventType.WindowResized:
                             Size = new Vector2i(@event.Window.Data1, @event.Window.Data2);
-                            GL.Viewport(0, 0, Size.X, Size.Y);
+                            _windowManager.Width = Size.X;
+                            _windowManager.Height = Size.Y;
+                            Resized?.Invoke(Size);
+                        GL.Viewport(0, 0, Size.X, Size.Y);
                             break;
                         case SDL.EventType.KeyDown:
                             Keyboard.KeyDown(ConvertKey(@event.Key.Scancode));
@@ -87,7 +99,7 @@
                             break;
                         case SDL.EventType.MouseMotion:
                             Mouse.Move(@event.Motion.X, @event.Motion.Y);
-                            break;
+                        break;
                     }
                 }
                 ulong now = SDL.GetTicks();

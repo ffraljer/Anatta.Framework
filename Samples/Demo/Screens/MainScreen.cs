@@ -20,8 +20,8 @@ public class MainScreen : Screen {
     public override void Load() {
         base.Load();
         var transformas = new Transformation[] {
-            new (Transformation.Type.Colour, Colour.White, Colour.Green, 0f, 2f, Easing.OutCubic),
-            new (Transformation.Type.Colour, Colour.Green, Colour.White, 2f, 4f, Easing.OutCubic),
+            new (Transformation.Type.Colour, Color.White, Color.Green, 0f, 2f, Easing.OutCubic),
+            new (Transformation.Type.Colour, Color.Green, Color.White, 2f, 4f, Easing.OutCubic),
         };
         _music = Resource.Load<Track>("longcat.mp3");
         _music.Loop = true;
@@ -29,14 +29,14 @@ public class MainScreen : Screen {
             Anchor = Anchors.CentreLeft,
             Position = new Vector2(0),
             Origin = Anchors.CentreLeft,
-            Colour = new Colour(255, 255, 255, 0),
+            Colour = new Color(255, 255, 255, 0),
             CornerRadius = 4f
         };
-        Vector2 size = GameBase.Instance.Size;
+        Vector2 size = GameBase.WindowManager.Size;
         float baseRatio = 16f / 9f;
         float ratio = (size.X / size.Y) / baseRatio;
         sprite.Scale = new Vector2(ratio, 1f);
-        player = new Text("I NEED TO LAY OFF THE CATNIP...", 32f, Colour.White, Fonts.AllerBold);
+        player = new Text("I NEED TO LAY OFF THE CATNIP...", 32f, Color.White, Fonts.AllerBold);
         player.Position = new Vector2(0);
         player.Anchor = Anchors.TopRight;
         player.Origin = Anchors.TopRight;
@@ -59,11 +59,11 @@ public class MainScreen : Screen {
         sprite
             .FadeTo(255, 10)
             .Then()
-            .MoveTo(new Vector2(GameBase.Instance.Size.X - sprite.Texture.Width, 0), 10, Easing.InOutCubic)
+            .MoveTo(new Vector2(GameBase.WindowManager.Width - sprite.Texture.Width, 0), 10, Easing.InOutCubic)
             .Then()
             .RotateTo(360, 10, Easing.OutCubic);
-        var playe2r = new Text("I NEED TO LAY OFF THE CATNIP...", 32f, Colour.White);
-        var playes2r = new Text("I NEED TO LAY OFF THE CATNIP...", 24f, Colour.White) {
+        var playe2r = new Text("I NEED TO LAY OFF THE CATNIP...", 32f, Color.White);
+        var playes2r = new Text("I NEED TO LAY OFF THE CATNIP...", 24f, Color.White) {
             Font = Resource.Load<FontFace>("TIMES.ttf"),
             Position = new(0,2),
             Origin = Anchors.Bottom,
@@ -73,7 +73,7 @@ public class MainScreen : Screen {
         Add(player);
         Add(playes2r);
         Add(playe2r);
-        var CLICKTO = new Text("CLICK TO ENTER A SCREEN", 24f, Colour.White) {
+        var CLICKTO = new Text("CLICK TO ENTER A SCREEN", 24f, Color.White) {
             Anchor = Anchors.BottomRight,
             Origin = Anchors.BottomRight
         };

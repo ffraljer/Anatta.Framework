@@ -30,6 +30,7 @@ internal class NativeWindowBackend : IWindowBackend {
     }
     public event Action? Load;
     public event Action<float>? RenderFrame;
+    public event Action<Vector2i>? Resized;
     public event Action? Unload;
 
     public NativeWindowBackend(Vector2i size, string title) {
@@ -91,6 +92,7 @@ internal class NativeWindowBackend : IWindowBackend {
         _window.Resize += args =>
         {
             GL.Viewport(0, 0, args.Width, args.Height);
+			Resized?.Invoke(new Vector2i(args.Width, args.Height));
         };
 
         _window.Unload += () => Unload?.Invoke();

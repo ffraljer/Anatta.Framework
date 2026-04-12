@@ -18,10 +18,10 @@ public class Application : IDisposable {
     private Logger _frameworkLogger = new("Framework");
     
     public static FrameworkConfig Config { get; set; }
-    
-    public static IWindowBackend Backend;
 
-    public Vector2i Size;
+    public static WindowManager WindowManager { get; private set; } = new WindowManager();
+
+    public static IWindowBackend Backend;
 
     public bool HideCursor;
 
@@ -35,13 +35,11 @@ public class Application : IDisposable {
             ? new DefaultWindowBackend(size, title)
             : new NativeWindowBackend(size, title);
         Backend = _backend;
-
-        Size = _backend.Size;
-        SpriteManager.ScreenSize = Size;
         _backend.Load += OnLoad;
         _backend.RenderFrame += OnRenderFrame;
         _backend.Unload += OnUnload;
         _backend.HideCursor = HideCursor;
+        _backend.Resized += OnResize;
         Instance = this;
         if (!useSdl)
             logger.Warn("Use SDL.");
@@ -65,6 +63,15 @@ public class Application : IDisposable {
         _frameworkLogger.Info($".NET Version: {Environment.Version}");
         _frameworkLogger.Info($"OS: {RuntimeInformation.OSDescription}");
         _frameworkLogger.Info($"Window Backend: {_backend.ToString().TrimStart("Anatta.Framework.")}");
+        WindowManager.Width = _backend.Size.X;
+        WindowManager.Height = _backend.Size.Y;
+
+
+        SpriteManager.ScreenSize = new Vector2i(
+            WindowManager.Width,
+            WindowManager.Height
+        );
+
         GL.ClearColor(0f, 0f, 0f, 1f);
         Initialise();
     }
@@ -80,6 +87,17 @@ public class Application : IDisposable {
         GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
         Draw();
+    }
+    
+
+    private void OnResize(Vector2i size) {
+        WindowManager.Width = size.X;
+        WindowManager.Height = size.Y;
+
+        SpriteManager.ScreenSize = new Vector2i(
+            WindowManager.Width,
+            WindowManager.Height
+        );
     }
 
     private void OnUnload()

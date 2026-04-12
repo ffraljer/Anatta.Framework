@@ -3,6 +3,7 @@ namespace Anatta.Framework.Sound;
 public class Track : IDisposable
 {
     private readonly byte[] _data;
+    public float Time => (float)Audio.GetPositionSeconds(_handle);
     private int _handle;
 
     public bool Loop { get; set; }

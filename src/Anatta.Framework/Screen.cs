@@ -33,14 +33,14 @@ public class Screen : IDisposable {
     public virtual void Update() { Manager.Update(); }
 
     public virtual void OnEnter() { IsActive = true; }
-    public virtual void OnExit() { IsActive = false; }
+    public virtual void OnExit() { IsActive = false; Manager.InvalidateInput(); }
 
     public void Add(IManageable item) {
         _owned.Add(item);
         Manager.Add(item);
     }
 
-    public void Add(IManageable[] items) {
+    public void Add(IEnumerable<IManageable> items) {
         foreach (var item in items) {
             _owned.Add(item);
             Manager.Add(item);

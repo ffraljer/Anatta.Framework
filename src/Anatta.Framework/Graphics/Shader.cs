@@ -88,6 +88,14 @@ public class Shader : IDisposable, IShader
         int loc = G.GetUniformLocation(Handle, name);
         G.Uniform1i(loc, value);
     }
+    public void UseWith(Action<Shader> setup) {
+        Use();
+        setup(this);
+    }
+    public void SetBool(string name, bool value) {
+        int loc = GL.GetUniformLocation(Handle, name);
+        GL.Uniform1i(loc, value ? 1 : 0);
+    }
     public void SetVector2(string name, Vector2 vec)
     {
         int loc = G.GetUniformLocation(Gandle, name);

@@ -11,9 +11,9 @@ public static class AnimationHelper {
         return a + (b - a) * t;
     }
     
-    public static Colour Lerp(Colour a, Colour b, float t)
+    public static Color Lerp(Color a, Color b, float t)
     {
-        return new Colour(
+        return new Color(
             MathHelper.Lerp(a.R, b.R, t),
             MathHelper.Lerp(a.G, b.G, t),
             MathHelper.Lerp(a.B, b.B, t),

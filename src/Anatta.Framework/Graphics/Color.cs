@@ -2,18 +2,18 @@ namespace Anatta.Framework.Graphics;
 
 using OpenTK.Mathematics;
 
-public partial struct Colour
+public partial struct Color
 {
     public float R, G, B, A;
 
-    public Colour(byte r, byte g, byte b, byte a = 255)
+    public Color(byte r, byte g, byte b, byte a = 255)
     {
         R = r;
         G = g;
         B = b;
         A = a;
     }
-    public Colour(float r, float g, float b, float a = 255f)
+    public Color(float r, float g, float b, float a = 255f)
     {
         R = r;
         G = g;
@@ -21,7 +21,7 @@ public partial struct Colour
         A = a;
     }
     
-    public Colour(string hex)
+    public Color(string hex)
     {
         if (hex.StartsWith("#"))
             hex = hex.Substring(1);
@@ -77,10 +77,10 @@ public partial struct Colour
                 A / 255f
             );
    }
-   public Colour Darken(float factor = 0.1f)
+   public Color Darken(float factor = 0.1f)
    {
        factor = Math.Clamp(factor, 0f, 1f);
-       return new Colour(
+       return new Color(
            R * (1 - factor),
            G * (1 - factor),
            B * (1 - factor),
@@ -88,17 +88,20 @@ public partial struct Colour
        );
    }
 
-   public Colour Lighten(float factor = 0.1f) {
+   public Color Lighten(float factor = 0.1f) {
        factor = Math.Clamp(factor, 0f, 1f);
-       return new Colour(
+       return new Color(
            R + (255 - R) * factor,
            G + (255 - G) * factor,
            B + (255 - B) * factor,
            A
        );
    }
+   public Color Alpha(float alpha) {
+       return new Color(R, G, B, alpha);
+   }
 
-   public static implicit operator Color4<Rgba>(Colour c) => c.ToColor4();
-   public static implicit operator ColourInfo(Colour c)
-       => new ColourInfo(c);
+   public static implicit operator Color4<Rgba>(Color c) => c.ToColor4();
+   public static implicit operator ColorInfo(Color c)
+       => new ColorInfo(c);
 }

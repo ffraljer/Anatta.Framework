@@ -10,7 +10,6 @@ using Anatta.Framework.IO;
 using Anatta.Framework.Sound;
 using Anatta.Framework.Graphics;
 using Anatta.Framework.Input;
-
 namespace Demo;
 
 public class GameBase : Application
@@ -59,11 +58,10 @@ public class GameBase : Application
 
     protected override void Draw()
     {
-        GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
+        base.Draw();
         _spriteManager?.Draw();
         ScreenStack.Draw();
         _cursorSpriteManager.Draw();
-        base.Draw();
     }
 
     protected override void OnExit() {

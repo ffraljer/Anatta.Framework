@@ -20,13 +20,13 @@ namespace Anatta.Framework.Graphics.Sprites {
         }
         private FontFace _font = null!;
 
-        public Text(string text, float fontSize, Colour colour, FontFace? font = null) {
+        public Text(string text, float fontSize, Color tint, FontFace? font = null) {
             Content = text;
             FontSize = fontSize;
-            Colour = colour;
+            Colour = tint;
 
             this._font = font ?? Resource.LoadInternal<FontFace>("odat.ttf");
-            Texture = NativeTextRenderer.CreateString(this._font, text, fontSize, colour);
+            Texture = NativeTextRenderer.CreateString(this._font, text, fontSize, tint);
         }
         public override void Dispose() {
             if (Texture != null) {

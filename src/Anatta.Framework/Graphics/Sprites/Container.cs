@@ -20,7 +20,7 @@ public class Container : Drawable, IEnumerable<Drawable> {
     
     private bool _loaded;
 
-    protected virtual void Load() { }
+    protected virtual void Load() { }                                                                                       
 
     internal void EnsureLoaded() {
         if (_loaded) return;

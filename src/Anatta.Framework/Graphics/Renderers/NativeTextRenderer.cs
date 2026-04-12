@@ -11,7 +11,7 @@ public static class NativeTextRenderer {
         FontFace font,
         string text,
         float size,
-        Colour colour,
+        ColorInfo color,
         int padding = 4) {
         
         var data = font.Bytes;
@@ -39,7 +39,7 @@ public static class NativeTextRenderer {
             ctx.DrawText(
                 text,
                 z,
-                new _Colour(new System.Numerics.Vector4(colour.R, colour.G, colour.B, 255f)),
+                new _Colour(new System.Numerics.Vector4(color.Top.R, color.Top.G, color.Top.B, 255f)),
                 new PointF(drawX, drawY));
         });
     

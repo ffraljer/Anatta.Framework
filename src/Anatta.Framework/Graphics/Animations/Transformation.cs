@@ -12,8 +12,8 @@ public class Transformation {
     public Vector2 VecStart;
     public Vector2 VecEnd;
 
-    public Colour ColStart;
-    public Colour ColEnd;
+    public Color ColStart;
+    public Color ColEnd;
     
     public float FloatStart;
     public float FloatEnd;
@@ -32,7 +32,7 @@ public class Transformation {
         Easing = easing;
     }
     
-    public Transformation(Type type, Colour start, Colour end, float startTime, float endTime, Easing easing = Easing.None) {
+    public Transformation(Type type, Color start, Color end, float startTime, float endTime, Easing easing = Easing.None) {
         TransformType = type;
         ColStart = start;
         ColEnd = end;

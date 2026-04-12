@@ -205,13 +205,12 @@ public class SpriteManager : IDisposable {
         
         if (item is Box box) {
             size = box.Size * box.Scale;
-            Vector4 top = box.Gradient?.Top.ToVector4() ?? box.Colour.ToVector4();
-            Vector4 bottom = box.Gradient?.Bottom.ToVector4() ?? box.Colour.ToVector4();
+            Vector4 top = box.Colour.Top.ToVector4();
+            Vector4 bottom = box.Colour.Bottom.ToVector4();
             
             _shd.SetVector4("uTintTop", top);
             _shd.SetVector4("uTintBottom", bottom);
 
-            _shd.SetVector4("uTint", box.Colour.ToVector4());
             _shd.SetVector2("uSize", size);
             _shd.SetFloat("uRadius", box.CornerRadius);
             
@@ -225,16 +224,14 @@ public class SpriteManager : IDisposable {
         else if (item is Circle circle)
         { 
             size = new Vector2(circle.Radius * 2f * circle.Scale.X, circle.Radius * 2f * circle.Scale.Y);
-            Vector4 fill = circle.FillColour.ToVector4();
-            Vector4 top = circle.Gradient?.Top.ToVector4() ?? fill;
-            Vector4 bottom = circle.Gradient?.Bottom.ToVector4() ?? fill;
-            Vector4 topp = circle.BorderGradient?.Top.ToVector4() ?? circle.BorderColour.ToVector4();
-            Vector4 botmm = circle.BorderGradient?.Bottom.ToVector4() ?? circle.BorderColour.ToVector4();
+            Vector4 top = circle.FillColor.Top.ToVector4();
+            Vector4 bottom = circle.FillColor.Bottom.ToVector4();
+            Vector4 topp = circle.BorderColor.Top.ToVector4();
+            Vector4 botmm = circle.BorderColor.Bottom.ToVector4();
 
             _shd.SetVector4("uTintTop", top);
             _shd.SetVector4("uTintBottom", bottom);
             _shd.SetVector4("uTint", top);
-            _shd.SetVector4("uBorderColour", circle.BorderColour.ToVector4());
             _shd.SetVector4("uBorderTop", topp);
             _shd.SetVector4("uBorderBottom", botmm);
             _shd.SetVector2("uSize", size);
@@ -249,7 +246,7 @@ public class SpriteManager : IDisposable {
 
             sprite.Texture.Bind();
             GL.Uniform1i(GL.GetUniformLocation(_shd.Handle, "tex"), 0);
-            Vector4 tint = sprite.Colour.ToVector4();
+            Vector4 tint = sprite.Colour.Top.ToVector4();
             _shd.SetVector4("uTintTop", tint);
             _shd.SetVector4("uTintBottom", tint);
             _shd.SetVector4("uTint", tint);
@@ -279,7 +276,25 @@ public class SpriteManager : IDisposable {
 
         GL.DrawArrays(PrimitiveType.Triangles, 0, 6);
     }
-    
+    public void InvalidateInput() {
+        _wasMouseDown = false;
+
+        foreach (var item in _managables)
+            InvalidateInput(item);
+    }
+    private void InvalidateInput(IManageable item) {
+        if (item is Drawable drawable) {
+            if (drawable.IsHovering) {
+                drawable.IsHovering = false;
+                drawable.TriggerHoverLost();
+            }
+        }
+
+        if (item is Container container) {
+            foreach (var child in container.Children)
+                InvalidateInput(child);
+        }
+    }
     private void End() {
         GL.BindVertexArray(0);
     }

@@ -4,14 +4,11 @@ using OpenTK.Mathematics;
 
 namespace Anatta.Framework.Graphics.Shapes;
 
-public class Circle : Drawable, IHasGradients{
+public class Circle : Drawable {
     public float Radius { get; set; } = 50f;
     public float Thickness { get; set; } = 0f;
-    public Colour BorderColour { get; set; } = Colour.White;
-    public Colour FillColour { get; set; } = Colour.Transparent;
-    
-    public ColourInfo? Gradient { get; set; } = null;
-    public ColourInfo? BorderGradient { get; set; } = null;
+    public ColorInfo BorderColor { get; set; } = Framework.Graphics.Color.White;
+    public ColorInfo FillColor { get; set; } = Framework.Graphics.Color.Transparent;
 
     public override Texture Texture { get; protected set; } = Texture.WhitePixel;
 

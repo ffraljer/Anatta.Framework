@@ -20,7 +20,7 @@ public class Logger {
         if (!Directory.Exists(logDirectory))
             Directory.CreateDirectory(logDirectory);
 
-        var timestamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
+        var timestamp = DateTime.Now.ToString("yyyyMMdd");
         logFilePath = Path.Combine(logDirectory, $"{name}_{timestamp}.log");
     }
 

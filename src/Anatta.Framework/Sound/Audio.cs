@@ -33,7 +33,16 @@ namespace Anatta.Framework.Sound {
         {
             return Resource.Load<byte[]>(resourceName);
         }
+        public static double GetPositionSeconds(int stream) {
+            if (stream == 0) return 0;
 
+            long pos = Bass.ChannelGetPosition(stream);
+            return Bass.ChannelBytes2Seconds(stream, pos);
+        }
+        public static double GetLengthSeconds(int stream) {
+            long len = Bass.ChannelGetLength(stream);
+            return Bass.ChannelBytes2Seconds(stream, len);
+        }
         internal static int Play(byte[] data, bool loop = false)
         {
             switch (Binding) {

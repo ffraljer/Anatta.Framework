@@ -14,10 +14,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Shaders\" />
-    </ItemGroup>
-
-    <ItemGroup>
       <None Update="Fonts\font_allerbold.ttf">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>

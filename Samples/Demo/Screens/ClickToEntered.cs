@@ -1,5 +1,7 @@
 ﻿using Anatta.Framework;
 using Anatta.Framework.Graphics;
+using Anatta.Framework.Graphics.Animations;
+using Anatta.Framework.Graphics.Interfaces;
 using Anatta.Framework.Graphics.Shapes;
 using Anatta.Framework.Graphics.Sprites;
 using Anatta.Framework.Input;
@@ -11,23 +13,31 @@ namespace Demo.Screens;
 
 public class ClickToEntered : Screen {
     private Track track;
+    private ISprite title;
+    private Text back;
     public ClickToEntered(SpriteManager spriteManager) : base(spriteManager) { }
     public override void Load() {
-        Add(new Text("YOU HAVE CLICKED AND ENTERED", 24f, Colour.White) {
-            Anchor = Anchors.BottomRight,
-            Origin = Anchors.BottomRight
-        }.ColourTo(Colour.Red, 2, Easing.None, true)
-        .Then());
-         track = Resource.Load<Track>("btbbrbbq.mp3");
+        
+        track = Resource.Load<Track>("hlfswebbq.mp3");
         track.Play();
         var Boc = new Box() {
             Anchor = Anchors.Centre,
             Origin = Anchors.Centre,
-            Size = GameBase.Instance.Size - new Vector2i(100),
+            Size = GameBase.WindowManager.Size - new Vector2i(12),
             CornerRadius = 12,
-            Gradient = new ColourInfo(DemoColours.Purple0, DemoColours.Purple1) 
+            Colour = new ColorInfo(DemoColours.Purple0, DemoColours.Purple1).Darken(0.6f) 
         };
         Add(Boc);
+        title = new Text("YOU HAVE CLICKED AND ENTERED", 24f, Color.White) {
+            Anchor = Anchors.BottomRight,
+            Origin = Anchors.BottomRight
+        };
+        back = new pSymbolAwesome(SymbolAwesome.chevron_circle_left, 24f,
+            new Vector2(0, 0)) {
+            Origin = Anchors.Centre
+        };
+        Add(title);
+        Add(back);
     }
     public override void Draw() {
         base.Draw();
@@ -38,7 +48,8 @@ public class ClickToEntered : Screen {
         track.Stop();
     }
 
-    public override void Update() {
-        base.Update();                            
+    public override void Update()
+    {
+        base.Update();
     }
 }

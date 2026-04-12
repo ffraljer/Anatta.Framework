@@ -15,26 +15,23 @@ public class CursorContainer : Container
     {
         outerBlack = new Circle()
         {
-            BorderColour = new Colour(0, 0, 0),
             Radius = 19*2,
             Thickness = 12,
-            BorderGradient = ColourInfo.GradientVertical(new Colour("FC618F"), new Colour("BB1A41")),
+            BorderColor = ColorInfo.GradientVertical(new Color("FC618F"), new Color("BB1A41")),
             Origin = Anchors.Centre
         };
-        var C = new Colour("FC618F").Darken(0.6f);
-        C.A = 128;
         outerPink = new Circle
         {
             Radius = 18 * 2,
-            BorderGradient = ColourInfo.GradientVertical(new Colour("FC618F"), new Colour("BB1A41")),
+            BorderColor = ColorInfo.GradientVertical(new Color("FC618F"), new Color("BB1A41")),
             Thickness = 12,
-            FillColour = C,
+            FillColor = new Color("FC618F").Darken(0.6f).Alpha(128f),
             Origin = Anchors.Centre
         };
         cursormiddl = new Circle
         {
             Radius = 9,
-            FillColour = Colour.White,
+            FillColor = Anatta.Framework.Graphics.Color.White,
             Origin = Anchors.Centre
         };
 

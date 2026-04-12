@@ -37,16 +37,15 @@
         <EmbeddedResource Include="Resources\**\*" />
     </ItemGroup>
     <ItemGroup>
-        <None Include="runtimes/linux-x64/native/libbass.so"
-              Pack="true"
-              PackagePath="runtimes/linux-x64/native/" />
-
-        <None Include="runtimes/win-x64/native/bass.dll"
-              Pack="true"
-              PackagePath="runtimes/win-x64/native/" />
-
-        <None Include="runtimes/win-x64/native/SDL3.dll"
-              Pack="true"
-              PackagePath="runtimes/win-x64/native/" />
+        <None Update="runtimes\linux-x64\native\libbass.so">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="runtimes\win-x64\native\bass.dll">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="runtimes\win-x64\native\SDL3.dll">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
     </ItemGroup>
+
 </Project>

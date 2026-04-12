@@ -1,14 +1,15 @@
 ﻿using Anatta.Framework.Graphics.Animations;
 using Anatta.Framework.Graphics.Interfaces;
+using Anatta.Framework.Threading;
 using OpenTK.Mathematics;
 
 namespace Anatta.Framework.Graphics.Sprites;
 
 public abstract class Drawable : ISprite, IUpdatable { 
-    // my only problem now is that I have two animation systems 
     public abstract Texture Texture { get; protected set; }
     public Vector2 Position { get; set; }
     public Vector2 Scale { get; set; } = Vector2.One;
+    public float Depth { get; set; } = 1f;
     public float CornerRadius { get; set; }
     public Drawable? Parent { get; internal set; }
     
@@ -24,7 +25,7 @@ public abstract class Drawable : ISprite, IUpdatable {
     }
 
     public float Rotation { get; set; }
-    public Colour Colour { get; set; } = Colour.White;
+    public ColorInfo Colour { get; set; } = Framework.Graphics.Color.White;
     
     private Queue<Action>? _thenActions;
 
@@ -35,6 +36,7 @@ public abstract class Drawable : ISprite, IUpdatable {
 
     public event Action<ISprite>? OnClick;
     public event Action<ISprite>? OnHover;
+    public VoidDelegate? OnUpdate;
     public event Action<ISprite>? OnHoverLost;
 
     private List<ITween> _transformTweens = new(); // TransformationSequence tweens
@@ -43,6 +45,10 @@ public abstract class Drawable : ISprite, IUpdatable {
 
     public virtual void Update()
     {
+        if (OnUpdate != null) {
+            OnUpdate?.Invoke();
+        } 
+        
         // *To() tweens
         if (_tweens.Count > 0) {
             if (_tweens[0].Update()) {
@@ -131,14 +137,14 @@ public abstract class Drawable : ISprite, IUpdatable {
         return this;
     }
 
-    public ISprite ColourTo(Colour colour, float duration, Easing easing = Easing.None, bool loop = false, bool restart = false)
+    public ISprite ColourTo(Color color, float duration, Easing easing = Easing.None, bool loop = false, bool restart = false)
     {
-        _tweens.Add(new Tween<Colour>
+        _tweens.Add(new Tween<Color>
         {
-            Getter = () => Colour,
+            Getter = () => Colour.Top,
             Setter = v => Colour = v,
-            Start = Colour,
-            End = colour,
+            Start = Colour.Top,
+            End = color,
             Ease = easing,
             Loop = loop,
             StartTime = 0f,
@@ -154,9 +160,9 @@ public abstract class Drawable : ISprite, IUpdatable {
     {
         _tweens.Add(new Tween<float>
         {
-            Getter = () => Colour.A,
-            Setter = v => Colour = new Colour(Colour.R, Colour.G, Colour.B, v),
-            Start = Colour.A,
+            Getter = () => Colour.Top.A,
+            Setter = v => Colour = new Color(Colour.Top.R, Colour.Top.G, Colour.Top.B, v),
+            Start = Colour.Top.A,
             End = alpha,
             Ease = easing,
             StartTime = 0f,
@@ -240,8 +246,8 @@ public abstract class Drawable : ISprite, IUpdatable {
                 };
 
             case Transformation.Type.Colour:
-                return new Tween<Colour> {
-                    Getter = () => Colour,
+                return new Tween<Color> {
+                    Getter = () => Colour.Top,
                     Setter = v => Colour = v,
                     Start = t.ColStart,
                     End = t.ColEnd,
@@ -253,8 +259,8 @@ public abstract class Drawable : ISprite, IUpdatable {
 
             case Transformation.Type.Fade:
                 return new Tween<float> {
-                    Getter = () => Colour.A,
-                    Setter = v => Colour = new Colour(Colour.R, Colour.G, Colour.B, v),
+                    Getter = () => Colour.Top.A, // so this only tweens top for now
+                    Setter = v => Colour = new Color(Colour.Top.R, Colour.Top.G, Colour.Top.B, v),
                     Start = t.FloatStart,
                     End = t.FloatEnd,
                     StartTime = t.StartTime,
@@ -288,7 +294,7 @@ public abstract class Drawable : ISprite, IUpdatable {
                 break;
 
             case Transformation.Type.Fade:
-                Colour = new Colour(Colour.R, Colour.G, Colour.B, first.FloatStart);
+                Colour = new Color(Colour.Top.R, Colour.Top.G, Colour.Top.B, first.FloatStart);
                 break;
         }
     }
