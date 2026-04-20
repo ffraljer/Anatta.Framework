@@ -34,7 +34,7 @@ public class GameBase : Application
         Resource.AddStore(new FileSystemStore("Content"));
         ScreenStack.Push(new MainScreen(_spriteManager));
         base.Initialise();
-        _cursorSpriteManager.Add(new CursorContainer());
+        _cursorSpriteManager.Add(new OsuArgonCursor());
     }
 
     private void loadScreens() {
@@ -47,7 +47,7 @@ public class GameBase : Application
             bool escapeNow = Keyboard.IsKeyDown(Keyboard.Key.Escape);
 
             if (escapeNow && !_escapePressedLastFrame) {
-                ScreenStack.Push(new MainScreen(_spriteManager), true, 0.5f);
+                ScreenStack.Push(new KittyScreen(_spriteManager), true, 0.5f);
             }
 
             _escapePressedLastFrame = escapeNow;

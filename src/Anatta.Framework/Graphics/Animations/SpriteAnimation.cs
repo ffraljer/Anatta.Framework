@@ -22,11 +22,11 @@ public class SpriteAnimation : Sprite {
 
     public SpriteAnimation() : base((Texture)null!) { }
 
-    public void AddFrame(Texture texture, float? duration = null) {
-        _frames.Add(new Frame(texture, duration ?? DefaultFrameDuration));
+    public void AddFrame(Texture glTexture, float? duration = null) {
+        _frames.Add(new Frame(glTexture, duration ?? DefaultFrameDuration));
 
         if (_frames.Count == 1)
-            Texture = texture;
+            Texture = glTexture;
     }
 
     public override void Update() {

@@ -1,14 +1,27 @@
-﻿using System.Runtime.InteropServices;
+﻿using System.Reflection;
+using System.Runtime.InteropServices;
 using Anatta.Framework.Configuration;
 using Anatta.Framework.Graphics.Sprites;
 using Anatta.Framework.Logging;
 using Anatta.Framework.Threading;
-using OpenTK.Graphics.OpenGL;
+#if win
+using Anatta.Framework.Windowing;
+#endif
 using OpenTK.Mathematics;
 
 namespace Anatta.Framework;
+public static class BackendFactory {
+    public static IWindowBackend Create(Vector2i size, string title)
+    {
+        #if WINDOWS
+        if (FrameworkConfig.sRenderer == Renderer.D3D)
+            return new D3D11WindowBackend(size, title);
+        #endif
+        return new DefaultWindowBackend(size, title);
+    }
+}
 
-public class Application : IDisposable {
+public class Application : IDisposable {  
     public Time Time { get; } = new Time();
     public Scheduler Scheduler { get; } = new Scheduler();
     
@@ -27,13 +40,12 @@ public class Application : IDisposable {
 
     public static Application Instance;
 
-    protected Application(Vector2i size, string title = "Untitled", bool useSdl = true)
-    {
+    protected Application(Vector2i size, string title = "Untitled", bool useSdl = true) {
+        FrameworkController.GlobalGame = this;
+        
         Config = new FrameworkConfig();
         
-        _backend = useSdl
-            ? new DefaultWindowBackend(size, title)
-            : new NativeWindowBackend(size, title);
+        _backend = BackendFactory.Create(size, title);
         Backend = _backend;
         _backend.Load += OnLoad;
         _backend.RenderFrame += OnRenderFrame;
@@ -59,7 +71,7 @@ public class Application : IDisposable {
     private void OnLoad()
     {
         _frameworkLogger.Info($"Window Size: {_backend.Size.X}x{_backend.Size.Y}");
-        _frameworkLogger.Info($"Renderer: {GL.GetString(StringName.Renderer)}");
+        _frameworkLogger.Info($"Renderer: {FrameworkConfig.sRenderer.ToString()}");
         _frameworkLogger.Info($".NET Version: {Environment.Version}");
         _frameworkLogger.Info($"OS: {RuntimeInformation.OSDescription}");
         _frameworkLogger.Info($"Window Backend: {_backend.ToString().TrimStart("Anatta.Framework.")}");
@@ -72,8 +84,13 @@ public class Application : IDisposable {
             WindowManager.Height
         );
 
-        GL.ClearColor(0f, 0f, 0f, 1f);
+        _backend.OnLoad();
         Initialise();
+    }
+    
+    public void Exit() {
+        OnExit();
+        _backend.Dispose();
     }
 
     private void OnRenderFrame(float dt)
@@ -84,7 +101,7 @@ public class Application : IDisposable {
         
         Update();
 
-        GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
+        _backend.Clear();
 
         Draw();
     }

@@ -7,8 +7,7 @@ namespace Anatta.Framework.Graphics.Shapes;
 public class Circle : Drawable {
     public float Radius { get; set; } = 50f;
     public float Thickness { get; set; } = 0f;
-    public ColorInfo BorderColor { get; set; } = Framework.Graphics.Color.White;
-    public ColorInfo FillColor { get; set; } = Framework.Graphics.Color.Transparent;
+    public ColorInfo BorderColour { get; set; } = Framework.Graphics.Color.White;
 
     public override Texture Texture { get; protected set; } = Texture.WhitePixel;
 

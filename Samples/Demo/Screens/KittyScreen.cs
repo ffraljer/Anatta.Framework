@@ -10,11 +10,11 @@ using OpenTK.Mathematics;
 
 namespace Demo.Screens;
 
-public class MainScreen : Screen {
+public class KittyScreen : Screen {
     Text player;
     private Track _music;
 
-    public MainScreen(SpriteManager spriteManager) : base(spriteManager) {
+    public KittyScreen(SpriteManager spriteManager) : base(spriteManager) {
     }
 
     public override void Load() {

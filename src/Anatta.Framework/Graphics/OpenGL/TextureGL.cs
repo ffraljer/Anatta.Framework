@@ -6,7 +6,7 @@
 
     namespace Anatta.Framework.Graphics;
 
-    public class GLTexture : ITexture, IDisposable
+    public class TextureGL : ITexture, IDisposable
     {
         /// <summary>
         /// the Handle of the Texture.
@@ -17,15 +17,15 @@
         /// </summary>
         public int Width { get; private set; }
         
-        private static GLTexture? _whitePixel;
-        internal static GLTexture WhitePixel
+        private static TextureGL? _whitePixel;
+        internal static TextureGL WhitePixel
         {
             get
             {
                 if (_whitePixel == null)
                 {
                     byte[] data = { 255, 255, 255, 255 };
-                    _whitePixel = new GLTexture(1, 1, data);
+                    _whitePixel = new TextureGL(1, 1, data);
                 }
 
                 return _whitePixel;
@@ -44,11 +44,11 @@
         /// <remarks>The extension is added in automatically.</remarks>
         /// <returns>The loaded Texture.</returns>
         /// <exception cref="FileNotFoundException">Throws if the texture cannot be found.</exception>
-        public static GLTexture Load(string name) {
+        public static TextureGL Load(string name) {
             foreach (var ext in _names) {
                 string resourceName = name + ext;
                 try {
-                    return Resource.Load<GLTexture>(resourceName);
+                    return Resource.Load<TextureGL>(resourceName);
                 }
                 catch {
                 }
@@ -56,7 +56,7 @@
             throw new FileNotFoundException($"{name} not found");
         }
         
-        public static GLTexture SetData(byte[] bytes)
+        public static TextureGL SetData(byte[] bytes)
         {
             using Image<Rgba32> image = Image.Load<Rgba32>(bytes);
 
@@ -66,11 +66,11 @@
             byte[] rgba = new byte[width * height * 4];
             image.CopyPixelDataTo(rgba);
 
-            return new GLTexture(width, height, rgba);
+            return new TextureGL(width, height, rgba);
         }
         
         
-        public GLTexture(int width, int height, byte[] rgbaData)
+        public TextureGL(int width, int height, byte[] rgbaData)
         {
             Width = width;
             Height = height;
@@ -91,7 +91,7 @@
             GL.TexParameteri(TextureTarget.Texture2d, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
             GL.TexParameteri(TextureTarget.Texture2d, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
         }
-        public GLTexture(int glHandle, int width, int height)
+        public TextureGL(int glHandle, int width, int height)
         {
             Handle = glHandle;
             Width = width;

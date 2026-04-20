@@ -19,4 +19,10 @@ public class Bindable<T> {
     {
         _value = defaultValue;
     }
+    
+    public static implicit operator T(Bindable<T> bindable) => bindable.Value;
+
+    public override string ToString() {
+        return _value?.ToString() ?? "null";
+    }
 }

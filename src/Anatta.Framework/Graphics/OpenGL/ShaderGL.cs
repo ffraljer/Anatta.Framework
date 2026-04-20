@@ -8,13 +8,13 @@ using Vortice.SpirvCross;
 
 namespace Anatta.Framework.Graphics;
 
-public class GLShader : IDisposable, IShader
+public class ShaderGL : IDisposable, IShader
 {
     public int Handle { get; set; }
     private int Gandle => Handle;
     private Logger _logger = new("Shader");
 
-    internal static GLShader Load(string vertex, string fragment)
+    internal static ShaderGL Load(string vertex, string fragment)
     {
         var a = Assembly.GetExecutingAssembly();
 
@@ -26,10 +26,10 @@ public class GLShader : IDisposable, IShader
         using var streamReaderVertex = new StreamReader(vr);
         using var streamReaderFragment = new StreamReader(fr);
 
-        return new GLShader(streamReaderVertex.ReadToEnd(), streamReaderFragment.ReadToEnd());
+        return new ShaderGL(streamReaderVertex.ReadToEnd(), streamReaderFragment.ReadToEnd());
     }
 
-    public GLShader(string vtx, string frg)
+    public ShaderGL(string vtx, string frg)
     {
         int vtxS = GL.CreateShader(ShaderType.VertexShader);
         GL.ShaderSource(vtxS, vtx);
@@ -89,7 +89,7 @@ public class GLShader : IDisposable, IShader
         int loc = G.GetUniformLocation(Handle, name);
         G.Uniform1i(loc, value);
     }
-    public void UseWith(Action<GLShader> setup) {
+    public void UseWith(Action<ShaderGL> setup) {
         Use();
         setup(this);
     }

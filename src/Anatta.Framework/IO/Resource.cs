@@ -1,5 +1,7 @@
+using System.Data;
 using System.Reflection;
 using Anatta.Framework.Graphics;
+using Anatta.Framework.Graphics.Interfaces;
 using Anatta.Framework.Sound;
 
 namespace Anatta.Framework.IO {
@@ -8,6 +10,8 @@ namespace Anatta.Framework.IO {
         private static readonly List<IResourceStore> Stores = new();
         private static readonly string RootNamespace;
         private static readonly Dictionary<string, object> Cache = new();
+        private static string[] _names = { ".png", ".jpeg", ".jpg", ".xnb" };
+        
         
         public static void AddStore(IResourceStore store) {
             if (!Stores.Contains(store))
@@ -34,15 +38,15 @@ namespace Anatta.Framework.IO {
             stream.CopyTo(ms);
             var bytes = ms.ToArray();
 
-            if (typeof(T) == typeof(Texture))
+            if (typeof(T) == typeof(ITexture) || typeof(T) == typeof(Texture))
             {
                 if (name.EndsWith(".xnb", StringComparison.OrdinalIgnoreCase))
                 {
-                    Texture text = LoadXnbTexture(bytes);
+                    ITexture text = LoadXnbTexture(bytes);
                     return (T)(object)text;
                 }
                 
-                Texture tex = Texture.SetData(bytes);
+                var tex = new Texture(bytes);
                 return (T)(object)tex;
             }
             if (typeof(T) == typeof(byte[]))
@@ -62,7 +66,7 @@ namespace Anatta.Framework.IO {
             if (typeof(T) == typeof(FontFace)) {
                 return (T)(object)new FontFace(bytes);
             }
-            if (typeof(T) == typeof(Shader)) {
+            if (typeof(T) == typeof(ShaderGL)) {
                 foreach (var store in Stores) {
                     using var vr = store.Open($"Shaders/{name}.avs");
                     using var fr = store.Open($"Shaders/{name}.afs");
@@ -71,7 +75,7 @@ namespace Anatta.Framework.IO {
                         using var vreader = new StreamReader(vr);
                         using var freader = new StreamReader(fr);
 
-                        return (T)(object)new Shader(
+                        return (T)(object)new ShaderGL(
                             vreader.ReadToEnd(),
                             freader.ReadToEnd());
                     }
@@ -94,8 +98,8 @@ namespace Anatta.Framework.IO {
             stream.CopyTo(ms);
             var bytes = ms.ToArray();
 
-            if (typeof(T) == typeof(Texture)) {
-                Texture tex = Texture.SetData(bytes);
+            if (typeof(T) == typeof(ITexture) || typeof(T) == typeof(Texture)) {
+                TextureGL tex = TextureGL.SetData(bytes);
                 return (T)(object)tex;
             }
             if (typeof(T) == typeof(byte[])) {
@@ -114,7 +118,7 @@ namespace Anatta.Framework.IO {
             }
             throw new NotSupportedException(typeof(T).Name);
         }
-        public static Shader LoadShader(string name) {
+        public static ShaderGL LoadShader(string name) {
             foreach (var store in Stores) {
                 using var vr = store.Open($"Shaders/{name}.glsl");
                 using var fr = store.Open($"Shaders/{name}Fragment.glsl");
@@ -124,7 +128,7 @@ namespace Anatta.Framework.IO {
                     using var vreader = new StreamReader(vr);
                     using var freader = new StreamReader(fr);
 
-                    return new Shader(
+                    return new ShaderGL(
                         vreader.ReadToEnd(),
                         freader.ReadToEnd());
                 }
@@ -132,7 +136,7 @@ namespace Anatta.Framework.IO {
 
             throw new FileNotFoundException($"Shader not found: {name}");
         }
-        private static Texture LoadXnbTexture(byte[] data)
+        private static ITexture LoadXnbTexture(byte[] data)
         {
             using var ms = new MemoryStream(data);
             using var br = new BinaryReader(ms);
@@ -163,7 +167,20 @@ namespace Anatta.Framework.IO {
             {
                 (pixelData[i], pixelData[i + 2]) = (pixelData[i + 2], pixelData[i]);
             }
+                
             return new Texture(width, height, pixelData);
+        }
+        public static Texture LoadSpriteInternal(string name) {
+            foreach (var ext in _names) {
+                string resourceName = name + ext;
+                try {
+                    return Load<Texture>(resourceName);
+                }
+                catch {
+                    throw;
+                }
+            }
+            throw new FileNotFoundException($"{name} not found");
         }
         private static string GetTypeFolder(Type t)
         {
@@ -172,7 +189,7 @@ namespace Anatta.Framework.IO {
             if (t == typeof(Sample)) return "Audio.Samples";
             if (t == typeof(Track)) return "Audio.Tracks";
             if (t == typeof(FontFace)) return "Fonts";
-            if (t == typeof(Shader)) return "Shaders";
+            if (t == typeof(ShaderGL)) return "Shaders";
             return "Unknown";
         }
     }

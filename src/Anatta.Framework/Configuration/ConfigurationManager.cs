@@ -27,6 +27,7 @@ public abstract class ConfigurationManager
         Converters = { new JsonStringEnumConverter() }
     };
     
+    /// <remarks>Even if the <see cref="Bindable{T}"/> is static, you will still need to instantiate it at least once.</remarks>
     protected ConfigurationManager(string filePath)
     {
         _filePath = filePath;
@@ -97,6 +98,7 @@ public abstract class ConfigurationManager
     {
         var fields = GetType().GetFields(
             System.Reflection.BindingFlags.Instance |
+            System.Reflection.BindingFlags.Static |
             System.Reflection.BindingFlags.Public |
             System.Reflection.BindingFlags.NonPublic);
 
@@ -126,7 +128,7 @@ public abstract class ConfigurationManager
             });
             
             _AutoSave(bindable);
-            field.SetValue(this, bindable);
+            field.SetValue(field.IsStatic ? null : this, bindable);
         }
     }
     public void Load()

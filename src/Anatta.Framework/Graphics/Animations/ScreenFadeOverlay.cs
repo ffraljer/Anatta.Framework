@@ -10,7 +10,7 @@ internal class ScreenFadeOverlay : Drawable {
         Position = Vector2.Zero;
         Scale = new Vector2(SpriteManager.ScreenSize.X, SpriteManager.ScreenSize.Y);
         Colour = new Color(0, 0, 0, 0);
-        Texture = Texture.WhitePixel;
+        Texture = Graphics.Texture.WhitePixel;
     }
 
     public override Texture Texture { get; protected set; }

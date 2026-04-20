@@ -23,6 +23,7 @@ public class ClickToEntered : Screen {
         var Boc = new Box() {
             Anchor = Anchors.Centre,
             Origin = Anchors.Centre,
+            BorderThickness = 12f,
             Size = GameBase.WindowManager.Size - new Vector2i(12),
             CornerRadius = 12,
             Colour = new ColorInfo(DemoColours.Purple0, DemoColours.Purple1).Darken(0.6f) 
@@ -34,7 +35,7 @@ public class ClickToEntered : Screen {
         };
         back = new pSymbolAwesome(SymbolAwesome.chevron_circle_left, 24f,
             new Vector2(0, 0)) {
-            Origin = Anchors.Centre
+            Origin = Anchors.TopLeft
         };
         Add(title);
         Add(back);
