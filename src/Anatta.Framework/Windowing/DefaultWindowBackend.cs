@@ -125,6 +125,14 @@
             SDL.GLDestroyContext(_context);
             SDL.DestroyWindow(_window);
         }
+        
+        public void OnLoad() {
+            GL.ClearColor(0f, 0f, 0f, 1f);
+        }
+
+        public void Clear() {
+            GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
+        }
 
         #region  keys
         private static Keyboard.Key ConvertKey(SDL.Scancode key)
@@ -210,3 +218,4 @@
         }
         #endregion
     }
+    

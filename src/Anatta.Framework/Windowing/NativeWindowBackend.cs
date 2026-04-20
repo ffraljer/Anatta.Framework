@@ -108,6 +108,14 @@ internal class NativeWindowBackend : IWindowBackend {
     public void Run() => _window.Run();
 
     public void SwapBuffers() => _window.SwapBuffers();
+	
+	public void OnLoad() {
+                GL.ClearColor(0f, 0f, 0f, 1f);
+            }
+    
+            public void Clear() {
+                GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
+            }
 
     public void Dispose() => _window.Dispose();
 	
