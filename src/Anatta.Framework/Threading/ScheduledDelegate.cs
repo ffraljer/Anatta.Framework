@@ -2,7 +2,7 @@
 
 public class ScheduledDelegate : IComparable<ScheduledDelegate>
 {
-    public VoidDelegate Task;
+    public Action Task;
 
     public float WaitTime;
 
@@ -10,7 +10,7 @@ public class ScheduledDelegate : IComparable<ScheduledDelegate>
 
     public bool Cancelled { get; private set; }
 
-    public ScheduledDelegate(VoidDelegate task, float waitTime, float repeatInterval = 0)
+    public ScheduledDelegate(Action task, float waitTime, float repeatInterval = 0)
     {
         WaitTime = waitTime;
         RepeatInterval = repeatInterval;

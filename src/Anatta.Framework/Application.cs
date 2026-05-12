@@ -1,15 +1,16 @@
-﻿using System.Reflection;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using Anatta.Framework.Configuration;
 using Anatta.Framework.Graphics.Sprites;
 using Anatta.Framework.Logging;
 using Anatta.Framework.Threading;
 #if win
-using Anatta.Framework.Windowing;
+using Anatta.Framework.fWindowing;
 #endif
 using OpenTK.Mathematics;
 
 namespace Anatta.Framework;
+
 public static class BackendFactory {
     public static IWindowBackend Create(Vector2i size, string title)
     {
@@ -18,16 +19,18 @@ public static class BackendFactory {
             return new D3D11WindowBackend(size, title);
         #endif
         return new DefaultWindowBackend(size, title);
+        // can the GameWindow be used in my Vortiche? maybe not.
     }
 }
 
 public class Application : IDisposable {  
-    public Time Time { get; } = new Time();
+    private Time _time { get; } = new Time();
     public Scheduler Scheduler { get; } = new Scheduler();
     
     private readonly IWindowBackend _backend;
 
     protected Logger logger = new("Application");
+
     private Logger _frameworkLogger = new("Framework");
     
     public static FrameworkConfig Config { get; set; }
@@ -40,26 +43,42 @@ public class Application : IDisposable {
 
     public static Application Instance;
 
-    protected Application(Vector2i size, string title = "Untitled", bool useSdl = true) {
+    protected Application(Vector2i size, string title = "Untitled", bool dontlaunch = false) {
+        if (dontlaunch == true) return;
+        /*
+          ⣠⣤⣤⣤⡤⢤⣤⣤⣤⣤⣤⣄⣀⣀⡀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⣠⣿⡿⣟⠯⡒⢯⣽⣓⣒⢾⣯⣭⣿⣿⠿⠭⠭⣯⣷⣦⡀⠀⠀⠀
+⠀⠀⠀⠀⣰⣿⣯⣞⣕⣽⠾⠿⠿⠿⢿⣏⣿⣿⣿⡗⣽⣿⣿⣷⡝⣿⣿⡆⠀⠀
+⠀⠀⠀⣀⣛⠛⢿⣛⢝⢁⣀⣀⣀⠓⠶⠈⣿⣿⡿⠗⠉⠁⢀⣀⣹⣛⣛⣳⢄⠀
+⠀⡔⡾⢁⣴⡆⢦⣬⣙⣛⣋⣤⣿⣿⣷⣾⣿⣿⣿⡆⢿⣿⡟⠻⠛⡉⣍⣲⢱⠁
+⠀⣇⣇⢸⣉⡀⢦⣌⡙⠻⠿⣯⣭⣥⠡⡤⠿⢿⣿⣿⡆⠉⡻⢿⣿⠇⢻⣟⠼⠀
+⠀⠈⠪⣴⣿⣧⡀⢉⠛⠘⢶⣦⣬⠉⣀⠓⠿⠿⠯⢉⣴⠿⠿⠓⡁⡄⠀⣿⠃⠀
+⠀⠀⠀⠙⣿⣿⣷⣌⠻⢠⣤⣀⠉⠐⠛⠿⠿⠰⠶⠦⠰⠶⠇⠘⠃⠁⠀⣿⠀⠀
+⠀⠀⠀⠀⠘⢿⣿⣿⣷⣌⠻⢿⠇⣼⣶⣦⡄⣄⣀⡀⢀⡀⢀⡀⡀⠀⢠⣿⠀⠀
+⠀⠀⠀⠀⠀⠀⠙⠯⣛⠭⣻⠶⣬⣉⣛⠛⠃⠿⠿⠃⠿⠃⠚⣀⣁⣤⣾⣿⡀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠙⠒⠯⣶⣋⡽⢛⣿⣯⣿⣭⣭⡿⢿⣿⣻⣾⢟⣿⡇⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⠛⠿⠿⣶⣾⣿⣿⣿⣭⣭⣭⣶⣿⡿⠁⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⠙⠛⠛⠛⠛⠋⠁⠀⠀⠀
+         */
+
+
         FrameworkController.GlobalGame = this;
         
         Config = new FrameworkConfig();
         
         _backend = BackendFactory.Create(size, title);
         Backend = _backend;
+
         _backend.Load += OnLoad;
         _backend.RenderFrame += OnRenderFrame;
         _backend.Unload += OnUnload;
         _backend.HideCursor = HideCursor;
         _backend.Resized += OnResize;
+
         Instance = this;
-        if (!useSdl)
-            logger.Warn("Use SDL.");
-        else {
-        }
     }
     
-    protected virtual void Initialise() {}
+    protected virtual void Initialise() { }
     protected virtual void Update() { }
 
     protected virtual void Draw() { }

@@ -1,5 +1,4 @@
-﻿namespace Anatta.Framework.Graphics
-{
+﻿namespace Anatta.Framework.Graphics.Animations {
     public interface ITween
     {
         bool Update();

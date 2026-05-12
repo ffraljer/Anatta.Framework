@@ -40,62 +40,10 @@ void main()
 
             if (a <= 0.0)
                 discard;
-             if (BoxBorderThickness > 0.0) {
-                float innerRadius = max(uRadius - BoxBorderThickness, 0.0);
-                vec2 innerSize = uSize - vec2(BoxBorderThickness * 2.0);
-                vec2 innerP = p - vec2(BoxBorderThickness);
 
-                float idx = max(innerRadius - innerP.x, 0.0);
-                idx = max(idx, max(innerRadius - (innerSize.x - innerP.x), 0.0));
-
-                float idy = max(innerRadius - innerP.y, 0.0);
-                idy = max(idy, max(innerRadius - (innerSize.y - innerP.y), 0.0));
-
-                float innerDist = length(vec2(idx, idy));
-                float innerAA = fwidth(innerDist);
-                float innerA = 1.0 - smoothstep(innerRadius - innerAA, innerRadius + innerAA, innerDist);
-
-                float borderA = a - innerA * a;
-
-                borderColor.a *= borderA;
-                fillColor.a   *= innerA * a;
-
-                vec4 fcol = fillColor;
-                fcol.rgb = fillColor.rgb * fillColor.a + borderColor.rgb * borderColor.a * (1.0 - fillColor.a);
-                fcol.a   = fillColor.a + borderColor.a * (1.0 - fillColor.a);
-
-                color = fcol * texture(tex, vTex);
-            } else {
-                fillColor.a *= a;
-                color = fillColor * texture(tex, vTex);
-            }
-        } else { // sharp box
-            if (BoxBorderThickness > 0.0) {
-                float edgeDist = min(min(p.x, uSize.x - p.x), min(p.y, uSize.y - p.y));
-                float aa = fwidth(edgeDist);
-
-                float outerA = smoothstep(-aa, aa, edgeDist);
-
-                float innerDist = edgeDist - BoxBorderThickness;
-                float innerA = smoothstep(-aa, aa, innerDist);
-
-                float borderA = outerA - innerA;
-
-                borderColor.a *= borderA;
-                fillColor.a   *= innerA;
-
-                vec4 fcol;
-                fcol.rgb = fillColor.rgb * fillColor.a + borderColor.rgb * borderColor.a * (1.0 - fillColor.a);
-                fcol.a   = fillColor.a + borderColor.a * (1.0 - fillColor.a);
-
-                color = fcol * texture(tex, vTex);
-
-                if (color.a <= 0.0)
-                    discard;
-            } else {
-                color *= fillColor;
-            }
+            fillColor.a *= a;
         }
+        color *= fillColor;
     }
     else { // circle
         vec2 center = uSize * 0.5;
@@ -114,16 +62,7 @@ void main()
         fillColor.a *= fillAlpha;
         borderColor.a *= borderAlpha;
 
-        vec4 tcol = texture(tex, vTex);
-        
-        vec4 fcol = fillColor + borderColor * (1.0 - fillColor.a);
-        
-        fcol.rgb *= tcol.rgb;
-        fcol.a *= tcol.a;
-        
-        color = fcol;
-        
-        color = fcol;
+        color = fillColor + borderColor * (1.0 - fillColor.a);
 
         if (color.a <= 0.0)
             discard;

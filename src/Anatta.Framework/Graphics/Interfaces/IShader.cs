@@ -3,8 +3,6 @@
 namespace Anatta.Framework.Graphics.Interfaces;
 
 public interface IShader : IDisposable{
-    int Handle { get; set; }
-
     void Use();
     void SetMatrix4(string name, Matrix4 mat);
     void SetFloat(string name, float value);

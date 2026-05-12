@@ -6,7 +6,7 @@ using G = OpenTK.Graphics.OpenGL.GL;
 using OpenTK.Mathematics;
 using Vortice.SpirvCross;
 
-namespace Anatta.Framework.Graphics;
+namespace Anatta.Framework.Graphics.OpenGL;
 
 public class ShaderGL : IDisposable, IShader
 {

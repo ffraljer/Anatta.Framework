@@ -1,11 +1,11 @@
-﻿using OpenTK.Mathematics;
+﻿using Anatta.Framework.Graphics.Interfaces;
+using Anatta.Framework.Graphics.Rendering;
+using OpenTK.Mathematics;
 using System.Collections;
 
 namespace Anatta.Framework.Graphics.Sprites;
 
-public class Container : CompositeDrawable, IEnumerable<Drawable> {
-    public override Texture Texture { get => null!; protected set { } }
-
+public class Container : CompositeDrawable, IManageable, IEnumerable<Drawable> {
     public int Count => Children.Count;
     public Drawable this[int index] => Children[index];
 
@@ -17,4 +17,6 @@ public class Container : CompositeDrawable, IEnumerable<Drawable> {
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
     public override Vector2 GetSize() => Vector2.Zero;
+
+    public override RenderCommand BuildRenderCommand(Vector2i screenSize) => default;
 }

@@ -1,4 +1,5 @@
 ﻿using Anatta.Framework.Graphics.Sprites;
+using Anatta.Framework.Threading;
 using OpenTK.Mathematics;
 
 namespace Anatta.Framework.Graphics.Animations;

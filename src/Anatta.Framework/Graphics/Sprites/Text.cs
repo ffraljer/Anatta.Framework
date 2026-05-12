@@ -1,10 +1,10 @@
-﻿using Anatta.Framework.Graphics.Renderers;
-using Anatta.Framework.IO;
+﻿using Anatta.Framework.Graphics;
+using Anatta.Framework.Graphics.Renderers;
+using Anatta.Framework.Storage;
 using OpenTK.Mathematics;
 
 namespace Anatta.Framework.Graphics.Sprites {
-    public class Text : Drawable {
-        public override Texture Texture { get; protected set; }
+    public class Text : Sprite {
         public string Content { get; private set; }
         public float FontSize { get; private set; }
         
@@ -20,7 +20,8 @@ namespace Anatta.Framework.Graphics.Sprites {
         }
         private FontFace _font = null!;
 
-        public Text(string text, float fontSize, Color tint, FontFace? font = null) {
+        public Text(string text, float fontSize, Colour4 tint, FontFace? font = null) 
+            : base(Texture.WhitePixel) {
             Content = text;
             FontSize = fontSize;
             Colour = tint;

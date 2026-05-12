@@ -1,6 +1,6 @@
 using OpenTK.Mathematics;
 
-namespace Anatta.Framework.Graphics;
+namespace Anatta.Framework.Graphics.Animations;
 
 public static class AnimationHelper {
     public static Vector2 Lerp(Vector2 a, Vector2 b, float t) {
@@ -11,9 +11,9 @@ public static class AnimationHelper {
         return a + (b - a) * t;
     }
     
-    public static Color Lerp(Color a, Color b, float t)
+    public static Colour4 Lerp(Colour4 a, Colour4 b, float t)
     {
-        return new Color(
+        return new Colour4(
             MathHelper.Lerp(a.R, b.R, t),
             MathHelper.Lerp(a.G, b.G, t),
             MathHelper.Lerp(a.B, b.B, t),

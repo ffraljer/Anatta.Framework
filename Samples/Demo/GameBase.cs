@@ -6,9 +6,8 @@ using Demo.Resources;
 using Anatta.Framework;
 using Anatta.Framework.Graphics;
 using Anatta.Framework.Graphics.Sprites;
-using Anatta.Framework.IO;
+using Anatta.Framework.Storage;
 using Anatta.Framework.Sound;
-using Anatta.Framework.Graphics;
 using Anatta.Framework.Input;
 namespace Demo;
 
@@ -21,7 +20,7 @@ public class GameBase : Application
 
     public static Screen ClickToEntered;
 
-    public GameBase(Vector2i tize, bool UseSDL, string title = "Demo Game") : base(tize, title, UseSDL) {
+    public GameBase(Vector2i tize, string title = "Demo Game") : base(tize, title, false) {
         _spriteManager = new();
         _cursorSpriteManager = new();
         ScreenStack = new();
@@ -32,7 +31,7 @@ public class GameBase : Application
         loadScreens();
         Resource.AddStore(new AssemblyStore(typeof(_Resource).Assembly, "Demo.Resources"));
         Resource.AddStore(new FileSystemStore("Content"));
-        ScreenStack.Push(new MainScreen(_spriteManager));
+        ScreenStack.Push(new KittyScreen(_spriteManager));
         base.Initialise();
         _cursorSpriteManager.Add(new OsuArgonCursor());
     }

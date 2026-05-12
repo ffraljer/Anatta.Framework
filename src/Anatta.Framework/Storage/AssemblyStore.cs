@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
 
-namespace Anatta.Framework.IO;
+namespace Anatta.Framework.Storage;
 
 public class AssemblyStore : IResourceStore {
     private readonly Assembly _asm;

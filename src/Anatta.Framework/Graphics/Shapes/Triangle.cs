@@ -3,15 +3,13 @@ using Anatta.Framework.Graphics.Sprites;
 using OpenTK.Mathematics;
 
 namespace Anatta.Framework.Graphics.Shapes; 
-public class Triangle : Drawable {
+public class Triangle : Sprite {
     public float Thickness { get; set; } = 0f;
-    public Color BorderColor { get; set; } = Framework.Graphics.Color.White;
-    public Color FillColor { get; set; } = Framework.Graphics.Color.Transparent;
+    public Colour4 BorderColour4 { get; set; } = Colour4.White;
+    public Colour4 FillColour4 { get; set; } = Colour4.Transparent;
 
-    public ColorInfo? Gradient { get; set; } = null;
-    public ColorInfo? BorderGradient { get; set; } = null;
-
-    public override Texture Texture { get; protected set; } = Texture.WhitePixel;
+    public Triangle() : base(Texture.WhitePixel) {
+    }
 
     public override Vector2 GetSize() {
         return Scale;

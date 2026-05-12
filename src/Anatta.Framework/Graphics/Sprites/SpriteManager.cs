@@ -1,7 +1,7 @@
 using Anatta.Framework.Configuration;
+using Anatta.Framework.Input;
 using Anatta.Framework.Graphics.D3D;
 using Anatta.Framework.Graphics.Helpers;
-using Anatta.Framework.Input;
 using Anatta.Framework.Graphics.Interfaces;
 using Anatta.Framework.Graphics.Renderers;
 using Anatta.Framework.Graphics.Rendering;
@@ -62,8 +62,9 @@ public class SpriteManager : IDisposable {
         }
     }
     #region INPUT
-    private void HandleInput(Drawable sprite)
-    {
+    private void HandleInput(Drawable sprite) {
+        if (!sprite.HandleInput) return;
+        
         var mousePos = new Vector2(Mouse.X, Mouse.Y);
 
         Vector2 size = sprite.GetSize() * sprite.Scale;
@@ -110,8 +111,13 @@ public class SpriteManager : IDisposable {
     }
     #endregion
     public void Update() {
-        foreach (var item in _managables.AsEnumerable().Reverse())
+        foreach (var item in _managables.AsEnumerable().Reverse().OrderByDescending(i => i is Drawable d ? d.Depth : 0f))
             UpdateItem(item);
+    }
+    private void EnsureRenderer() {
+        if (_renderer != null) return;
+        if (FrameworkConfig.sRenderer == Renderer.GL)
+            _renderer = new SpriteRendererGL();
     }
 #if win
     private void EnsureD3D() {
@@ -133,8 +139,10 @@ public class SpriteManager : IDisposable {
     }
     #endif
     public void Draw() {
-        #if win
+#if win
         EnsureD3D();
+#else
+    EnsureRenderer();
 #endif
         var screenH = ScreenSize.Y;
         var screenW = ScreenSize.X;
@@ -143,25 +151,23 @@ public class SpriteManager : IDisposable {
         _renderer.Init();
         
         _renderer.Use(screenW, screenH);
-        
-        _batcher.Clear();
 
-        foreach (var item in _managables)
-            _Draw(item, screenW, screenH);
-        
-        _renderer.DrawBatch(_batcher.Commands, screenW, screenH);
+
+        foreach (var item in _managables.OrderBy(i => i is Drawable d ? d.Depth : 0f))
+            _Draw(item);
 
         _renderer.Kill();
     }
-    private void _Draw(IManageable item, int screenW, int screenH)
+    private void _Draw(IManageable item)
     {
         if (item is Container container) {
             foreach (var child in container.Children)
-                _Draw(child, screenW, screenH);
+                _Draw(child);
         }
         else if (item is Drawable drawable) {
-            var cmd = _renderer.BuildCommand(drawable, screenW, screenH);
+            var cmd = drawable.BuildRenderCommand(ScreenSize);
             _batcher.Add(cmd);
+            _renderer.Submit(cmd);
         }
     }
     

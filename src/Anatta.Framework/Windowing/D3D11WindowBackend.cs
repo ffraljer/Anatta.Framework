@@ -9,27 +9,35 @@ using Anatta.Framework.Input;
 using SDL3;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 
-namespace Anatta.Framework.Windowing;
+namespace Anatta.Framework.fWindowing;
 
 internal class D3D11WindowBackend : IWindowBackend {
     private readonly IntPtr _window;
-    private ID3D11Device _device;
-    private ID3D11DeviceContext _context;
-    private IDXGISwapChain _swapChain;
-    private ID3D11RenderTargetView _rtv;
 
+    private ID3D11Device _device;
+
+    private ID3D11DeviceContext _context;
+
+    private IDXGISwapChain _swapChain;
+
+    private ID3D11RenderTargetView _rtv;
     public KeyboardState KeyboardState { get; }
 
     public Vector2i Size { get; private set; }
     public bool HideCursor { get; set; }
 
     public event Action<Vector2i>? Resized;
+
     public event Action? Load;
+
     public event Action<float>? RenderFrame;
+
     public event Action? Unload;
 
     public IntPtr WindowHandle => _window;
+
     public ID3D11Device Device => _device;
+
     public ID3D11DeviceContext DeviceContext => _context;
 
     public D3D11WindowBackend(Vector2i size, string title) {

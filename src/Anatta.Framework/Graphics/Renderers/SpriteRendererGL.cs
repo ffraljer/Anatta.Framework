@@ -1,9 +1,10 @@
-﻿using Anatta.Framework.Graphics.Helpers;
+﻿using Anatta.Framework.Input;
+using Anatta.Framework.Graphics.Helpers;
+using Anatta.Framework.Graphics.Interfaces;
+using Anatta.Framework.Graphics.OpenGL;
+using Anatta.Framework.Graphics.Rendering;
 using Anatta.Framework.Graphics.Shapes;
 using Anatta.Framework.Graphics.Sprites;
-using Anatta.Framework.Input;
-using Anatta.Framework.Graphics.Interfaces;
-using Anatta.Framework.Graphics.Rendering;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
 
@@ -16,7 +17,11 @@ public class SpriteRendererGL : IRenderer {
     private Matrix4 _projection;
     private ShaderGL _shd;
     private bool _initialized;
-    
+    private readonly List<RenderCommand> _commands = new(256);
+    private readonly byte[] _uniformData = new byte[224];
+
+    public void Submit(RenderCommand cmd) => _commands.Add(cmd);
+
     private static readonly float[] Quad =
     {
         // X,  Y,  U,  V
@@ -69,12 +74,6 @@ public class SpriteRendererGL : IRenderer {
         _shd.Use();
         GL.Uniform1i(GL.GetUniformLocation(_shd.Handle, "tex"), 0);
 
-        var projection = Matrix4.CreateOrthographicOffCenter(
-            0, screenW,
-            screenH, 0,
-            -1, 1
-        );
-
         _projection = Matrix4.CreateOrthographicOffCenter(0, screenW, screenH, 0, -1, 1);
         
         
@@ -89,14 +88,14 @@ public class SpriteRendererGL : IRenderer {
         );
     }
     
-    public RenderCommand BuildCommand(ISprite sprite, int screenW, int screenH) {
+    public RenderCommand BuildCommand(ITexturedDrawable sprite, int screenW, int screenH) {
         Vector2 size;
         var cmd = new RenderCommand();
 
         if (sprite is Box box) {
             size = box.Size * box.Scale;
 
-            cmd.Texture = TextureGL.WhitePixel;
+            cmd.Texture = Texture.WhitePixel;
             cmd.TintTop = box.Colour.Top.ToVector4();
             cmd.TintBottom = box.Colour.Bottom.ToVector4();
             cmd.Size = size;
@@ -111,7 +110,7 @@ public class SpriteRendererGL : IRenderer {
                 circle.Radius * 2f * circle.Scale.Y
             );
 
-            cmd.Texture = TextureGL.WhitePixel;
+            cmd.Texture = Texture.WhitePixel;
             cmd.TintTop = circle.Colour.Top.ToVector4();
             cmd.TintBottom = circle.Colour.Bottom.ToVector4();
             cmd.BorderTop = circle.BorderColour.Top.ToVector4();
@@ -122,7 +121,7 @@ public class SpriteRendererGL : IRenderer {
             cmd.Size = size;
         }
         else if (sprite.Texture != null) {
-            var glTex = ((Texture)sprite.Texture).GetGL();
+            var glTex = ((Texture)sprite.Texture);
             if (glTex == null) return default;
             
             size = new Vector2(
@@ -158,32 +157,28 @@ public class SpriteRendererGL : IRenderer {
         return cmd;
     }
 
-    public void DrawBatch(IReadOnlyList<RenderCommand> commands, int screenW, int screenH) {
-        foreach (var cmd in commands) {
-            if (cmd.Texture is TextureGL tex)
-                tex.Bind();
-
-            var data = new byte[224]; // a price
-            WriteMatrix(data, 0,   cmd.Transform);
-            WriteMatrix(data, 64,  _projection);
-            WriteVec4(data, 128, cmd.TintTop);
-            WriteVec4(data, 144, cmd.TintBottom);
-            WriteVec4(data, 160, cmd.BorderTop);
-            WriteVec4(data, 176, cmd.BorderBottom);
-            WriteVec2(data, 192, cmd.Size);
-            WriteFloat(data, 200, cmd.Radius);
-            WriteFloat(data, 204, cmd.CircleRadius);
-            WriteFloat(data, 208, cmd.CircleThickness);
-            WriteFloat(data, 212, cmd.BoxBorderThickness);
-
-            GL.BindBuffer(BufferTarget.UniformBuffer, _qoobo);
-            GL.BufferSubData(BufferTarget.UniformBuffer, 0, data.Length, data);
-
-            GL.DrawArrays(PrimitiveType.Triangles, 0, 6);
-        }
+    private void DrawCommand(RenderCommand cmd) {
+        cmd.Texture!.GetGL().Bind();
+        WriteMatrix(_uniformData, 0, cmd.Transform);
+        WriteMatrix(_uniformData, 64, _projection);
+        WriteVec4(_uniformData, 128, cmd.TintTop);
+        WriteVec4(_uniformData, 144, cmd.TintBottom);
+        WriteVec4(_uniformData, 160, cmd.BorderTop);
+        WriteVec4(_uniformData, 176, cmd.BorderBottom);
+        WriteVec2(_uniformData, 192, cmd.Size);
+        WriteFloat(_uniformData, 200, cmd.Radius);
+        WriteFloat(_uniformData, 204, cmd.CircleRadius);
+        WriteFloat(_uniformData, 208, cmd.CircleThickness);
+        WriteFloat(_uniformData, 212, cmd.BoxBorderThickness);
+        GL.BindBuffer(BufferTarget.UniformBuffer, _qoobo);
+        GL.BufferSubData(BufferTarget.UniformBuffer, 0, _uniformData.Length, _uniformData);
+        GL.DrawArrays(PrimitiveType.Triangles, 0, 6);
     }
-    
+
     public void Kill() {
+        foreach (var cmd in _commands)
+            DrawCommand(cmd);
+        _commands.Clear();
         GL.BindVertexArray(0);
     }
 

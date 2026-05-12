@@ -1,5 +1,6 @@
-﻿using Anatta.Framework;
+﻿using Anatta.Framework.Threading;
 using Anatta.Framework.Graphics;
+using Anatta.Framework.Graphics.Animations;
 using Anatta.Framework.Graphics.Shapes;
 using Anatta.Framework.Graphics.Sprites;
 using Anatta.Framework.Input;
@@ -17,8 +18,8 @@ public class DemoCursor : Container
         {
             Radius = 19*2,
             Thickness = 12,
-            Colour = Color.White.Alpha(128),
-            BorderColour = ColorInfo.GradientVertical(Color.White, Color.White.Darken(0.6f)),
+            Colour = Colour4.White.Alpha(128),
+            BorderColour = ColourInfo.GradientVertical(Colour4.White, Colour4.White.Darken(0.6f)),
             Origin = Anchors.Centre
         };
 
@@ -49,12 +50,5 @@ public class DemoCursor : Container
             }
         }
     }
-
-    public override Texture Texture
-    {
-        get => null!;
-        protected set { }
-    }
-
     public override Vector2 GetSize() => Vector2.Zero;
 }

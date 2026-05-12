@@ -2,18 +2,24 @@ namespace Anatta.Framework.Graphics;
 
 using OpenTK.Mathematics;
 
-public partial struct Color
+public partial struct Colour4
 {
+    public static bool operator ==(Colour4 a, Colour4 b) => a.R == b.R && a.G == b.G && a.B == b.B && a.A == b.A;
+    public static bool operator !=(Colour4 a, Colour4 b) => !(a == b);
+    
+    public override bool Equals(object? obj) => obj is Colour4 c && this == c;
+    public override int GetHashCode() => HashCode.Combine(R, G, B, A);
+    
     public float R, G, B, A;
 
-    public Color(byte r, byte g, byte b, byte a = 255)
+    public Colour4(byte r, byte g, byte b, byte a = 255)
     {
         R = r;
         G = g;
         B = b;
         A = a;
     }
-    public Color(float r, float g, float b, float a = 255f)
+    public Colour4(float r, float g, float b, float a = 255f)
     {
         R = r;
         G = g;
@@ -21,7 +27,7 @@ public partial struct Color
         A = a;
     }
     
-    public Color(string hex)
+    public Colour4(string hex)
     {
         if (hex.StartsWith("#"))
             hex = hex.Substring(1);
@@ -62,7 +68,7 @@ public partial struct Color
 
     public Vector4 ToVector4()
     {
-        return new Vector4(
+        return new(
             R / 255f,
             G / 255f,
             B / 255f,
@@ -77,10 +83,10 @@ public partial struct Color
                 A / 255f
             );
    }
-   public Color Darken(float factor = 0.1f)
+   public Colour4 Darken(float factor = 0.1f)
    {
        factor = Math.Clamp(factor, 0f, 1f);
-       return new Color(
+       return new Colour4(
            R * (1 - factor),
            G * (1 - factor),
            B * (1 - factor),
@@ -88,20 +94,20 @@ public partial struct Color
        );
    }
 
-   public Color Lighten(float factor = 0.1f) {
+   public Colour4 Lighten(float factor = 0.1f) {
        factor = Math.Clamp(factor, 0f, 1f);
-       return new Color(
+       return new Colour4(
            R + (255 - R) * factor,
            G + (255 - G) * factor,
            B + (255 - B) * factor,
            A
        );
    }
-   public Color Alpha(float alpha) {
-       return new Color(R, G, B, alpha);
+   public Colour4 Alpha(float alpha) {
+       return new Colour4(R, G, B, alpha);
    }
 
-   public static implicit operator Color4<Rgba>(Color c) => c.ToColor4();
-   public static implicit operator ColorInfo(Color c)
-       => new ColorInfo(c);
+   public static implicit operator Color4<Rgba>(Colour4 c) => c.ToColor4();
+   public static implicit operator ColourInfo(Colour4 c)
+       => new ColourInfo(c);
 }

@@ -1,4 +1,4 @@
-﻿namespace Anatta.Framework.IO;
+﻿namespace Anatta.Framework.Storage;
 
 public class FileSystemStore : IResourceStore {
     private readonly string _root;

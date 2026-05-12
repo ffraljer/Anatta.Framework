@@ -4,7 +4,8 @@ using OpenTK.Mathematics;
 namespace Anatta.Framework.Graphics.Rendering;
 
 public struct RenderCommand {
-    public ITexture Texture;
+    public bool UseWhitePixel;
+    public Texture? Texture;
     public Matrix4 Transform;
     public Vector4 TintTop;
     public Vector4 TintBottom;

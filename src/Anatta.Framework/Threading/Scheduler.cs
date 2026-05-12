@@ -9,7 +9,7 @@ namespace Anatta.Framework.Threading;
 public class Scheduler {
 	private Logger logger = new Logger("Scheduler");
 	
-	private readonly Queue<VoidDelegate> schedulerQueue = new Queue<VoidDelegate>();
+	private readonly Queue<Action> schedulerQueue = new Queue<Action>();
 
 	private readonly List<ScheduledDelegate> timedTasks = new List<ScheduledDelegate>();
 
@@ -23,7 +23,7 @@ public class Scheduler {
 
 	public bool Update()
 	{
-		VoidDelegate[] array;
+		Action[] array;
 		lock (schedulerQueue)
 		{
 			lock (timedTasks)
@@ -49,16 +49,16 @@ public class Scheduler {
 			{
 				return false;
 			}
-			array = new VoidDelegate[count];
+			array = new Action[count];
 			schedulerQueue.CopyTo(array, 0);
 			schedulerQueue.Clear();
 		}
-		VoidDelegate[] array2 = array;
-		foreach (VoidDelegate voidDelegate in array2)
+		Action[] array2 = array;
+		foreach (Action voidDelegate in array2)
 		{
 			try
 			{
-				new VoidDelegate(voidDelegate.Invoke)();
+				new Action(voidDelegate.Invoke)();
 			}
 			catch (Exception arg)
 			{
@@ -68,7 +68,7 @@ public class Scheduler {
 		return true;
 	}
 
-	public virtual bool Add(VoidDelegate task, bool forceScheduled = false)
+	public virtual bool Add(Action task, bool forceScheduled = false)
 	{
 		if (!forceScheduled && isMainThread)
 		{
@@ -82,7 +82,7 @@ public class Scheduler {
 		return false;
 	}
 
-	public ScheduledDelegate AddDelayed(VoidDelegate task, float timeUntilRun, bool repeat = false)
+	public ScheduledDelegate AddDelayed(Action task, float timeUntilRun, bool repeat = false)
 	{
 		ScheduledDelegate scheduledDelegate = new ScheduledDelegate(task, Time.Total + timeUntilRun, repeat ? timeUntilRun : 0);
 		lock (timedTasks)
@@ -92,7 +92,7 @@ public class Scheduler {
 		}
 	}
 
-	public bool AddOnce(VoidDelegate task)
+	public bool AddOnce(Action task)
 	{
 		if (schedulerQueue.Contains(task))
 		{

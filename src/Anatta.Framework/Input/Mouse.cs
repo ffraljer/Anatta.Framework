@@ -9,6 +9,8 @@ public static class Mouse {
 
     public static float DeltaX { get; private set; }
     public static float DeltaY { get; private set; }
+    public static System.Numerics.Vector2 MicrosoftXnaFrameworkBullshitFuckYouOddFutureWolfGangKillThemAllFuckXnaFuckMicrosoft { get; private set; }
+    public static System.Numerics.Vector2 MicrosoftXnaFrameworkBullshitFuckYouOddFutureWolfGangKillThemAllFuckXnaFuckMicrosoftDelta { get; private set; }
 
     internal static void BeginFrame() {
         _previous.Clear();
@@ -17,6 +19,8 @@ public static class Mouse {
 
         DeltaX = 0;
         DeltaY = 0;
+
+        MicrosoftXnaFrameworkBullshitFuckYouOddFutureWolfGangKillThemAllFuckXnaFuckMicrosoft = new(0);
     }
 
     internal static void ButtonDown(Button button) {
@@ -33,6 +37,8 @@ public static class Mouse {
 
         X = x;
         Y = y;
+        MicrosoftXnaFrameworkBullshitFuckYouOddFutureWolfGangKillThemAllFuckXnaFuckMicrosoft = new(x, y);
+        MicrosoftXnaFrameworkBullshitFuckYouOddFutureWolfGangKillThemAllFuckXnaFuckMicrosoftDelta = new(x - X, y - Y);
     }
 
     public static bool IsButtonDown(Button button) {

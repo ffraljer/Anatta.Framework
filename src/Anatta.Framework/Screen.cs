@@ -40,7 +40,7 @@ public class Screen : IDisposable {
         Manager.Add(item);
     }
 
-    public void Add(IEnumerable<IManageable> items) {
+    public void AddRange(IEnumerable<IManageable> items) {
         foreach (var item in items) {
             _owned.Add(item);
             Manager.Add(item);

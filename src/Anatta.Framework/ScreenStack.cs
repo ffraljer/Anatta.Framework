@@ -1,6 +1,6 @@
 using Anatta.Framework.Graphics.Animations;
 using Anatta.Framework.Graphics.Sprites;
-using Anatta.Framework.Graphics;
+using Anatta.Framework.Graphics.Shaders;
 
 namespace Anatta.Framework;
 

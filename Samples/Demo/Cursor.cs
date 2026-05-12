@@ -17,21 +17,22 @@ public class OsuArgonCursor : Container
         {
             Radius = 19*2,
             Thickness = 12,
-            BorderColour = ColorInfo.GradientVertical(new Color("FC618F"), new Color("BB1A41")),
+            Colour = Colour4.Transparent,
+            BorderColour = ColourInfo.GradientVertical(new Colour4("FC618F"), new Colour4("BB1A41")),
             Origin = Anchors.Centre
         };
         outerPink = new Circle
         {
             Radius = 18 * 2,
-            BorderColour = ColorInfo.GradientVertical(new Color("FC618F"), new Color("BB1A41")),
+            BorderColour = ColourInfo.GradientVertical(new Colour4("FC618F"), new Colour4("BB1A41")),
             Thickness = 12,
-            Colour = new Color(255, 0, 0, 128),
+            Colour = new Colour4("FC618F").Darken(0.6f).Alpha(128f),
             Origin = Anchors.Centre
         };
         cursormiddl = new Circle
         {
             Radius = 9,
-            Colour = Anatta.Framework.Graphics.Color.White,
+            Colour = Colour4.White,
             Origin = Anchors.Centre
         };
 
@@ -63,11 +64,19 @@ public class OsuArgonCursor : Container
         }
     }
 
-    public override Texture Texture
-    {
-        get => null!;
-        protected set { }
-    }
+    public override Vector2 GetSize() {
+        if (Children.Count == 0)
+            return Vector2.Zero;
 
-    public override Vector2 GetSize() => Vector2.Zero;
+        float maxX = 0;
+        float maxY = 0;
+
+        foreach (var child in Children) {
+            var s = child.GetSize();
+            maxX = MathF.Max(maxX, s.X);
+            maxY = MathF.Max(maxY, s.Y);
+        }
+
+        return new Vector2(maxX, maxY);
+    }
 }

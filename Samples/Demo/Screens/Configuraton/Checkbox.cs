@@ -33,7 +33,7 @@ public class Checkbox : Container {
             Anchor = Anchors.Centre,
         };
 
-        _label = new Text(text, 14f, Color.White) {
+        _label = new Text(text, 14f, Colour4.White) {
             Position = new Vector2(32, 4),
         };
 

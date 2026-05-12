@@ -2,6 +2,7 @@
 using System.Reflection;
 using System.Runtime.InteropServices;
 using Anatta.Framework.Graphics.Helpers;
+using Anatta.Framework.Graphics.Interfaces;
 using Anatta.Framework.Logging;
 using Vortice.Direct3D11;
 using Vortice.DXGI;
@@ -12,7 +13,8 @@ using Compiler = Vortice.D3DCompiler.Compiler;
 
 namespace Anatta.Framework.Graphics.D3D;
 
-public unsafe class ShaderD3D : IDisposable {
+public unsafe class ShaderD3D : IDisposable, IShader {
+    
     private readonly ID3D11Device _device;
     private readonly ID3D11DeviceContext _context;
 
@@ -31,10 +33,7 @@ public unsafe class ShaderD3D : IDisposable {
         ID3D11Device device,
         ID3D11DeviceContext context,
         string vertex,
-        string fragment,
-        InputElementDescription[] layout,
-        (string Name, int Offset, int Size)[] uniforms,
-        int cbSize)
+        string fragment)
     {
         var a = Assembly.GetExecutingAssembly();
 
@@ -46,11 +45,15 @@ public unsafe class ShaderD3D : IDisposable {
         string vsGlsl = new StreamReader(vs).ReadToEnd();
         string fsGlsl = new StreamReader(fs).ReadToEnd();
 
-        byte[] vsSpirvBytes = AnattaShaderCompiler.CompileGlslToSpirv(vsGlsl, ShaderKind.VertexShader);
-        byte[] fsSpirvBytes = AnattaShaderCompiler.CompileGlslToSpirv(fsGlsl, ShaderKind.FragmentShader);
+        byte[] spvVsbytes = AnattaShaderCompiler.CompileGlslToSpirv(vsGlsl, ShaderKind.VertexShader);
+        byte[] spvPsbytes = AnattaShaderCompiler.CompileGlslToSpirv(fsGlsl, ShaderKind.FragmentShader);
 
-        string vsHlsl = AnattaShaderCompiler.SpirvToHlsl(vsSpirvBytes);
-        string pissHlsl = AnattaShaderCompiler.SpirvToHlsl(fsSpirvBytes);
+        var (uniforms, cbSize, layout) = 
+            AnattaShaderCompiler.ReflectSpirv(spvVsbytes, spvPsbytes);
+        
+        string vsHlsl = AnattaShaderCompiler.SpirvToHlsl(spvVsbytes);
+        Console.WriteLine(vsHlsl);
+        string pissHlsl = AnattaShaderCompiler.SpirvToHlsl(spvPsbytes);
 
         return new ShaderD3D(device, context, vsHlsl, pissHlsl, layout, uniforms, cbSize);
     }
@@ -131,6 +134,60 @@ public unsafe class ShaderD3D : IDisposable {
         MemoryMarshal.AsBytes(f).CopyTo(_cbData.AsSpan(offset));
         _dirty = true;
     }
+    
+    public void SetMatrix4(string name, Matrix4 mat) {
+        if (!_uniforms.TryGetValue(name, out var slot)) {
+            _logger.Warn($"Unknown uniform '{name}'");
+            return;
+        }
+        SetMatrix4(slot.Offset, mat);
+    }
+
+    public void SetVector4(string name, Vector4 vec) {
+        if (!_uniforms.TryGetValue(name, out var slot)) {
+            _logger.Warn($"Unknown uniform '{name}'");
+            return;
+        }
+        SetVector4(slot.Offset, vec);
+    }
+
+    public void SetVector3(string name, Vector3 vec) {
+        if (!_uniforms.TryGetValue(name, out var slot)) {
+            _logger.Warn($"Unknown uniform '{name}'");
+            return;
+        }
+        Span<float> f = stackalloc float[] { vec.X, vec.Y, vec.Z };
+        MemoryMarshal.AsBytes(f).CopyTo(_cbData.AsSpan(slot.Offset));
+        _dirty = true;
+    }
+
+    public void SetVector2(string name, Vector2 vec) {
+        if (!_uniforms.TryGetValue(name, out var slot)) {
+            _logger.Warn($"Unknown uniform '{name}'");
+            return;
+        }
+        SetVector2(slot.Offset, vec);
+    }
+
+    public void SetFloat(string name, float value) {
+        if (!_uniforms.TryGetValue(name, out var slot)) {
+            _logger.Warn($"Unknown uniform '{name}'");
+            return;
+        }
+        SetFloat(slot.Offset, value);
+    }
+
+    public void SetInt(string name, int value) {
+        if (!_uniforms.TryGetValue(name, out var slot)) {
+            _logger.Warn($"Unknown uniform '{name}'");
+            return;
+        }
+        Span<float> f = stackalloc float[] { (float)value };
+        MemoryMarshal.AsBytes(f).CopyTo(_cbData.AsSpan(slot.Offset));
+        _dirty = true;
+    }
+
+    public void SetBool(string name, bool value) => SetInt(name, value ? 1 : 0);
 
     private void Write(string name, ReadOnlySpan<byte> data)
     {
@@ -158,5 +215,6 @@ public unsafe class ShaderD3D : IDisposable {
         _pixelShader.Dispose();
         _constantBuffer.Dispose();
     }
+
 }
 #endif
