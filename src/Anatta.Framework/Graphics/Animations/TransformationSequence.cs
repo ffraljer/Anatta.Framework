@@ -4,12 +4,8 @@ public class TransformationSequence {
     public bool Loop;
     public List<Transformation> Transformations = new();
 
-    public float Time;
-
     public TransformationSequence(IEnumerable<Transformation> transformations, bool loop = false) {
         Transformations = transformations.ToList();
         Loop = loop;
     }
-
-    public TransformationSequence() { }
 }

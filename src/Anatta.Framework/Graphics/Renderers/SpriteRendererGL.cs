@@ -1,10 +1,5 @@
-﻿using Anatta.Framework.Input;
-using Anatta.Framework.Graphics.Helpers;
-using Anatta.Framework.Graphics.Interfaces;
-using Anatta.Framework.Graphics.OpenGL;
+﻿using Anatta.Framework.Graphics.OpenGL;
 using Anatta.Framework.Graphics.Rendering;
-using Anatta.Framework.Graphics.Shapes;
-using Anatta.Framework.Graphics.Sprites;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
 
@@ -15,7 +10,7 @@ public class SpriteRendererGL : IRenderer {
     private int _vbo;
     private int _qoobo;
     private Matrix4 _projection;
-    private ShaderGL _shd;
+    private ShaderGL? _shd;
     private bool _initialized;
     private readonly List<RenderCommand> _commands = new(256);
     private readonly byte[] _uniformData = new byte[224];
@@ -71,9 +66,11 @@ public class SpriteRendererGL : IRenderer {
         _initialized = true;
     }
     public void Use(int screenW, int screenH) {
+        if (_shd is null) return;
         _shd.Use();
         GL.Uniform1i(GL.GetUniformLocation(_shd.Handle, "tex"), 0);
 
+        
         _projection = Matrix4.CreateOrthographicOffCenter(0, screenW, screenH, 0, -1, 1);
         
         
@@ -86,75 +83,6 @@ public class SpriteRendererGL : IRenderer {
             BlendingFactor.SrcAlpha,
             BlendingFactor.OneMinusSrcAlpha
         );
-    }
-    
-    public RenderCommand BuildCommand(ITexturedDrawable sprite, int screenW, int screenH) {
-        Vector2 size;
-        var cmd = new RenderCommand();
-
-        if (sprite is Box box) {
-            size = box.Size * box.Scale;
-
-            cmd.Texture = Texture.WhitePixel;
-            cmd.TintTop = box.Colour.Top.ToVector4();
-            cmd.TintBottom = box.Colour.Bottom.ToVector4();
-            cmd.Size = size;
-            cmd.Radius = box.CornerRadius;
-            cmd.BorderTop = box.BorderColour.Top.ToVector4();
-            cmd.BorderBottom = box.BorderColour.Bottom.ToVector4();
-            cmd.BoxBorderThickness = box.BorderThickness;
-        }
-        else if (sprite is Circle circle) {
-            size = new Vector2(
-                circle.Radius * 2f * circle.Scale.X,
-                circle.Radius * 2f * circle.Scale.Y
-            );
-
-            cmd.Texture = Texture.WhitePixel;
-            cmd.TintTop = circle.Colour.Top.ToVector4();
-            cmd.TintBottom = circle.Colour.Bottom.ToVector4();
-            cmd.BorderTop = circle.BorderColour.Top.ToVector4();
-            cmd.BorderBottom = circle.BorderColour.Bottom.ToVector4();
-            cmd.CircleRadius = circle.Radius * MathF.Max(circle.Scale.X, circle.Scale.Y);
-            cmd.CircleThickness = circle.Thickness * MathF.Max(circle.Scale.X, circle.Scale.Y);
-            cmd.IsCircle = true;
-            cmd.Size = size;
-        }
-        else if (sprite.Texture != null) {
-            var glTex = ((Texture)sprite.Texture);
-            if (glTex == null) return default;
-            
-            size = new Vector2(
-                sprite.Texture.Width * sprite.Scale.X,
-                sprite.Texture.Height * sprite.Scale.Y
-            );
-
-            var tint = sprite.Colour.Top.ToVector4();
-
-            cmd.Texture = glTex;
-            cmd.TintTop = tint;
-            cmd.TintBottom = tint;
-            cmd.Size = size;
-        }
-        else return default;
-
-        var originNorm = AnchorHelper.ToNormalised(sprite.Origin);
-        var originOffset = originNorm * size;
-
-        var anchorNorm = AnchorHelper.ToNormalised(sprite.Anchor);
-        var anchorOffset = new Vector2(
-            anchorNorm.X * screenW,
-            anchorNorm.Y * screenH
-        );
-
-        cmd.Transform =
-            Matrix4.CreateScale(size.X, size.Y, 1f) *
-            Matrix4.CreateTranslation(-originOffset.X, -originOffset.Y, 0f) *
-            Matrix4.CreateRotationZ(sprite.Rotation) *
-            Matrix4.CreateTranslation(sprite.DrawPosition.X, sprite.DrawPosition.Y, 0f) *
-            Matrix4.CreateTranslation(anchorOffset.X, anchorOffset.Y, 0f);
-
-        return cmd;
     }
 
     private void DrawCommand(RenderCommand cmd) {
@@ -170,6 +98,7 @@ public class SpriteRendererGL : IRenderer {
         WriteFloat(_uniformData, 204, cmd.CircleRadius);
         WriteFloat(_uniformData, 208, cmd.CircleThickness);
         WriteFloat(_uniformData, 212, cmd.BoxBorderThickness);
+        WriteFloat(_uniformData, 216, cmd.Triangle);
         GL.BindBuffer(BufferTarget.UniformBuffer, _qoobo);
         GL.BufferSubData(BufferTarget.UniformBuffer, 0, _uniformData.Length, _uniformData);
         GL.DrawArrays(PrimitiveType.Triangles, 0, 6);
@@ -181,29 +110,33 @@ public class SpriteRendererGL : IRenderer {
         _commands.Clear();
         GL.BindVertexArray(0);
     }
-
+    
     public void Dispose() {
+        if (!_initialized) return;
+        
         GL.DeleteBuffer(_vbo);
+        GL.DeleteBuffer(_qoobo);
         GL.DeleteVertexArray(_vao);
 
-        _shd.Dispose();
+        _shd!.Dispose(); // if it's already disposing, shader CAN'T be null, right?
+        _initialized = false;
     }
     
     private static void WriteMatrix(byte[] buf, int offset, Matrix4 m) {
-        var floats = new float[] {
+        float[] floats = [
             m.M11, m.M12, m.M13, m.M14,
             m.M21, m.M22, m.M23, m.M24,
             m.M31, m.M32, m.M33, m.M34,
             m.M41, m.M42, m.M43, m.M44
-        };
+        ];
         System.Buffer.BlockCopy(floats, 0, buf, offset, 64);
     }
     private static void WriteVec4(byte[] buf, int offset, Vector4 v) {
-        var floats = new float[] { v.X, v.Y, v.Z, v.W };
+        float[] floats = [v.X, v.Y, v.Z, v.W];
         System.Buffer.BlockCopy(floats, 0, buf, offset, 16);
     }
     private static void WriteVec2(byte[] buf, int offset, Vector2 v) {
-        var floats = new float[] { v.X, v.Y };
+        float[] floats = [v.X, v.Y];
         System.Buffer.BlockCopy(floats, 0, buf, offset, 8);
     }
     private static void WriteFloat(byte[] buf, int offset, float v) {

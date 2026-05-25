@@ -18,7 +18,7 @@ public class Transformation {
     public float FloatStart;
     public float FloatEnd;
 
-    public float StartTime; // I question myself every day.
+    public float StartTime;
     public float EndTime;
 
     public Easing Easing;

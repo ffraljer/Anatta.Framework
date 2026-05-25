@@ -5,16 +5,16 @@ using Anatta.Framework.Graphics.Rendering;
 using Anatta.Framework.Threading;
 using OpenTK.Mathematics;
 
-namespace Anatta.Framework.Graphics.Sprites;
+namespace Anatta.Framework.Graphics;
 
 public abstract class Drawable : IDrawable, IUpdatable {
     public virtual RenderCommand BuildRenderCommand(Vector2i screenSize) => default;
     public Vector2 Position { get; set; }
     public Vector2 Scale { get; set; } = Vector2.One;
     public float CornerRadius { get; set; }
-    public Drawable? Parent { get; internal set; }
+    public IDrawable? Parent { get; set; }
     public float Depth { get; set; } = 1f;
-    public bool HandleInput { get; set; } = false;
+    public bool HandleInput { get; set; }
 
     public Vector2 DrawPosition {
         get {
@@ -36,10 +36,11 @@ public abstract class Drawable : IDrawable, IUpdatable {
     internal bool IsHovering = false;
 
     public event Action<IDrawable>? OnClick;
+    public event Action<IDrawable>? OnDoubleClick;
     public event Action<IDrawable>? OnHover;
     public Action? OnUpdate;
-    private float _clock = 0f;
-    private float _chainClock = 0f;
+    private float _clock;
+    private float _chainClock;
     private List<Transformation> _transformations = new();
     public event Action<IDrawable>? OnHoverLost;
 
@@ -49,7 +50,7 @@ public abstract class Drawable : IDrawable, IUpdatable {
         if (OnUpdate != null)
             OnUpdate?.Invoke();
 
-        _clock += (float)Time.Delta;
+        _clock += Time.Delta;
 
         doTransforms();
     }
@@ -62,7 +63,7 @@ public abstract class Drawable : IDrawable, IUpdatable {
             if (t.StartTime > _clock || t.EndTime < _clock)
                 continue;
 
-            float frac = (t.EndTime == t.StartTime)
+            float frac = t.EndTime == t.StartTime
                 ? 1f
                 : EasingHelper.Ease(t.Easing, _clock - t.StartTime, 0f, 1f, t.EndTime - t.StartTime);
 
@@ -130,7 +131,7 @@ public abstract class Drawable : IDrawable, IUpdatable {
             ApplyTransformationSequence(_currentSequence);
     }
 
-    public IDrawable Then() => this;
+    public ITransformable Then() => this;
     
     private float startChain() {
         return _chainClock > _clock ? _chainClock : _clock;
@@ -143,7 +144,7 @@ public abstract class Drawable : IDrawable, IUpdatable {
         _currentSequence = null;
     }
 
-    public IDrawable MoveTo(Vector2 position, float duration, Easing easing = Easing.None) {
+    public ITransformable MoveTo(Vector2 position, float duration, Easing easing = Easing.None) {
         var start = startChain();
         _transformations.Add(new Transformation(
             Transformation.Type.Move, Position, position,
@@ -152,10 +153,10 @@ public abstract class Drawable : IDrawable, IUpdatable {
         return this;
     }
 
-    public IDrawable MoveToX(int x, float duration, Easing easing = Easing.None) => MoveTo(new(x, 0), duration, easing);
-    public IDrawable MoveToY(int y, float duration, Easing easing = Easing.None) => MoveTo(new(0, y), duration, easing);
+    public ITransformable MoveToX(int x, float duration, Easing easing = Easing.None) => MoveTo(new(x, 0), duration, easing);
+    public ITransformable MoveToY(int y, float duration, Easing easing = Easing.None) => MoveTo(new(0, y), duration, easing);
 
-    public IDrawable ScaleTo(Vector2 scale, float duration, Easing easing = Easing.None) {
+    public ITransformable ScaleTo(Vector2 scale, float duration, Easing easing = Easing.None) {
         var start = startChain();
         _transformations.Add(new Transformation(
             Transformation.Type.Scale, Scale, scale,
@@ -164,7 +165,7 @@ public abstract class Drawable : IDrawable, IUpdatable {
         return this;
     }
 
-    public IDrawable RotateTo(float rotation, float duration, Easing easing = Easing.None) {
+    public ITransformable RotateTo(float rotation, float duration, Easing easing = Easing.None) {
         var start = startChain();
         _transformations.Add(new Transformation(
             Transformation.Type.Rotate,
@@ -174,7 +175,7 @@ public abstract class Drawable : IDrawable, IUpdatable {
         return this;
     }
 
-    public IDrawable FadeTo(float alpha, float duration, Easing easing = Easing.None) {
+    public ITransformable FadeTo(float alpha, float duration, Easing easing = Easing.None) {
         var start = startChain();
         _transformations.Add(new Transformation(
             Transformation.Type.Fade, Colour.Top.A, alpha,
@@ -183,7 +184,7 @@ public abstract class Drawable : IDrawable, IUpdatable {
         return this;
     }
 
-    public IDrawable ColourTo(Colour4 colour4, float duration, Easing easing = Easing.None) {
+    public ITransformable ColourTo(Colour4 colour4, float duration, Easing easing = Easing.None) {
         var start = startChain();
         _transformations.Add(new Transformation(
             Transformation.Type.Colour, Colour.Top, colour4,
@@ -206,16 +207,19 @@ public abstract class Drawable : IDrawable, IUpdatable {
         return this;
     }
 
-    internal void TriggerHover() {
+    public virtual void TriggerHover() {
         OnHover?.Invoke(this);
     }
 
-    internal void TriggerHoverLost() {
+    public virtual void TriggerHoverLost() {
         OnHoverLost?.Invoke(this);
     }
 
-    internal void TriggerClick() {
+    public virtual void TriggerClick() {
         OnClick?.Invoke(this);
+    }
+    public virtual void TriggerDoubleClick() {
+        OnDoubleClick?.Invoke(this);
     }
 
     public virtual void Dispose() {
@@ -236,7 +240,7 @@ public abstract class Drawable : IDrawable, IUpdatable {
             Matrix4.CreateTranslation(anchorOffset.X, anchorOffset.Y, 0f);
     }
 
-    public IDrawable Then(Action action) {
+    public ITransformable Then(Action action) {
         if (_thenActions == null)
             _thenActions = new Queue<(float, Action)>();
 

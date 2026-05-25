@@ -1,7 +1,7 @@
-﻿using Anatta.Framework.Graphics.Interfaces;
+﻿
 using Anatta.Framework.Graphics.Rendering;
 
-namespace Anatta.Framework.Graphics.Sprites;
+namespace Anatta.Framework.Graphics.Renderers;
 
 public interface IRenderer : IDisposable {
     void Init();

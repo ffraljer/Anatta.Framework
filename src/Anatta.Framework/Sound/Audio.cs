@@ -6,6 +6,7 @@ using Anatta.Framework.Logging;
 using OpenTK.Audio.OpenAL;
 using OpenTK.Audio.OpenAL.ALC;
 
+
 namespace Anatta.Framework.Sound {
     public static class Audio
     {
@@ -17,7 +18,8 @@ namespace Anatta.Framework.Sound {
         public static Bindings Binding = Bindings.Bass;
         
         private static bool _useOpenAl = false;
-        
+        static readonly ConcurrentDictionary<int, byte> _alSources = new();
+
         static bool _bassInitialized = false;
 
         internal static Logger logger = new("Audio");
@@ -133,24 +135,33 @@ namespace Anatta.Framework.Sound {
             AL.Sourcei(source, SourcePNameI.Buffer, buffer);
             AL.Sourcei(source, SourcePNameI.Looping, loop ? 1 : 0);
             AL.SourcePlay(source);
+            _alSources.TryAdd(source, 0);
 
             AlBuffers[source] = buffer;
 
             return source;
         }
 
-        internal static void Stop(int stream)
-        {
+        internal static void Stop(int stream) {
             if (stream == 0) return;
 
-            Bass.ChannelStop(stream);
-            Bass.StreamFree(stream);
+            if (_alSources.TryRemove(stream, out _)) {
+                AL.SourceStop(stream);
+                if (AlBuffers.TryRemove(stream, out int buffer))
+                    AL.DeleteBuffer(buffer);
+                AL.DeleteSource(stream);
+            }
+            else {
+                Bass.ChannelStop(stream);
+                Bass.StreamFree(stream);
+                if (PinnedBuffers.TryRemove(stream, out var h) && h.IsAllocated)
+                    h.Free();
+            }
+
             if (_currentMusicStream == stream)
                 _currentMusicStream = 0;
-            if (PinnedBuffers.TryRemove(stream, out var h) && h.IsAllocated)
-                h.Free();
         }
-        
+
         internal static void Shutdown()
         {
             if (!openAlInitialized)
@@ -184,7 +195,7 @@ namespace Anatta.Framework.Sound {
 
             byte[] pcm = new byte[totalBytes];
 
-            //int bytesRead = Bass.ChannelGetData(stream, pcm, totalBytes);
+            int bytesRead = Bass.ChannelGetData(stream, pcm, totalBytes);
 
             Bass.StreamFree(stream);
 

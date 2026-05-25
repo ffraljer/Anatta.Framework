@@ -3,7 +3,7 @@ using OpenTK.Mathematics;
 
 namespace Anatta.Framework.Graphics;
 
-public partial struct ColourInfo
+public struct ColourInfo
 {
     public Colour4 Top;
     public Colour4 Bottom;

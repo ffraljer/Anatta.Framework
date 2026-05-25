@@ -4,16 +4,9 @@ using System.Text.Json.Serialization;
 namespace Anatta.Framework.Configuration;
 
 [AttributeUsage(AttributeTargets.Field)]
-public class ConfigKeyAttribute : Attribute
-{
-    public string Key { get; }
-    public object? DefaultValue { get; }
-
-    public ConfigKeyAttribute(string key, object? defaultValue = null)
-    {
-        Key = key;
-        DefaultValue = defaultValue;
-    }
+public class ConfigKeyAttribute(string key, object? defaultValue = null) : Attribute {
+    public string Key { get; } = key;
+    public object? DefaultValue { get; } = defaultValue;
 }
 
 public abstract class ConfigurationManager
@@ -21,7 +14,7 @@ public abstract class ConfigurationManager
     private readonly string _filePath;
     private bool _initialized;
     
-    private static readonly JsonSerializerOptions _jsonOptions = new()
+    private static readonly JsonSerializerOptions JsonOptions = new()
     {
         WriteIndented = true,
         Converters = { new JsonStringEnumConverter() }
@@ -121,11 +114,10 @@ public abstract class ConfigurationManager
                 .GetMethod(nameof(GetValue), System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!
                 .MakeGenericMethod(valueType);
 
-            var bindable = method.Invoke(this, new object?[]
-            {
+            var bindable = method.Invoke(this, [
                 attr.Key,
                 attr.DefaultValue ?? (valueType.IsValueType ? Activator.CreateInstance(valueType) : null)
-            });
+            ]);
             
             _AutoSave(bindable);
             field.SetValue(field.IsStatic ? null : this, bindable);
@@ -141,7 +133,7 @@ public abstract class ConfigurationManager
 
         var json = File.ReadAllText(_filePath);
 
-        var data = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(json, _jsonOptions);
+        var data = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(json, JsonOptions);
         if (data == null) return;
 
         foreach (var (key, element) in data)
@@ -153,21 +145,21 @@ public abstract class ConfigurationManager
 
             object? value = type switch
             {
-                var t when t.IsEnum => JsonSerializer.Deserialize(element.GetRawText(), type, _jsonOptions),
+                var t when t.IsEnum => JsonSerializer.Deserialize(element.GetRawText(), type, JsonOptions),
                 var t when t == typeof(int) => element.GetInt32(),
                 var t when t == typeof(float) => element.GetSingle(),
                 var t when t == typeof(double) => element.GetDouble(),
                 var t when t == typeof(bool) => element.GetBoolean(),
                 var t when t == typeof(string) => element.GetString(),
-                _ => JsonSerializer.Deserialize(element.GetRawText(), type, _jsonOptions)
+                _ => JsonSerializer.Deserialize(element.GetRawText(), type, JsonOptions)
             };
 
             bindable.GetType().GetProperty("Value")?.SetValue(bindable, value);
         }
     }
-    private void _AutoSave(object bindable)
+    private void _AutoSave(object? bindable)
     {
-        var eventInfo = bindable.GetType().GetEvent("ValueChanged");
+        var eventInfo = bindable?.GetType().GetEvent("ValueChanged");
         if (eventInfo == null) return;
 
         var handlerType = eventInfo.EventHandlerType!;

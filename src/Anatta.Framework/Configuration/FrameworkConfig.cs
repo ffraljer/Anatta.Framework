@@ -8,7 +8,7 @@
 namespace Anatta.Framework.Configuration {
     public class FrameworkConfig : ConfigurationManager {
         [ConfigKey("Renderer", Renderer.GL)]
-        public static Bindable<Renderer> sRenderer;
+        public static Bindable<Renderer> sRenderer = null!;
         
         public FrameworkConfig() : base("framework.json") {
             Initialize();

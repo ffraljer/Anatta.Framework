@@ -1,6 +1,4 @@
-﻿using Anatta.Framework.Graphics.Sprites;
-
-namespace Anatta.Framework.Graphics;
+﻿namespace Anatta.Framework.Graphics;
 
 public abstract class CompositeDrawable : Drawable {
     private readonly List<Drawable> _children = new();
@@ -50,6 +48,26 @@ public abstract class CompositeDrawable : Drawable {
         base.Update();
         foreach (var child in _children)
             child.Update();
+    }
+
+    public override void TriggerClick() {
+        base.TriggerClick();
+        OnMouseClick();
+    }
+
+    public override void TriggerDoubleClick() {
+        base.TriggerDoubleClick();
+        OnMouseDoubleClick();
+    }
+
+    public override void TriggerHover() {
+        base.TriggerHover();
+        OnMouseHoverOn();
+    }
+
+    public override void TriggerHoverLost() {
+        base.TriggerHoverLost();
+        OnMouseHoverOff();
     }
 
     public virtual void OnMouseClick() { }

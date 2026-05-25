@@ -1,15 +1,12 @@
 using Anatta.Framework.Graphics.Interfaces;
 using Anatta.Framework.Graphics.Rendering;
-using Anatta.Framework.Storage;
 using OpenTK.Mathematics;
 
 namespace Anatta.Framework.Graphics.Sprites;
 
-public class Sprite : Drawable, ITexturedDrawable
-{
-    public Texture Texture { get; protected set; }
-    
-    public Sprite(Texture texture) => Texture = texture;
+public class Sprite(Texture texture) : Drawable, ITexturedDrawable {
+    public Texture Texture { get; protected set; } = texture;
+
     public override void Dispose() => Texture.Dispose();
     
     public override Vector2 GetSize() => new Vector2(Texture.Width, Texture.Height);

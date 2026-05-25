@@ -4,11 +4,10 @@ using Anatta.Framework.Logging;
 using OpenTK.Graphics.OpenGL;
 using G = OpenTK.Graphics.OpenGL.GL;
 using OpenTK.Mathematics;
-using Vortice.SpirvCross;
 
 namespace Anatta.Framework.Graphics.OpenGL;
 
-public class ShaderGL : IDisposable, IShader
+public class ShaderGL : IShader
 {
     public int Handle { get; set; }
     private int Gandle => Handle;
@@ -50,8 +49,8 @@ public class ShaderGL : IDisposable, IShader
         if (success == 0)
         {
             GL.GetProgramInfoLog(Handle, out string info);
-            throw new Exception($"ur fucking shader broke bro {info}");
             _logger.Error("Shader error!");
+            throw new Exception($"ur fucking shader broke bro {info}");
         }
         
         G.DetachShader(Handle, vtxS);
@@ -67,8 +66,8 @@ public class ShaderGL : IDisposable, IShader
         if (success == 0)
         {
             GL.GetShaderInfoLog(shader, out string info);
-            throw new Exception($"ur {type} shader fucking broke: {info}");
             _logger.Error("Shader error!");
+            throw new Exception($"ur {type} shader fucking broke: {info}");
         }
     }
 

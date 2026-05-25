@@ -8,9 +8,9 @@ public class Screen : IDisposable {
     
     public bool IsActive { get; private set; } = true;
     
-    private readonly List<IManageable> _owned = new();
+    private readonly List<IDrawable> _owned = new();
     
-    protected IEnumerable<IManageable> InternalChildren {
+    protected IEnumerable<IDrawable> InternalChildren {
         set {
             foreach (var item in value)
                 Add(item);
@@ -35,12 +35,12 @@ public class Screen : IDisposable {
     public virtual void OnEnter() { IsActive = true; }
     public virtual void OnExit() { IsActive = false; Manager.InvalidateInput(); }
 
-    public void Add(IManageable item) {
+    public void Add(IDrawable item) {
         _owned.Add(item);
         Manager.Add(item);
     }
 
-    public void AddRange(IEnumerable<IManageable> items) {
+    public void AddRange(IEnumerable<IDrawable> items) {
         foreach (var item in items) {
             _owned.Add(item);
             Manager.Add(item);

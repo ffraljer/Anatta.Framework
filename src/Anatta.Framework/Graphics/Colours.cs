@@ -706,5 +706,4 @@ public partial struct Colour4 {
         /// </summary>
         public static Colour4 YellowGreen => new Colour4(154, 205, 50, 255);
         #endregion
-    
 }

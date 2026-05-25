@@ -5,7 +5,7 @@ using Vortice.Direct3D11;
 
 namespace Anatta.Framework.Graphics.D3D;
 
-public static class D3DController {
+internal static class D3DController {
     public static ID3D11Device Device { get; private set; }
     public static ID3D11DeviceContext Context { get; private set; }
 

@@ -10,5 +10,4 @@ internal class ScreenFadeOverlay : Sprite {
         Scale = new Vector2(SpriteManager.ScreenSize.X, SpriteManager.ScreenSize.Y);
         Colour = new Colour4(0, 0, 0, 0);
     }
-
 }

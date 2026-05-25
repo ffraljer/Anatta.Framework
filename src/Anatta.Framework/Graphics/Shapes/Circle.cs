@@ -19,6 +19,8 @@ public class Circle : Drawable {
 
     public override RenderCommand BuildRenderCommand(Vector2i screenSize) {
         var size = GetSize();
+        var scaledSize = size * MathF.Max(Scale.X, Scale.Y);
+
         return new RenderCommand {
             Texture = Texture.WhitePixel,
             TintTop = Colour.Top.ToVector4(),
@@ -27,8 +29,8 @@ public class Circle : Drawable {
             BorderBottom = BorderColour.Bottom.ToVector4(),
             CircleRadius = Radius * MathF.Max(Scale.X, Scale.Y),
             CircleThickness = Thickness * MathF.Max(Scale.X, Scale.Y),
-            Size = size,
-            Transform = BuildTransform(size, screenSize)
+            Size = scaledSize,
+            Transform = BuildTransform(scaledSize, screenSize)
         };
     }
 }

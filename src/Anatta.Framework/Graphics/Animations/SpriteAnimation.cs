@@ -4,24 +4,16 @@ using OpenTK.Mathematics;
 
 namespace Anatta.Framework.Graphics.Animations;
 
-public class SpriteAnimation : Sprite {
-    private class Frame {
-        public Texture Texture { get; }
-        public float Duration { get; }
-
-
-        public Frame(Texture texture, float duration) {
-            Texture = texture;
-            Duration = duration;
-        }
+public class SpriteAnimation() : Sprite(null!) {
+    private class Frame(Texture texture, float duration) {
+        public Texture Texture { get; } = texture;
+        public float Duration { get; } = duration;
     }
 
     private readonly List<Frame> _frames = new();
-    private int _frameIndex = 0;
-    private float _time = 0;
+    private int _frameIndex;
+    private float _time;
     public float DefaultFrameDuration { get; set; } = 0.1f;
-
-    public SpriteAnimation() : base((Texture)null!) { }
 
     public void AddFrame(Texture glTexture, float? duration = null) {
         _frames.Add(new Frame(glTexture, duration ?? DefaultFrameDuration));
@@ -47,8 +39,8 @@ public class SpriteAnimation : Sprite {
     }
 
     public override void Dispose() {
-        foreach (var framew in _frames) {
-            framew.Texture.Dispose();
+        foreach (var frame in _frames) {
+            frame.Texture.Dispose();
         }
     }
 

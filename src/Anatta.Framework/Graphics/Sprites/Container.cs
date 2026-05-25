@@ -1,11 +1,10 @@
-﻿using Anatta.Framework.Graphics.Interfaces;
-using Anatta.Framework.Graphics.Rendering;
+﻿using Anatta.Framework.Graphics.Rendering;
 using OpenTK.Mathematics;
 using System.Collections;
 
 namespace Anatta.Framework.Graphics.Sprites;
 
-public class Container : CompositeDrawable, IManageable, IEnumerable<Drawable> {
+public class Container : CompositeDrawable, IEnumerable<Drawable> {
     public int Count => Children.Count;
     public Drawable this[int index] => Children[index];
 

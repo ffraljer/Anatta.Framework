@@ -1,10 +1,9 @@
-using System.Reflection;
 using Demo.Screens;
 using OpenTK.Mathematics;
-using OpenTK.Graphics.OpenGL;
 using Demo.Resources;
 using Anatta.Framework;
 using Anatta.Framework.Graphics;
+using Anatta.Framework.Graphics.Shapes;
 using Anatta.Framework.Graphics.Sprites;
 using Anatta.Framework.Storage;
 using Anatta.Framework.Sound;
@@ -14,7 +13,9 @@ namespace Demo;
 public class GameBase : Application
 {
     private SpriteManager _spriteManager;
+    private SpriteManager _spriteManagerOverlay;
     private SpriteManager _cursorSpriteManager;
+    Sprite overlay;
     public static ScreenStack ScreenStack;
     private bool _escapePressedLastFrame = false;
 
@@ -22,26 +23,47 @@ public class GameBase : Application
 
     public GameBase(Vector2i tize, string title = "Demo Game") : base(tize, title, false) {
         _spriteManager = new();
+        _spriteManagerOverlay = new();
         _cursorSpriteManager = new();
         ScreenStack = new();
         HideCursor = true;
+        Audio.Binding = Audio.Bindings.Al;
     }
 
     protected override void Initialise() {
-        loadScreens();
+        LoadScreens();
         Resource.AddStore(new AssemblyStore(typeof(_Resource).Assembly, "Demo.Resources"));
         Resource.AddStore(new FileSystemStore("Content"));
         ScreenStack.Push(new KittyScreen(_spriteManager));
+        overlay = new Sprite(Resource.Load<Texture>("tbo.png")) {
+            Anchor = Anchors.Bottom,
+            Origin = Anchors.BottomRight
+        };
+        _spriteManagerOverlay.Add(overlay);
+        overlay = new Sprite(Resource.Load<Texture>("tbo.png")) {
+            Anchor = Anchors.Bottom,
+            Origin = Anchors.BottomLeft
+        };
+        Triangle tri = new() {
+            Anchor = Anchors.Centre,
+            BorderColour = Colour4.White, 
+            Thickness = 5,
+            Colour = Colour4.Transparent,
+            Scale = new(100)
+        };
+        _spriteManagerOverlay.Add(overlay);
+        _spriteManagerOverlay.Add(tri);
         base.Initialise();
         _cursorSpriteManager.Add(new OsuArgonCursor());
     }
 
-    private void loadScreens() {
+    private void LoadScreens() {
         ClickToEntered = new ClickToEntered(_spriteManager);
     }
     protected override void Update()
     {
-        _spriteManager?.Update();
+        _spriteManager.Update();
+        _spriteManagerOverlay.Update();
         if (ScreenStack.Current == ClickToEntered) {
             bool escapeNow = Keyboard.IsKeyDown(Keyboard.Key.Escape);
 
@@ -58,8 +80,9 @@ public class GameBase : Application
     protected override void Draw()
     {
         base.Draw();
-        _spriteManager?.Draw();
+        _spriteManager.Draw();
         ScreenStack.Draw();
+        _spriteManagerOverlay.Draw();
         _cursorSpriteManager.Draw();
     }
 

@@ -1,14 +1,15 @@
-﻿using Anatta.Framework.Configuration;
-using Anatta.Framework.Graphics.D3D;
+﻿using Anatta.Framework.Graphics.D3D;
 using Anatta.Framework.Graphics.OpenGL;
 using Anatta.Framework.Graphics.Interfaces;
+
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
+
 using Vortice.Direct3D11;
 
 namespace Anatta.Framework.Graphics;
 
-public class Texture : ITexture, IDisposable {
+public class Texture : ITexture {
     private byte[] _rawData;
 
     private TextureGL? _gl;

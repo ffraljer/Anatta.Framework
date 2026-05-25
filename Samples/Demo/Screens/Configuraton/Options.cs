@@ -15,7 +15,7 @@ public class Options : Screen {
         checkboxRenderer.OnCheckChange += delegate(bool status) {
             FrameworkConfig.sRenderer.Value = status ? Renderer.D3D : Renderer.GL;
         };
-        Add((Drawable)checkboxRenderer);
+        Add(checkboxRenderer);
     }
     public override void Update() {
         base.Update();

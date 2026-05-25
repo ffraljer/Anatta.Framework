@@ -11,20 +11,10 @@ public class TextureD3D : ITexture {
     public int Width { get; private set; }
     public int Height { get; private set; }
 
-    public ID3D11Texture2D Texture2D { get; private set; }
-    public ID3D11ShaderResourceView SRV { get; private set; }
+    public ID3D11Texture2D Texture2D { get; set; }
+    public ID3D11ShaderResourceView ShaderResourceView { get; private set; }
 
-    private static TextureD3D? _whitePixel;
-    internal static TextureD3D WhitePixel(ID3D11Device device) {
-        if (_whitePixel == null)
-        {
-            byte[] data = { 255, 255, 255, 255 };
-            _whitePixel = new TextureD3D(device, 1, 1, data);
-        }
-        return _whitePixel;
-    }
-
-    public TextureD3D(ID3D11Device device, int width, int height, byte[] rgbaData) {
+    private TextureD3D(ID3D11Device device, int width, int height, byte[] rgbaData) {
         Width = width;
         Height = height;
 
@@ -46,11 +36,11 @@ public class TextureD3D : ITexture {
             }
         }
 
-        SRV = device.CreateShaderResourceView(Texture2D);
+        ShaderResourceView = device.CreateShaderResourceView(Texture2D);
     }
 
     public void Bind(ID3D11DeviceContext context, int slot = 0) {
-        context.PSSetShaderResources((uint)slot, new[] { SRV });
+        context.PSSetShaderResources((uint)slot, [ShaderResourceView]);
     }
     
     public static TextureD3D SetData(ID3D11Device device, byte[] bytes) {
@@ -70,7 +60,7 @@ public class TextureD3D : ITexture {
     }
 
     public void Dispose() {
-        SRV.Dispose();
+        ShaderResourceView.Dispose();
         Texture2D.Dispose();
     }
 }

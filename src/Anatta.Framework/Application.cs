@@ -44,7 +44,7 @@ public class Application : IDisposable {
     public static Application Instance;
 
     protected Application(Vector2i size, string title = "Untitled", bool dontlaunch = false) {
-        if (dontlaunch == true) return;
+        if (dontlaunch is true) return;
         /*
           ⣠⣤⣤⣤⡤⢤⣤⣤⣤⣤⣤⣄⣀⣀⡀⠀⠀⠀⠀⠀⠀⠀⠀
 ⠀⠀⠀⠀⠀⣠⣿⡿⣟⠯⡒⢯⣽⣓⣒⢾⣯⣭⣿⣿⠿⠭⠭⣯⣷⣦⡀⠀⠀⠀
@@ -93,7 +93,8 @@ public class Application : IDisposable {
         _frameworkLogger.Info($"Renderer: {FrameworkConfig.sRenderer.ToString()}");
         _frameworkLogger.Info($".NET Version: {Environment.Version}");
         _frameworkLogger.Info($"OS: {RuntimeInformation.OSDescription}");
-        _frameworkLogger.Info($"Window Backend: {_backend.ToString().TrimStart("Anatta.Framework.")}");
+        //_frameworkLogger.Info($"Window Backend: {_backend.ToString().TrimStart("Anatta.Framework.")}");
+        // add back IF I ever add back other backends
         WindowManager.Width = _backend.Size.X;
         WindowManager.Height = _backend.Size.Y;
 
