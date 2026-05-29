@@ -15,4 +15,7 @@ public interface IWindowBackend : IDisposable {
     event Action<float>? RenderFrame;
     event Action<Vector2i>? Resized;
     event Action? Unload;
+    
+    void OnLoad();
+    void Clear(); 
 }

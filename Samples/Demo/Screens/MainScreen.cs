@@ -2,95 +2,59 @@ using Anatta.Framework;
 using Anatta.Framework.Configuration;
 using Anatta.Framework.Graphics;
 using Anatta.Framework.Graphics.Animations;
-using Anatta.Framework.Graphics;
+using Anatta.Framework.Graphics.Interfaces;
+using Anatta.Framework.Graphics.Shapes;
 using Anatta.Framework.Graphics.Sprites;
-using Anatta.Framework.IO;
+using Anatta.Framework.Storage;
 using Anatta.Framework.Sound;
+using Anatta.Framework.Threading;
 using OpenTK.Mathematics;
 
 namespace Demo.Screens;
 
 public class MainScreen : Screen {
     Text player;
+    private Sprite mrladybug;
     private Track _music;
 
-    public MainScreen(SpriteManager spriteManager) : base(spriteManager) {
+    protected override void Load() {
+        mrladybug = new(Resource.Load<Texture>("pillowpetladybug2")) {
+            Anchor = Anchors.Centre,
+            Origin = Anchors.Centre,
+            Scale = new(3)
+        };
+        mrladybug.OnHover += delegate { mrladybug.ScaleTo(new(3.2f), 3); };
+        mrladybug.OnHoverLost += delegate { mrladybug.ScaleTo(new(3f), 3, Easing.OutCubic); };
+        Add(mrladybug);
+        AddMenuButton("Play",    new(0, -50),  Colour4.Green, _ => { GameBase.ScreenStack.Push(new KittyScreen()); });
+        AddMenuButton("Options", new(0, -170), Colour4.Gray, _ => { GameBase.ScreenStack.Push(new Options()); });
+        AddMenuButton("Quit",    new(0, -290), Colour4.Red, _ => { GameBase.Instance.Exit(); });
     }
 
-    public override void Load() {
-        base.Load();
-        var transformas = new Transformation[] {
-            new (Transformation.Type.Colour, Color.White, Color.Green, 0f, 2f, Easing.OutCubic),
-            new (Transformation.Type.Colour, Color.Green, Color.White, 2f, 4f, Easing.OutCubic),
+    private void AddMenuButton(string name, Vector2 pos, Colour4 colour, Action<IDrawable> onClick) {
+        var pSprite = new Box() {
+            Size = new(300, 100),
+            Colour = colour,
+            BorderColour = Colour4.Black,
+            Position = pos,
+            BorderThickness = 2,
+            Anchor = Anchors.Bottom,
+            Origin = Anchors.Centre
         };
-        _music = Resource.Load<Track>("longcat.mp3");
-        _music.Loop = true;
-        Sprite sprite = new("finished") {
-            Anchor = Anchors.CentreLeft,
-            Position = new Vector2(0),
-            Origin = Anchors.CentreLeft,
-            Colour = new Color(255, 255, 255, 0),
-            CornerRadius = 4f
+        pSprite.OnClick += onClick;
+        pSprite.OnHover += delegate { pSprite.ScaleTo(new(1.2f), 3); };
+        pSprite.OnHoverLost += delegate { pSprite.ScaleTo(new(1), 3, Easing.OutCubic); };
+        var pText = new Text(name, 14f, Colour4.White) {
+            Anchor = Anchors.Bottom,
+            Origin = Anchors.Centre,
+            Position = pSprite.Position
         };
-        Vector2 size = GameBase.WindowManager.Size;
-        float baseRatio = 16f / 9f;
-        float ratio = (size.X / size.Y) / baseRatio;
-        sprite.Scale = new Vector2(ratio, 1f);
-        player = new Text("I NEED TO LAY OFF THE CATNIP...", 32f, Color.White, Fonts.AllerBold);
-        player.Position = new Vector2(0);
-        player.Anchor = Anchors.TopRight;
-        player.Origin = Anchors.TopRight;
-        //sprite.ScaleTo(new Vector2(4), 10);
-        if (Application.Config.GraphicsRenderer.Value == Renderer.GL) {
-            
-            sprite.OnClick += delegate {
-                _music.Play();
-            };
-            sprite.OnHover += s => {
-                Console.WriteLine("Mouse over sprite!");
-            };
-            sprite.OnHoverLost += s => {
-                Console.WriteLine("Mouse left sprite!");
-            };
-        }
-        else {
-            _music.Play();
-        }
-        sprite
-            .FadeTo(255, 10)
-            .Then()
-            .MoveTo(new Vector2(GameBase.WindowManager.Width - sprite.Texture.Width, 0), 10, Easing.InOutCubic)
-            .Then()
-            .RotateTo(360, 10, Easing.OutCubic);
-        var playe2r = new Text("I NEED TO LAY OFF THE CATNIP...", 32f, Color.White);
-        var playes2r = new Text("I NEED TO LAY OFF THE CATNIP...", 24f, Color.White) {
-            Font = Resource.Load<FontFace>("TIMES.ttf"),
-            Position = new(0,2),
-            Origin = Anchors.Bottom,
-            Anchor = Anchors.Bottom
-        };
-        Add(sprite);
-        Add(player);
-        Add(playes2r);
-        Add(playe2r);
-        var CLICKTO = new Text("CLICK TO ENTER A SCREEN", 24f, Color.White) {
-            Anchor = Anchors.BottomRight,
-            Origin = Anchors.BottomRight
-        };
-        CLICKTO.ApplyTransformationSequence(new TransformationSequence(transformas, true));
-        CLICKTO.OnClick += delegate {
-            _music.Stop();
-            GameBase.ScreenStack.Push(GameBase.ClickToEntered, true, 0.5f); 
-        };
-        Add(CLICKTO);
+
+        Add(pSprite);
+        Add(pText);
     }
 
     public override void Update() {
         base.Update();
-        //Console.Write($"\rMouse: {Mouse.X}, {Mouse.Y}      "); // having something like this writing recursively might mess up logging.
-    }
-
-    public override void Draw() {
-        base.Draw();
     }
 }

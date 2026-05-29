@@ -12,13 +12,13 @@ public class Transformation {
     public Vector2 VecStart;
     public Vector2 VecEnd;
 
-    public Color ColStart;
-    public Color ColEnd;
+    public Colour4 ColStart;
+    public Colour4 ColEnd;
     
     public float FloatStart;
     public float FloatEnd;
 
-    public float StartTime; // I question myself every day.
+    public float StartTime;
     public float EndTime;
 
     public Easing Easing;
@@ -32,7 +32,7 @@ public class Transformation {
         Easing = easing;
     }
     
-    public Transformation(Type type, Color start, Color end, float startTime, float endTime, Easing easing = Easing.None) {
+    public Transformation(Type type, Colour4 start, Colour4 end, float startTime, float endTime, Easing easing = Easing.None) {
         TransformType = type;
         ColStart = start;
         ColEnd = end;

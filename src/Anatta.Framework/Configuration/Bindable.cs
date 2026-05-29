@@ -1,7 +1,7 @@
 ﻿namespace Anatta.Framework.Configuration;
 
-public class Bindable<T> {
-    private T _value;
+public class Bindable<T>(T defaultValue = default!) {
+    private T _value = defaultValue;
     
     public T Value
     {
@@ -14,9 +14,10 @@ public class Bindable<T> {
     }
     
     public event Action<T>? ValueChanged;
-    
-    public Bindable(T defaultValue = default!)
-    {
-        _value = defaultValue;
+
+    public static implicit operator T(Bindable<T> bindable) => bindable.Value;
+
+    public override string ToString() {
+        return _value?.ToString() ?? "null";
     }
 }

@@ -1,16 +1,22 @@
-#version 330 core
+ #version 450
 
-in vec2 vTex;
-out vec4 FragColor;
-uniform sampler2D tex;
-uniform vec4 uTintTop;
-uniform vec4 uTintBottom;
-uniform vec4 uBorderTop;
-uniform vec4 uBorderBottom;
-uniform float uRadius;
-uniform float uCircleRadius;
-uniform float uCircleThickness;
-uniform vec2 uSize;
+layout(location = 0) in vec2 vTex;
+layout(location = 0) out vec4 FragColor;
+layout(binding = 1) uniform sampler2D tex;
+layout(binding = 0) uniform Constants {
+    mat4 transform;
+    mat4 uProjection;
+    vec4 uTintTop;
+    vec4 uTintBottom;
+    vec4 uBorderTop;
+    vec4 uBorderBottom;
+    vec2 uSize;
+    float uRadius;
+    float uCircleRadius;
+    float uCircleThickness;
+    float BoxBorderThickness;
+    float uTriangle;
+};
 
 void main()
 {
@@ -21,7 +27,23 @@ void main()
 
     vec4 color = texture(tex, vTex);
 
-    if (uCircleRadius <= 0.0) { // box
+    
+    if (uTriangle > 0.0) {
+        vec2 uv = vTex;
+        uv.y = 1.0 - uv.y;
+
+        float d = uv.y - abs(uv.x - 0.5) * 2.0;
+
+        float aa = fwidth(d);
+        float a = smoothstep(0.0, aa, d);
+
+        if (a <= 0.0)
+            discard;
+
+        color = fillColor;
+        color.a *= a;
+    }
+    else if (uCircleRadius <= 0.0) { // box
         if (uRadius > 0.0) { // rounded
             float dx = max(uRadius - p.x, 0.0);
             dx = max(dx, max(uRadius - (uSize.x - p.x), 0.0));

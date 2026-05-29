@@ -1,10 +1,9 @@
-﻿namespace Anatta.Framework.Graphics;
+﻿namespace Anatta.Framework.Graphics.Animations;
 
 public enum Easing {
     None,
-    InSine,
-    OutSine,
-    InOutSine,
+    Out,
+    In,
     InQuad,
     OutQuad,
     InOutQuad,
@@ -16,5 +15,25 @@ public enum Easing {
     InOutQuart,
     InQuint,
     OutQuint,
-    InOutQuint
+    InOutQuint,
+    InSine,
+    OutSine,
+    InOutSine,
+    InExpo,
+    OutExpo,
+    InOutExpo,
+    InCirc,
+    OutCirc,
+    InOutCirc,
+    InElastic,
+    OutElastic,
+    OutElasticHalf,
+    OutElasticQuarter,
+    InOutElastic,
+    InBack,
+    OutBack,
+    InOutBack,
+    InBounce,
+    OutBounce,
+    InOutBounce
 }

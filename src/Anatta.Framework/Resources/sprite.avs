@@ -1,11 +1,24 @@
-#version 330 core
+#version 450
+
 layout(location = 0) in vec2 aPos;
 layout(location = 1) in vec2 aTex;
 
-out vec2 vTex;
+layout(location = 0) out vec2 vTex;
 
-uniform mat4 uProjection;
-uniform mat4 transform;
+layout(binding = 0) uniform Constants {
+    mat4 transform;
+    mat4 uProjection;
+    vec4 uTintTop;
+    vec4 uTintBottom;
+    vec4 uBorderTop;
+    vec4 uBorderBottom;
+    vec2 uSize;
+    float uRadius;
+    float uCircleRadius;
+    float uCircleThickness;
+    float BoxBorderThickness;
+    float uTriangle;
+};
 
 void main()
 {
