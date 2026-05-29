@@ -6,10 +6,8 @@ namespace Demo.Screens;
 
 public class Options : Screen {
     private Checkbox checkboxRenderer;
-    
-    public Options(SpriteManager spriteManager) : base(spriteManager) { }
    
-    public override void Load() {
+    protected override void Load() {
         checkboxRenderer = new("OpenGL") {
         };
         checkboxRenderer.OnCheckChange += delegate(bool status) {

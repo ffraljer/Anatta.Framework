@@ -4,7 +4,6 @@ using Anatta.Framework.Graphics.Animations;
 using Anatta.Framework.Graphics.Interfaces;
 using Anatta.Framework.Graphics.Shapes;
 using Anatta.Framework.Graphics.Sprites;
-using Anatta.Framework.Input;
 using Anatta.Framework.Storage;
 using Anatta.Framework.Sound;
 using OpenTK.Mathematics;
@@ -15,8 +14,7 @@ public class ClickToEntered : Screen {
     private Track track;
     private ITexturedDrawable title;
     private Text back;
-    public ClickToEntered(SpriteManager spriteManager) : base(spriteManager) { }
-    public override void Load() {
+    protected override void Load() {
         
         track = Resource.Load<Track>("hlfswebbq.mp3");
         track.Play();
@@ -37,11 +35,8 @@ public class ClickToEntered : Screen {
             new Vector2(0, 0)) {
             Origin = Anchors.TopLeft
         };
-        Add(title);
+        Add((Drawable)title);
         Add(back);
-    }
-    public override void Draw() {
-        base.Draw();
     }
 
     public override void OnExit() {

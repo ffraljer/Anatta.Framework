@@ -48,7 +48,7 @@ public class SpriteManager : IDisposable {
         _managables.Remove(managed);
     }
     private void UpdateItem(IDrawable item) {
-        if (item is Container container)
+        if (item is CompositeDrawable container)
             container.EnsureLoaded();
 
         if (item is IUpdatable u)
@@ -57,7 +57,7 @@ public class SpriteManager : IDisposable {
         if (item is Drawable sprite)
             HandleInput(sprite);
 
-        if (item is Container c)
+        if (item is CompositeDrawable c)
         {
             foreach (var child in c.Children)
                 UpdateItem(child);
@@ -170,7 +170,7 @@ public class SpriteManager : IDisposable {
     }
     private void _Draw(IDrawable item)
     {
-        if (item is Container container) {
+        if (item is CompositeDrawable container) {
             foreach (var child in container.Children)
                 _Draw(child);
         }
@@ -194,7 +194,7 @@ public class SpriteManager : IDisposable {
             }
         }
 
-        if (item is Container container) {
+        if (item is CompositeDrawable container) {
             foreach (var child in container.Children)
                 InvalidateInput(child);
         }

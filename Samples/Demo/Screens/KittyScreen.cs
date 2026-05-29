@@ -13,10 +13,8 @@ public class KittyScreen : Screen {
     Text player;
     private Track _music;
 
-    public KittyScreen(SpriteManager spriteManager) : base(spriteManager) {
-    }
-
-    public override void Load() {
+    protected override void Load() {
+        Scale = new(0.8f);
         base.Load();
         var transformas = new Transformation[] {
             new (Transformation.Type.Colour, Colour4.White, Colour4.Green, 0f, 2f, Easing.OutCubic),
@@ -82,7 +80,10 @@ public class KittyScreen : Screen {
         CLICKTO.ApplyTransformationSequence(new TransformationSequence(transformas, true));
         CLICKTO.OnClick += delegate {
             _music.Stop();
-            GameBase.ScreenStack.Push(GameBase.ClickToEntered, true, 0.5f); 
+            MoveToX(-SpriteManager.ScreenSize.X + 14f, 0.5f);
+            GameBase.Instance.Scheduler.AddDelayed(delegate {
+                GameBase.ScreenStack.Push(GameBase.ClickToEntered); 
+            }, 0.5f);
         };
         Add(CLICKTO);
     }
@@ -90,9 +91,5 @@ public class KittyScreen : Screen {
     public override void Update() {
         base.Update();
         //Console.Write($"\rMouse: {Mouse.X}, {Mouse.Y}      "); // having something like this writing recursively might mess up logging.
-    }
-
-    public override void Draw() {
-        base.Draw();
     }
 }

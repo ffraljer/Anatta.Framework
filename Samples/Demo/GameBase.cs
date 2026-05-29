@@ -25,7 +25,7 @@ public class GameBase : Application
         _spriteManager = new();
         _spriteManagerOverlay = new();
         _cursorSpriteManager = new();
-        ScreenStack = new();
+        ScreenStack = new(_spriteManager);
         HideCursor = true;
         Audio.Binding = Audio.Bindings.Al;
     }
@@ -34,7 +34,7 @@ public class GameBase : Application
         LoadScreens();
         Resource.AddStore(new AssemblyStore(typeof(_Resource).Assembly, "Demo.Resources"));
         Resource.AddStore(new FileSystemStore("Content"));
-        ScreenStack.Push(new KittyScreen(_spriteManager));
+        ScreenStack.Push(new KittyScreen());
         overlay = new Sprite(Resource.Load<Texture>("tbo.png")) {
             Anchor = Anchors.Bottom,
             Origin = Anchors.BottomRight
@@ -58,7 +58,7 @@ public class GameBase : Application
     }
 
     private void LoadScreens() {
-        ClickToEntered = new ClickToEntered(_spriteManager);
+        ClickToEntered = new ClickToEntered();
     }
     protected override void Update()
     {
@@ -68,7 +68,7 @@ public class GameBase : Application
             bool escapeNow = Keyboard.IsKeyDown(Keyboard.Key.Escape);
 
             if (escapeNow && !_escapePressedLastFrame) {
-                ScreenStack.Push(new KittyScreen(_spriteManager), true, 0.5f);
+                ScreenStack.Push(new KittyScreen());
             }
 
             _escapePressedLastFrame = escapeNow;

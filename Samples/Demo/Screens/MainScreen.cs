@@ -17,9 +17,7 @@ public class MainScreen : Screen {
     private Sprite mrladybug;
     private Track _music;
 
-    public MainScreen(SpriteManager spriteManager) : base(spriteManager) { }
-
-    public override void Load() {
+    protected override void Load() {
         mrladybug = new(Resource.Load<Texture>("pillowpetladybug2")) {
             Anchor = Anchors.Centre,
             Origin = Anchors.Centre,
@@ -28,8 +26,8 @@ public class MainScreen : Screen {
         mrladybug.OnHover += delegate { mrladybug.ScaleTo(new(3.2f), 3); };
         mrladybug.OnHoverLost += delegate { mrladybug.ScaleTo(new(3f), 3, Easing.OutCubic); };
         Add(mrladybug);
-        AddMenuButton("Play",    new(0, -50),  Colour4.Green, _ => { GameBase.ScreenStack.Push(new KittyScreen(Manager)); });
-        AddMenuButton("Options", new(0, -170), Colour4.Gray, _ => { GameBase.ScreenStack.Push(new Options(Manager)); });
+        AddMenuButton("Play",    new(0, -50),  Colour4.Green, _ => { GameBase.ScreenStack.Push(new KittyScreen()); });
+        AddMenuButton("Options", new(0, -170), Colour4.Gray, _ => { GameBase.ScreenStack.Push(new Options()); });
         AddMenuButton("Quit",    new(0, -290), Colour4.Red, _ => { GameBase.Instance.Exit(); });
     }
 
@@ -58,9 +56,5 @@ public class MainScreen : Screen {
 
     public override void Update() {
         base.Update();
-    }
-
-    public override void Draw() {
-        base.Draw();
     }
 }

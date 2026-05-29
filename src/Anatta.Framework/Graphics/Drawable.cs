@@ -153,8 +153,8 @@ public abstract class Drawable : IDrawable, IUpdatable {
         return this;
     }
 
-    public ITransformable MoveToX(int x, float duration, Easing easing = Easing.None) => MoveTo(new(x, 0), duration, easing);
-    public ITransformable MoveToY(int y, float duration, Easing easing = Easing.None) => MoveTo(new(0, y), duration, easing);
+    public ITransformable MoveToX(float x, float duration, Easing easing = Easing.None) => MoveTo(new(x, 0), duration, easing);
+    public ITransformable MoveToY(float y, float duration, Easing easing = Easing.None) => MoveTo(new(0, y), duration, easing);
 
     public ITransformable ScaleTo(Vector2 scale, float duration, Easing easing = Easing.None) {
         var start = startChain();

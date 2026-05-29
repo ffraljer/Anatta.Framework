@@ -38,17 +38,20 @@ public class ShaderD3D : IShader {
         ID3D11Device device,
         ID3D11DeviceContext context,
         string vsGlsl,
-        string fsGlsl) {
+        string fsGlsl)
+    {
+        byte[] spvVs = AnattaShaderCompiler.CompileGlslToSpirv(vsGlsl, ShaderKind.VertexShader);
+        byte[] spvPs = AnattaShaderCompiler.CompileGlslToSpirv(fsGlsl, ShaderKind.FragmentShader);
 
-        byte[] spvVsbytes = AnattaShaderCompiler.CompileGlslToSpirv(vsGlsl, ShaderKind.VertexShader);
-        byte[] spvPsbytes = AnattaShaderCompiler.CompileGlslToSpirv(fsGlsl, ShaderKind.FragmentShader);
+        var (uniforms, cbSize, layout) = AnattaShaderCompiler.ReflectSpirv(spvVs, spvPs);
 
-        var (uniforms, cbSize, layout) = AnattaShaderCompiler.ReflectSpirv(spvVsbytes, spvPsbytes);
+        string vsHlsl = AnattaShaderCompiler.SpirvToHlsl(spvVs);
+        string psHlsl = AnattaShaderCompiler.SpirvToHlsl(spvPs);
 
-        string vsHlsl = AnattaShaderCompiler.SpirvToHlsl(spvVsbytes);
-        string psHlsl = AnattaShaderCompiler.SpirvToHlsl(spvPsbytes);
+        byte[] vsBlob = AnattaShaderCompiler.CompileHlsl(vsHlsl, "vs_5_0");
+        byte[] psBlob = AnattaShaderCompiler.CompileHlsl(psHlsl, "ps_5_0");
 
-        return new ShaderD3D(device, context, vsHlsl, psHlsl, layout, uniforms, cbSize);
+        return new ShaderD3D(device, context, vsBlob, psBlob, layout, uniforms, cbSize);
     }
 
     internal static ShaderD3D LoadShaderInternal(
@@ -58,25 +61,22 @@ public class ShaderD3D : IShader {
         string fragment)
     {
         var a = Assembly.GetExecutingAssembly();
-
+    
         using Stream vs = a.GetManifestResourceStream($"Anatta.Framework.Resources.{vertex}")
                           ?? throw new FileNotFoundException($"{vertex} cannot be found");
         using Stream fs = a.GetManifestResourceStream($"Anatta.Framework.Resources.{fragment}")
                           ?? throw new FileNotFoundException($"{fragment} cannot be found");
-
+    
         string vsGlsl = new StreamReader(vs).ReadToEnd();
         string fsGlsl = new StreamReader(fs).ReadToEnd();
-
-        byte[] spvVsbytes = GetOrCompileShader(vsGlsl, ShaderKind.VertexShader);
-        byte[] spvPsbytes = GetOrCompileShader(fsGlsl, ShaderKind.FragmentShader);
-
-        var (uniforms, cbSize, layout) = 
-            AnattaShaderCompiler.ReflectSpirv(spvVsbytes, spvPsbytes);
-        
-        string vsHlsl = AnattaShaderCompiler.SpirvToHlsl(spvVsbytes);
-        string pissHlsl = AnattaShaderCompiler.SpirvToHlsl(spvPsbytes);
-
-        return new ShaderD3D(device, context, vsHlsl, pissHlsl, layout, uniforms, cbSize);
+    
+        byte[] spvVs = GetOrCompileShader(vsGlsl, ShaderKind.VertexShader);
+        byte[] spvPs = GetOrCompileShader(fsGlsl, ShaderKind.FragmentShader);
+    
+        var (uniforms, cbSize, layout) = GetOrReflect(spvVs, spvPs);
+        var (vsBlob, psBlob) = GetOrCompileToBlobs(spvVs, spvPs);
+    
+        return new ShaderD3D(device, context, vsBlob, psBlob, layout, uniforms, cbSize);
     }
     #endregion
     
@@ -84,19 +84,16 @@ public class ShaderD3D : IShader {
     public ShaderD3D(
         ID3D11Device device,
         ID3D11DeviceContext context,
-        string vsHlsl,
-        string psHlsl,
+        byte[] vsBlob,
+        byte[] pissBlob,
         InputElementDescription[] inputLayout,
         (string Name, int Offset, int Size)[] uniforms,
         int cbSize)
     {
         _context = context;
-
-        byte[] vsBlob = AnattaShaderCompiler.CompileHlsl(vsHlsl, "vs_5_0");
-        byte[] psBlob = AnattaShaderCompiler.CompileHlsl(psHlsl, "ps_5_0");
-
+        
         _vertexShader = device.CreateVertexShader(vsBlob);
-        _pixelShader = device.CreatePixelShader(psBlob);
+        _pixelShader = device.CreatePixelShader(pissBlob);
         _inputLayout = device.CreateInputLayout(inputLayout, vsBlob);
 
         foreach (var (name, offset, size) in uniforms)
@@ -221,7 +218,7 @@ public class ShaderD3D : IShader {
     #region Private Methods
 
     private static byte[] GetOrCompileShader(string src, ShaderKind kind) { // VERYRYRYRYRYRYRYRYR MUCH REduced loading
-        //time
+        //time-
         var hsh = Convert.ToHexString(SHA256.HashData(
             Encoding.UTF8.GetBytes(src + kind)));
         var path = Path.Combine(shaderCacheDir, $"{hsh}.spv");
@@ -234,6 +231,100 @@ public class ShaderD3D : IShader {
         Directory.CreateDirectory(shaderCacheDir);
         File.WriteAllBytes(path, spv);
         return spv;
+    }
+    
+    private static (
+        (string Name, int Offset, int Size)[] Uniforms,
+        int CbSize,
+        InputElementDescription[] Layout
+        ) GetOrReflect(byte[] vsSpv, byte[] fsSpv) {
+        var combined = SHA256.HashData([..vsSpv, ..fsSpv]);
+        var path = Path.Combine(shaderCacheDir, $"{Convert.ToHexString(combined)}.refl");
+
+        if (File.Exists(path))
+            return DeserialiseReflection(File.ReadAllBytes(path));
+
+        var result = AnattaShaderCompiler.ReflectSpirv(vsSpv, fsSpv);
+        Directory.CreateDirectory(shaderCacheDir);
+        File.WriteAllBytes(path, SerialiseReflection(result));
+        return result;
+    }
+    
+    private static (byte[] vs, byte[] ps) GetOrCompileToBlobs(byte[] spvVs, byte[] spvPs) {
+        var hash = Convert.ToHexString(SHA256.HashData([..spvVs, ..spvPs]));
+        var vsPath = Path.Combine(shaderCacheDir, $"{hash}.vs.blob");
+        var psPath = Path.Combine(shaderCacheDir, $"{hash}.ps.blob");
+
+        if (File.Exists(vsPath) && File.Exists(psPath))
+            return (File.ReadAllBytes(vsPath), File.ReadAllBytes(psPath));
+
+        string vsHlsl = AnattaShaderCompiler.SpirvToHlsl(spvVs);
+        string psHlsl = AnattaShaderCompiler.SpirvToHlsl(spvPs);
+        var vsBlob = AnattaShaderCompiler.CompileHlsl(vsHlsl, "vs_5_0");
+        var pissBlob = AnattaShaderCompiler.CompileHlsl(psHlsl, "ps_5_0");
+
+        Directory.CreateDirectory(shaderCacheDir);
+        File.WriteAllBytes(vsPath, vsBlob);
+        File.WriteAllBytes(psPath, pissBlob);
+
+        return (vsBlob, pissBlob);
+    }
+    
+    private static byte[] SerialiseReflection((
+        (string Name, int Offset, int Size)[] Uniforms,
+        int CbSize,
+        InputElementDescription[] Layout) data) {
+        using var ms = new MemoryStream();
+        using var w = new BinaryWriter(ms);
+
+        w.Write(data.CbSize);
+
+        w.Write(data.Uniforms.Length);
+        foreach (var (name, offset, size) in data.Uniforms) {
+            w.Write(name);
+            w.Write(offset);
+            w.Write(size);
+        }
+
+        w.Write(data.Layout.Length);
+        foreach (var elem in data.Layout) {
+            w.Write(elem.SemanticName);
+            w.Write(elem.SemanticIndex);
+            w.Write((int)elem.Format);
+            w.Write(elem.AlignedByteOffset);
+            w.Write(elem.Slot);
+        }
+
+        return ms.ToArray();
+    }
+
+    private static (
+        (string, int, int)[],
+        int,
+        InputElementDescription[]
+        ) DeserialiseReflection(byte[] data) {
+        using var ms = new MemoryStream(data);
+        using var r = new BinaryReader(ms);
+
+        int cbSize = r.ReadInt32();
+
+        int uCount = r.ReadInt32();
+        var uniforms = new (string, int, int)[uCount];
+        for (int i = 0; i < uCount; i++)
+            uniforms[i] = (r.ReadString(), r.ReadInt32(), r.ReadInt32());
+
+        int lCount = r.ReadInt32();
+        var layout = new InputElementDescription[lCount];
+        for (int i = 0; i < lCount; i++)
+            layout[i] = new InputElementDescription(
+                r.ReadString(),
+                r.ReadUInt32(),
+                (Vortice.DXGI.Format)r.ReadInt32(),
+                r.ReadUInt32(),
+                r.ReadUInt32()
+            );
+
+        return (uniforms, cbSize, layout);
     }
     #endregion
 
