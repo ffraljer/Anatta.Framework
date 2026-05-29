@@ -143,7 +143,6 @@ public class SpriteRendererD3D(ID3D11Device device, ID3D11DeviceContext context)
         _shd.SetFloat(204, cmd.CircleRadius);
         _shd.SetFloat(208, cmd.CircleThickness);
         _shd.SetFloat(212, cmd.BoxBorderThickness);
-        _shd.SetFloat(216, cmd.Triangle);
         _shd.Upload();
         _context.Draw(6, 0);
     }

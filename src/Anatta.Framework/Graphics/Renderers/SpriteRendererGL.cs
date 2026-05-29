@@ -98,7 +98,6 @@ public class SpriteRendererGL : IRenderer {
         WriteFloat(_uniformData, 204, cmd.CircleRadius);
         WriteFloat(_uniformData, 208, cmd.CircleThickness);
         WriteFloat(_uniformData, 212, cmd.BoxBorderThickness);
-        WriteFloat(_uniformData, 216, cmd.Triangle);
         GL.BindBuffer(BufferTarget.UniformBuffer, _qoobo);
         GL.BufferSubData(BufferTarget.UniformBuffer, 0, _uniformData.Length, _uniformData);
         GL.DrawArrays(PrimitiveType.Triangles, 0, 6);

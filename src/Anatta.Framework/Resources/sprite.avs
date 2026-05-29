@@ -17,7 +17,6 @@ layout(binding = 0) uniform Constants {
     float uCircleRadius;
     float uCircleThickness;
     float BoxBorderThickness;
-    float uTriangle;
 };
 
 void main()

@@ -15,7 +15,6 @@ layout(binding = 0) uniform Constants {
     float uCircleRadius;
     float uCircleThickness;
     float BoxBorderThickness;
-    float uTriangle;
 };
 
 void main()
@@ -27,23 +26,7 @@ void main()
 
     vec4 color = texture(tex, vTex);
 
-    
-    if (uTriangle > 0.0) {
-        vec2 uv = vTex;
-        uv.y = 1.0 - uv.y;
-
-        float d = uv.y - abs(uv.x - 0.5) * 2.0;
-
-        float aa = fwidth(d);
-        float a = smoothstep(0.0, aa, d);
-
-        if (a <= 0.0)
-            discard;
-
-        color = fillColor;
-        color.a *= a;
-    }
-    else if (uCircleRadius <= 0.0) { // box
+    if (uCircleRadius <= 0.0) { // box
         if (uRadius > 0.0) { // rounded
             float dx = max(uRadius - p.x, 0.0);
             dx = max(dx, max(uRadius - (uSize.x - p.x), 0.0));

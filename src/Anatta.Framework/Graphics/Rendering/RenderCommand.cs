@@ -14,5 +14,4 @@ public struct RenderCommand {
     public float CircleRadius;
     public float CircleThickness;
     public float BoxBorderThickness;
-    public float Triangle;
 }

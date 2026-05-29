@@ -44,15 +44,7 @@ public class GameBase : Application
             Anchor = Anchors.Bottom,
             Origin = Anchors.BottomLeft
         };
-        Triangle tri = new() {
-            Anchor = Anchors.Centre,
-            BorderColour = Colour4.White, 
-            Thickness = 5,
-            Colour = Colour4.Transparent,
-            Scale = new(100)
-        };
         _spriteManagerOverlay.Add(overlay);
-        _spriteManagerOverlay.Add(tri);
         base.Initialise();
         _cursorSpriteManager.Add(new OsuArgonCursor());
     }
