@@ -81,7 +81,7 @@
                             _windowManager.Width = Size.X;
                             _windowManager.Height = Size.Y;
                             Resized?.Invoke(Size);
-                        GL.Viewport(0, 0, Size.X, Size.Y);
+                            GL.Viewport(0, 0, Size.X, Size.Y);
                             break;
                         case SDL.EventType.KeyDown:
                             Keyboard.KeyDown(ConvertKey(@event.Key.Scancode));

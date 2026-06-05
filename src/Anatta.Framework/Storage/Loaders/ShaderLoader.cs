@@ -1,5 +1,7 @@
 ﻿using Anatta.Framework.Configuration;
+#if win
 using Anatta.Framework.Graphics.D3D;
+#endif
 using Anatta.Framework.Graphics.OpenGL;
 using Anatta.Framework.Graphics.Shaders;
 

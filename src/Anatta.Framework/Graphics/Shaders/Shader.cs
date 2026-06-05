@@ -1,9 +1,7 @@
-﻿using Anatta.Framework.Configuration;
+﻿#if win
 using Anatta.Framework.Graphics.D3D;
+#endif
 using Anatta.Framework.Graphics.Interfaces;
-using Anatta.Framework.Graphics.OpenGL;
-using Anatta.Framework.Storage;
-using OpenTK.Mathematics;
 
 namespace Anatta.Framework.Graphics.Shaders;
 

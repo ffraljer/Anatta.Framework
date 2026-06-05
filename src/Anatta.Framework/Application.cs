@@ -11,23 +11,11 @@ using OpenTK.Mathematics;
 
 namespace Anatta.Framework;
 
-public static class BackendFactory {
-    public static IWindowBackend Create(Vector2i size, string title)
-    {
-        #if WINDOWS
-        if (FrameworkConfig.sRenderer == Renderer.D3D)
-            return new D3D11WindowBackend(size, title);
-        #endif
-        return new DefaultWindowBackend(size, title);
-        // can the GameWindow be used in my Vortiche? maybe not.
-    }
-}
-
 public class Application : IDisposable {  
     private Time _time { get; } = new Time();
     public Scheduler Scheduler { get; } = new Scheduler();
     
-    private readonly IWindowBackend _backend;
+    private readonly Window _window;
 
     protected Logger logger = new("Application");
 
@@ -37,7 +25,7 @@ public class Application : IDisposable {
 
     public static WindowManager WindowManager { get; private set; } = new WindowManager();
 
-    public static IWindowBackend Backend;
+    public static Window Window;
 
     public bool HideCursor;
 
@@ -66,14 +54,14 @@ public class Application : IDisposable {
         
         Config = new FrameworkConfig();
         
-        _backend = BackendFactory.Create(size, title);
-        Backend = _backend;
+        _window = new(size, title);
+        Window = _window;
 
-        _backend.Load += OnLoad;
-        _backend.RenderFrame += OnRenderFrame;
-        _backend.Unload += OnUnload;
-        _backend.HideCursor = HideCursor;
-        _backend.Resized += OnResize;
+        _window.Load += OnLoad;
+        _window.RenderFrame += OnRenderFrame;
+        _window.Unload += OnUnload;
+        _window.HideCursor = HideCursor;
+        _window.Resized += OnResize;
 
         Instance = this;
     }
@@ -85,18 +73,19 @@ public class Application : IDisposable {
 
     protected virtual void OnExit() { }
 
-    public void Run() => _backend.Run();
+    public void Run() => _window.Run();
 
     private void OnLoad()
     {
-        _frameworkLogger.Info($"Window Size: {_backend.Size.X}x{_backend.Size.Y}");
+        _frameworkLogger.Info($"Window Size: {_window.Size.X}x{_window.Size.Y}");
         _frameworkLogger.Info($"Renderer: {FrameworkConfig.sRenderer.ToString()}");
+        _frameworkLogger.Info($"Graphics Renderer: {_window.GetGraphicsRenderer()}");
         _frameworkLogger.Info($".NET Version: {Environment.Version}");
         _frameworkLogger.Info($"OS: {RuntimeInformation.OSDescription}");
         //_frameworkLogger.Info($"Window Backend: {_backend.ToString().TrimStart("Anatta.Framework.")}");
         // add back IF I ever add back other backends
-        WindowManager.Width = _backend.Size.X;
-        WindowManager.Height = _backend.Size.Y;
+        WindowManager.Width = _window.Size.X;
+        WindowManager.Height = _window.Size.Y;
 
 
         SpriteManager.ScreenSize = new Vector2i(
@@ -104,13 +93,13 @@ public class Application : IDisposable {
             WindowManager.Height
         );
 
-        _backend.OnLoad();
+        _window.OnLoad();
         Initialise();
     }
     
     public void Exit() {
         OnExit();
-        _backend.Dispose();
+        _window.Dispose();
     }
 
     private void OnRenderFrame(float dt)
@@ -121,7 +110,7 @@ public class Application : IDisposable {
         
         Update();
 
-        _backend.Clear();
+        _window.Clear();
 
         Draw();
     }
@@ -144,7 +133,7 @@ public class Application : IDisposable {
 
     public void Dispose()
     {
-        _backend.Dispose();
+        _window.Dispose();
         logger.Info("Application disposed.");
     }
 }

@@ -1,11 +1,13 @@
-﻿using Anatta.Framework.Graphics.D3D;
-using Anatta.Framework.Graphics.OpenGL;
+﻿using Anatta.Framework.Graphics.OpenGL;
 using Anatta.Framework.Graphics.Interfaces;
 
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
+#if win
 using Vortice.Direct3D11;
+using Anatta.Framework.Graphics.D3D;
+#endif
 
 namespace Anatta.Framework.Graphics;
 

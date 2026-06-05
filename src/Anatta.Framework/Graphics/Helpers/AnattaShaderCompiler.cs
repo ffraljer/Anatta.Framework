@@ -1,4 +1,5 @@
-﻿using System.Runtime.InteropServices;
+﻿#if win
+using System.Runtime.InteropServices;
 using Vortice.Direct3D11;
 using Vortice.DXGI;
 using Vortice.ShaderCompiler;
@@ -173,3 +174,4 @@ internal static class AnattaShaderCompiler {
         return (uniforms.ToArray(), cbSize, layout.ToArray());
     }
 }
+#endif

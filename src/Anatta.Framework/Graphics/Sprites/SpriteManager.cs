@@ -1,6 +1,8 @@
 using Anatta.Framework.Configuration;
 using Anatta.Framework.Input;
+#if win
 using Anatta.Framework.Graphics.D3D;
+#endif
 using Anatta.Framework.Graphics.Helpers;
 using Anatta.Framework.Graphics.Interfaces;
 using Anatta.Framework.Graphics.Renderers;

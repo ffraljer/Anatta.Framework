@@ -1,6 +1,4 @@
 ﻿#if WINDOWS
-
-#endif
 using Vortice.Direct3D11;
 
 namespace Anatta.Framework.Graphics.D3D;
@@ -14,3 +12,4 @@ internal static class D3DController {
         Context = context ?? throw new ArgumentNullException(nameof(context));
     }
 }
+#endif

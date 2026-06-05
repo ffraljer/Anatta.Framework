@@ -24,6 +24,7 @@ public abstract class CompositeDrawable : Drawable {
 
     protected void AddInternal(Drawable drawable) {
         if (drawable == null) throw new ArgumentNullException(nameof(drawable));
+        if (drawable == null) throw new ArgumentNullException(nameof(drawable));
         if (drawable == this) throw new InvalidOperationException("Cannot add to itself.");
         drawable.Parent = this;
         _children.Add(drawable);

@@ -2,11 +2,7 @@ using OpenTK.Mathematics;
 
 namespace Anatta.Framework; 
 public class WindowManager {
-    internal const int DEFAULT_WIDTH = 640;
-
-    internal const int DEFAULT_WIDE_SCREEN_WIDTH = 820;
-
-    internal const int DEFAULT_HEIGHT = 480;
+    internal Action? OnResize;
 
     public int Width;
 
@@ -56,12 +52,7 @@ public class WindowManager {
         }
         Width = width;
         Height = height;
+        
+        OnResize?.Invoke();
     }
-
-    /*
-    public void AddWindow(SubWindow window) {
-        // this is something I want to add later on, maybe (most likely in a different package)
-        // kinda like WinForms, or like, WinForms itself
-    }
-    */
 }
