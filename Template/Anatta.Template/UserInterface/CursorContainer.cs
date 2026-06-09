@@ -1,6 +1,6 @@
 ﻿using Anatta.Framework.Graphics;
-using Anatta.Framework.Graphics.Drawables.Shapes;
-using Anatta.Framework.Graphics.Drawables;
+using Anatta.Framework.Graphics.Shapes;
+using Anatta.Framework.Graphics.Sprites;
 using Anatta.Framework.Input;
 using OpenTK.Mathematics;
 
@@ -17,22 +17,23 @@ public class CursorContainer : Container
         _outerBlack = new Circle
         {
             Radius = 35,
-            BorderColour = new Colour(0, 0, 0),
+            Colour = Colour4.Transparent,
+            BorderColour = new Colour4(0, 0, 0),
             Thickness = 12,
             Origin = Anchors.Centre
         };
         _outerPink = new Circle
         {
             Radius = 34,
-            BorderColour = Colour.HotPink,
+            BorderColour = Colour4.HotPink,
             Thickness = 12,
-            FillColour = new Colour(0, 0, 0, 128),
+            Colour = new Colour4(0, 0, 0, 128),
             Origin = Anchors.Centre
         };
         _cursormiddle = new Circle
         {
             Radius = 6,
-            FillColour = Colour.White,
+            Colour = Colour4.White,
             Origin = Anchors.Centre
         };
 
@@ -62,12 +63,6 @@ public class CursorContainer : Container
                 _outerPink.ScaleTo(Vector2.One, 0.1f);
             }
         }
-    }
-
-    public override Texture Texture
-    {
-        get => null!;
-        protected set { }
     }
 
     public override Vector2 GetSize() => Vector2.Zero;
