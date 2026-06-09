@@ -12,6 +12,9 @@ namespace Anatta.Framework.Sound {
     {
         public enum Bindings {
             Bass = 1,
+            /// <summary>
+            /// INSTALL OALINST
+            /// </summary>
             Al // Weird...
         }
 

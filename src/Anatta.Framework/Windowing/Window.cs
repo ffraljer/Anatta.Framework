@@ -2,12 +2,17 @@ using Anatta.Framework.Configuration;
 using OpenTK.Mathematics;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Windowing.GraphicsLibraryFramework;
+using Vortice.DXGI;
+
+#if win
+using Anatta.Framework.fWindowing;
+#endif
 
 namespace Anatta.Framework;
 
 public class Window : IDisposable {
     private readonly IWindowBackend _backend;
-
+    internal IWindowBackend Backend => _backend;
     public Vector2i Size => _backend.Size;
     public bool HideCursor { get => _backend.HideCursor; set => _backend.HideCursor = value; }
     public KeyboardState KeyboardState => _backend.KeyboardState;
@@ -42,10 +47,12 @@ public class Window : IDisposable {
 
     internal string GetGraphicsRenderer() {
         #if win // I'm just basically doing this blind because I'm on Arch right now.
-        if (FrameworkConfig.sRenderer.Value == Renderer.D3D) {
-            using var dxgiDevice = _backend.Device.QueryInterface<IDXGIDevice>();
-            using var adapter = dxgiDevice.GetAdapter();
-            return adapter.Description.Description;
+        if (FrameworkConfig.sRenderer.Value == Renderer.D3D ) {
+            if (_backend is D3D11WindowBackend b) {
+                using var dxgiDevice = b.Device.QueryInterface<IDXGIDevice>();
+                using var adapter = dxgiDevice.GetAdapter();
+                return adapter.Description.Description;
+            }
         }
         #endif
         return GL.GetString(StringName.Renderer);

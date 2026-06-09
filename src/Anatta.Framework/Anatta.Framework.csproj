@@ -8,7 +8,7 @@
         <RootNamespace>Anatta.Framework</RootNamespace>
 
         <PackageId>Anatta.Framework</PackageId>
-        <Version>2026-05-29</Version>
+        <Version>20260609</Version>
         <Authors>fråljer</Authors>
         <Company>fråljer</Company>
         <PackageReadmeFile>README.md</PackageReadmeFile>
@@ -26,6 +26,7 @@
         <None Include="..\..\README.md" Pack="true" PackagePath="" />
     </ItemGroup>
     <ItemGroup>
+      <PackageReference Include="JetBrains.Annotations" Version="2025.2.4" />
       <PackageReference Include="ManagedBass" Version="4.0.2" />
       <PackageReference Include="ManagedBass.Fx" Version="4.0.2" />
       <PackageReference Include="OpenTK" Version="5.0.0-pre.15" />
