@@ -8,7 +8,7 @@
         <RootNamespace>Anatta.Framework</RootNamespace>
 
         <PackageId>Anatta.Framework</PackageId>
-        <Version>2026.06.09</Version>
+        <Version>20260612.0</Version>
         <Authors>fråljer</Authors>
         <Company>fråljer</Company>
         <PackageReadmeFile>README.md</PackageReadmeFile>
