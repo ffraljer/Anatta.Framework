@@ -29,7 +29,7 @@ public class SpriteAnimation() : Sprite(null!) {
 
         var current = _frames[_frameIndex];
 
-        _time = Time.Delta;
+        _time += Time.Delta;
 
         if (_time >= current.Duration) {
             _time -= current.Duration;
