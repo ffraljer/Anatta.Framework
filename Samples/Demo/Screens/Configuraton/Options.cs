@@ -11,7 +11,7 @@ public class Options : Screen {
         checkboxRenderer = new("OpenGL") {
         };
         checkboxRenderer.OnCheckChange += delegate(bool status) {
-            FrameworkConfig.sRenderer.Value = status ? Renderer.D3D : Renderer.GL;
+            FrameworkConfig.sRenderer.Value = Renderer.GL;
         };
         Add(checkboxRenderer);
     }

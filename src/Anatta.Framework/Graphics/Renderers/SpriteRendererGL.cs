@@ -86,7 +86,7 @@ public class SpriteRendererGL : IRenderer {
     }
 
     private void DrawCommand(RenderCommand cmd) {
-        cmd.Texture!.GetGL().Bind();
+        cmd.Texture!.GetTexture().Bind();
         WriteMatrix(_uniformData, 0, cmd.Transform);
         WriteMatrix(_uniformData, 64, _projection);
         WriteVec4(_uniformData, 128, cmd.TintTop);

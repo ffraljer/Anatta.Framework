@@ -4,9 +4,6 @@ using Anatta.Framework.Configuration;
 using Anatta.Framework.Graphics.Sprites;
 using Anatta.Framework.Logging;
 using Anatta.Framework.Threading;
-#if win
-using Anatta.Framework.fWindowing;
-#endif
 using OpenTK.Mathematics;
 
 namespace Anatta.Framework;
@@ -17,7 +14,7 @@ public class Application : IDisposable {
     
     private readonly Window _window;
 
-    protected Logger logger = new("Application");
+    private Logger logger = new("Application");
 
     private Logger _frameworkLogger = new("Framework");
     

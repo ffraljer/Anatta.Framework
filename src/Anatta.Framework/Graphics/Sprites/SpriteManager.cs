@@ -1,8 +1,4 @@
-using Anatta.Framework.Configuration;
 using Anatta.Framework.Input;
-#if win
-using Anatta.Framework.Graphics.D3D;
-#endif
 using Anatta.Framework.Graphics.Helpers;
 using Anatta.Framework.Graphics.Interfaces;
 using Anatta.Framework.Graphics.Renderers;
@@ -25,8 +21,7 @@ public class SpriteManager : IDisposable {
     public IEnumerable<IDrawable> GetAll() => _managables;
 
     public SpriteManager() {
-        if (FrameworkConfig.sRenderer == Framework.Renderer.GL)
-                Renderer = new SpriteRendererGL();
+        Renderer = new SpriteRendererGL();
     }
 
     public void Add(IDrawable managed) {
@@ -133,29 +128,7 @@ public class SpriteManager : IDisposable {
         foreach (var item in _managables.AsEnumerable().Reverse().OrderByDescending(i => i is Drawable d ? d.Depth : 0f))
             UpdateItem(item);
     }
-    private void EnsureRenderer() {
-        if (Renderer != null) return;
-
-        if (FrameworkConfig.sRenderer == Framework.Renderer.GL)
-            Renderer = new SpriteRendererGL();
-
-#if win
-        else if (FrameworkConfig.sRenderer == Framework.Renderer.D3D)
-        {
-            if (D3DController.Device == null)
-                throw new Exception("D3D not initialized yet.");
-
-            Renderer = new SpriteRendererD3D(
-                D3DController.Device,
-                D3DController.Context
-            );
-        }
-    #endif
-    }
     public void Draw() {
-#if win
-        EnsureRenderer();
-#endif
         var screenH = ScreenSize.Y;
         var screenW = ScreenSize.X;
         
